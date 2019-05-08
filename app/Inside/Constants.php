@@ -11,6 +11,7 @@ class Constants
     const USERS_LOGIN_TOKEN_DB = 'users_login_token';
     const USERS_LOGIN_TOKEN_LOG_DB = 'users_login_token_log';
     const APP_DB = 'app';
+    const APPS_SETTING_DB = 'user_setting';
     const USERS_APPS_DB = 'user_apps';
     const USERS_REFER_DB = 'users_refer';
     const WALLET_DB = 'wallet';

@@ -20,11 +20,10 @@ class CreateUsersTable extends Migration
             $table->string('email')->nullable();
             $table->string('password');
             $table->string('gmail')->nullable();
-            $table->rememberToken()->nullable();    
+            $table->rememberToken()->nullable();
             $table->string('name');
             $table->string('image');
             $table->string('gender');
-            $table->integer('user_level');
             $table->string('ref_link')->nullable();
             $table->json('info')->nullable();
             $table->timestamps();
