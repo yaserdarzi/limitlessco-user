@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePasswordResetsTable extends Migration
+class UserLoginTokenLogTableMigration extends Migration
 {
     /**
      * Run the migrations.
@@ -14,10 +14,13 @@ class CreatePasswordResetsTable extends Migration
      */
     public function up()
     {
-        Schema::create(Constants::PASSWORD_RESETS_DB, function (Blueprint $table) {
-            $table->string('email')->index();
+        Schema::create(Constants::USERS_LOGIN_TOKEN_LOG_DB, function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('login');
             $table->string('token');
-            $table->timestamp('created_at')->nullable();
+            $table->string('type');
+            $table->integer('expire_at')->default(0);
+            $table->integer('created_at');
         });
     }
 
@@ -28,6 +31,6 @@ class CreatePasswordResetsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('password_resets');
+        Schema::dropIfExists(Constants::USERS_LOGIN_TOKEN_LOG_DB);
     }
 }

@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePasswordResetsTable extends Migration
+class AppTableMigration extends Migration
 {
     /**
      * Run the migrations.
@@ -14,10 +14,13 @@ class CreatePasswordResetsTable extends Migration
      */
     public function up()
     {
-        Schema::create(Constants::PASSWORD_RESETS_DB, function (Blueprint $table) {
-            $table->string('email')->index();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
+        Schema::create(Constants::APP_DB, function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('app');
+            $table->string('type_app');
+            $table->string('type_app_child');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -28,6 +31,6 @@ class CreatePasswordResetsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('password_resets');
+        Schema::dropIfExists(Constants::APP_DB);
     }
 }
