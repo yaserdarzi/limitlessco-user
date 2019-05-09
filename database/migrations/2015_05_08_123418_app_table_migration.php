@@ -19,6 +19,8 @@ class AppTableMigration extends Migration
             $table->string('app');
             $table->string('type_app');
             $table->string('type_app_child');
+            $table->bigInteger('cash_back');
+            $table->json('info');
             $table->timestamps();
             $table->softDeletes();
         });

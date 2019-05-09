@@ -18,7 +18,7 @@ class UserAppsTableMigration extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
             $table->bigInteger('app_id');
-            $table->boolean('activated')->default(false);
+            $table->boolean('activated')->default(true);
             $table->integer('created_at');
         });
         Schema::table(Constants::USERS_APPS_DB, function (Blueprint $table) {

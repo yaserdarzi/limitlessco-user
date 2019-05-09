@@ -18,13 +18,14 @@ class UsersReferTableMigration extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
             $table->bigInteger('ref_user_id');
-            $table->bigInteger('cash_back');
+            $table->bigInteger('app_id');
             $table->string('type');
             $table->integer('created_at');
         });
         Schema::table(Constants::USERS_REFER_DB, function (Blueprint $table) {
             $table->foreign('user_id')->references('id')->on(Constants::USERS_DB)->onDelete('cascade');
             $table->foreign('ref_user_id')->references('id')->on(Constants::USERS_DB)->onDelete('cascade');
+            $table->foreign('app_id')->references('id')->on(Constants::APP_DB)->onDelete('cascade');
         });
     }
 

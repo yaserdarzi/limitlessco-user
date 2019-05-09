@@ -17,5 +17,4 @@ class AppSetting extends Model
         'app_id', 'type_payment', 'info_payment',
         'type_sms', 'info_sms', 'info',
     ];
-    protected $dates = ['deleted_at'];
 }

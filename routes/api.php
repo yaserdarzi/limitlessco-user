@@ -13,6 +13,10 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::namespace('Api\V1\Auth')->prefix('/v1/')->group(function () {
+
+    //Auth
+    Route::post('auth/otp/sms', 'OTPController@smsOTP');
+    Route::post('auth/otp/verify', 'OTPController@verifyOTP');
+
 });

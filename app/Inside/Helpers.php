@@ -3,24 +3,17 @@
 
 namespace App\Inside;
 
-use App\Exceptions\ApiException;
-
 class Helpers
 {
-    public function phoneChecker($phone)
+    public function phoneChecker($phone, $country)
     {
-        $re = '/(\0)?([ ]|,|-|[()]){0,2}9[0|1|2|3|4|9]([ ]|,|-|[()]){0,2}(?:[0-9]([ ]|,|-|[()]){0,2}){8}/m';
-        $str = $phone;
-        preg_match_all($re, $str, $matches, PREG_SET_ORDER, 0);
-        if (!$matches)
-            throw new ApiException(
-                ApiException::EXCEPTION_NOT_FOUND_404,
-                'your phone number is wrong'
-            );
-        $phone = '98' . $matches[0][0];
+        if (!$country)
+            $country = "IR";
+        $phoneUtil = \libphonenumber\PhoneNumberUtil::getInstance();
+        $phoneNumber = $phoneUtil->parse($phone, $country);
+        $phone = $phoneUtil->format($phoneNumber, \libphonenumber\PhoneNumberFormat::E164);
         $phone = str_replace('+', '', $phone);
         return $this->normalizePhoneNumber($phone);
-
     }
 
     ////////////////private function///////////////
