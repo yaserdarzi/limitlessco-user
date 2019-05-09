@@ -108,7 +108,7 @@ class OTPController extends ApiController
                 'too many request'
             );
         if ($request->header('X-DEBUG') == 1)
-            return $this->respond(["status" => "success", 'code' => $token], null);
+            return $this->respond(["phone" => $phone, "status" => "success", 'code' => $token], null);
 //        Redis::incr($phone);
 //        if (Redis::get($phone) > 5) {
 //            if (Redis::get($phone) == 6)
@@ -142,7 +142,7 @@ class OTPController extends ApiController
                         ApiException::EXCEPTION_NOT_FOUND_404,
                         $result["return"]["message"]
                     );
-                return ["status" => "success"];
+                return ["phone" => $phone, "status" => "success"];
                 break;
             default:
                 throw new ApiException(
