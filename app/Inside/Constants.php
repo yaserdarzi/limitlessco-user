@@ -23,4 +23,11 @@ class Constants
     Const LOGIN_TYPE_EMAIL = "login_with_email";
     Const LOGIN_TYPE_GMAIL = "login_with_gmail";
 
+    //Market
+    Const MARKET_ZARINPAL = "zarinpal";
+
+    //SMS
+    Const SMS_KAVENEGAR = "kavenegar";
+
+
 }
