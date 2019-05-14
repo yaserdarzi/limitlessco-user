@@ -1,5 +1,6 @@
 <?php
 
+use Firebase\JWT\JWT;
 use Illuminate\Database\Seeder;
 
 class AppTableSeeder extends Seeder
@@ -31,7 +32,14 @@ class AppTableSeeder extends Seeder
             'info_sms' => (object)$info_sms,
             'info' => ''
         ]);
-
+        $object = array(
+            "app_id" => $app->id,
+            "app" => $app->app,
+            "type_app" => $app->type_app,
+            "type_app_child" => $app->type_app_child,
+        );
+        $appSecret = JWT::encode($object, config("jwt.secret"));
+        echo $appSecret . "\n";
         $app = \App\App::create([
             'app' => 'hotel',
             'type_app' => 'hotel',
@@ -52,7 +60,14 @@ class AppTableSeeder extends Seeder
             'info_sms' => (object)$info_sms,
             'info' => ''
         ]);
-
+        $object = array(
+            "app_id" => $app->id,
+            "app" => $app->app,
+            "type_app" => $app->type_app,
+            "type_app_child" => $app->type_app_child,
+        );
+        $appSecret = JWT::encode($object, config("jwt.secret"));
+        echo $appSecret . "\n";
 
     }
 }
