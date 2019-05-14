@@ -21,7 +21,7 @@ return [
     |
     */
 
-    'secret' => env('JWT_SECRET', 'test'),
+    'secret' => env('JWT_SECRET', 'limitlessco.ir'),
 
     /*
     |--------------------------------------------------------------------------
