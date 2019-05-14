@@ -16,6 +16,8 @@ class Constants
     const USERS_REFER_DB = 'users_refer';
     const WALLET_DB = 'wallet';
     const WALLET_INVOICE_DB = 'wallet_invoice';
+    const API_DB = 'api';
+    const API_APP_DB = 'api_app';
 
     //sms log type
     Const LOGIN_TYPE_SMS = "login_with_sms";
