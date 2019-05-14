@@ -14,8 +14,8 @@ class Api extends Authenticatable
         'info' => 'object',
     ];
     protected $fillable = [
-        'name', 'type', 'percent', 'price', 'income', 'award',
-        'info'
+        'user_id', 'name', 'type', 'percent', 'price',
+        'income', 'award', 'info'
     ];
     protected $dates = ['deleted_at'];
 }

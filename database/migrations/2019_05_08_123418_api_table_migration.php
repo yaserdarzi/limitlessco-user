@@ -16,6 +16,7 @@ class ApiTableMigration extends Migration
     {
         Schema::create(Constants::API_DB, function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->bigInteger('user_id');
             $table->string('name');
             $table->string('type');
             $table->bigInteger('percent')->nullable()->default(0);
@@ -25,6 +26,9 @@ class ApiTableMigration extends Migration
             $table->json('info');
             $table->timestamps();
             $table->softDeletes();
+        });
+        Schema::table(Constants::API_DB, function (Blueprint $table) {
+            $table->foreign('user_id')->references('id')->on(Constants::USERS_DB)->onDelete('cascade');
         });
     }
 
