@@ -96,7 +96,7 @@ class AppController extends ApiController
         if (!$request->header('apiId'))
             throw new ApiException(
                 ApiException::EXCEPTION_BAD_REQUEST_400,
-                'Plz check your app header'
+                'Plz check your apiId header'
             );
         $appId = ApiApp::where([
             'api_id' => $request->header('apiId')
@@ -104,7 +104,7 @@ class AppController extends ApiController
         if (!sizeof($appId))
             throw new ApiException(
                 ApiException::EXCEPTION_BAD_REQUEST_400,
-                'Plz check your app & typeApp header'
+                'Plz check your apiId header'
             );
         return $this->respond(["app_id" => $appId]);
     }
