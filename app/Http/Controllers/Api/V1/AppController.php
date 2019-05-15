@@ -100,7 +100,7 @@ class AppController extends ApiController
             );
         $appId = ApiApp::where([
             'api_id' => $request->header('apiId')
-        ])->pluck('id');
+        ])->pluck('app_id');
         if (!sizeof($appId))
             throw new ApiException(
                 ApiException::EXCEPTION_BAD_REQUEST_400,
