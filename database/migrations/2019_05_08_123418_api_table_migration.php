@@ -16,7 +16,7 @@ class ApiTableMigration extends Migration
     {
         Schema::create(Constants::API_DB, function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('name');
             $table->string('type');
             $table->bigInteger('percent')->nullable()->default(0);

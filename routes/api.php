@@ -22,6 +22,6 @@ Route::namespace('Api\V1\Auth')->prefix('/v1/')->group(function () {
 Route::namespace('Api\V1')->prefix('/v1/')->group(function () {
 
     //Get Apps
-    Route::get('app', 'AppController@getApp');
+    Route::get('apiChecker', 'AppController@apiChecker');
 
 });

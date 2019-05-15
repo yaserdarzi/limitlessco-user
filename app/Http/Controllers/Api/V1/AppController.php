@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\ApiApp;
 use App\App;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
@@ -90,27 +91,21 @@ class AppController extends ApiController
 
     ///////////////////public function///////////////////////
 
-    public function getApp(Request $request)
+    public function apiChecker(Request $request)
     {
-        if (!$request->header('app'))
+        if (!$request->header('apiId'))
             throw new ApiException(
                 ApiException::EXCEPTION_BAD_REQUEST_400,
                 'Plz check your app header'
             );
-        if (!$request->header('typeApp'))
-            throw new ApiException(
-                ApiException::EXCEPTION_BAD_REQUEST_400,
-                'Plz check your typeApp header'
-            );
-        $app = App::where([
-            'app' => $request->header('app'),
-            'type_app' => $request->header('typeApp')
+        $appId = ApiApp::where([
+            'api_id' => $request->header('apiId')
         ])->pluck('id');
-        if (!sizeof($app))
+        if (!sizeof($appId))
             throw new ApiException(
                 ApiException::EXCEPTION_BAD_REQUEST_400,
                 'Plz check your app & typeApp header'
             );
-        return $this->respond(["app_id" => $app]);
+        return $this->respond(["app_id" => $appId]);
     }
 }
