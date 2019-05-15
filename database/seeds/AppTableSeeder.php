@@ -131,7 +131,7 @@ class AppTableSeeder extends Seeder
             'created_at' => date('Y-m-d')
         ]);
         $object = array(
-            "app_id" => $app->id,
+            "api_id" => $app->id,
         );
         $appSecret = JWT::encode($object, config("jwt.secret"));
         echo "hotel-sunrise= " . $appSecret . "\n";
