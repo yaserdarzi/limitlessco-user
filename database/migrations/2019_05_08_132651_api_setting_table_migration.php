@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AppSettingTableMigration extends Migration
+class ApiSettingTableMigration extends Migration
 {
     /**
      * Run the migrations.
@@ -14,9 +14,9 @@ class AppSettingTableMigration extends Migration
      */
     public function up()
     {
-        Schema::create(Constants::APPS_SETTING_DB, function (Blueprint $table) {
+        Schema::create(Constants::API_SETTING_DB, function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('app_id');
+            $table->bigInteger('api_id');
             $table->string('type_payment');
             $table->json('info_payment');
             $table->string('type_sms');
@@ -24,8 +24,8 @@ class AppSettingTableMigration extends Migration
             $table->json('info');
             $table->timestamps();
         });
-        Schema::table(Constants::APPS_SETTING_DB, function (Blueprint $table) {
-            $table->foreign('app_id')->references('id')->on(Constants::APP_DB)->onDelete('cascade');
+        Schema::table(Constants::API_SETTING_DB, function (Blueprint $table) {
+            $table->foreign('api_id')->references('id')->on(Constants::API_DB)->onDelete('cascade');
         });
     }
 
@@ -36,6 +36,6 @@ class AppSettingTableMigration extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists(Constants::APPS_SETTING_DB);
+        Schema::dropIfExists(Constants::API_SETTING_DB);
     }
 }
