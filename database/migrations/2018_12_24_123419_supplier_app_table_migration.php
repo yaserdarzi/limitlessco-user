@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ApiAppTableMigration extends Migration
+class SupplierAppTableMigration extends Migration
 {
     /**
      * Run the migrations.
@@ -14,15 +14,14 @@ class ApiAppTableMigration extends Migration
      */
     public function up()
     {
-        Schema::create(Constants::API_APP_DB, function (Blueprint $table) {
+        Schema::create(Constants::SUPPLIER_API_DB, function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('api_id');
+            $table->bigInteger('supplier_id');
             $table->bigInteger('app_id');
             $table->json('info');
-            $table->timestamp('created_at');
         });
-        Schema::table(Constants::API_APP_DB, function (Blueprint $table) {
-            $table->foreign('api_id')->references('id')->on(Constants::API_DB)->onDelete('cascade');
+        Schema::table(Constants::SUPPLIER_API_DB, function (Blueprint $table) {
+            $table->foreign('supplier_id')->references('id')->on(Constants::SUPPLIER_DB)->onDelete('cascade');
             $table->foreign('app_id')->references('id')->on(Constants::APP_DB)->onDelete('cascade');
         });
     }
@@ -34,6 +33,6 @@ class ApiAppTableMigration extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists(Constants::API_APP_DB);
+        Schema::dropIfExists(Constants::SUPPLIER_API_DB);
     }
 }

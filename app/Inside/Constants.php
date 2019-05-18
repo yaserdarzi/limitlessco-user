@@ -15,9 +15,9 @@ class Constants
     const USERS_REFER_DB = 'users_refer';
     const WALLET_DB = 'wallet';
     const WALLET_INVOICE_DB = 'wallet_invoice';
-    const API_DB = 'api';
-    const API_APP_DB = 'api_app';
-    const API_SETTING_DB = 'api_setting';
+    const SUPPLIER_DB = 'supplier';
+    const SUPPLIER_USERS_DB = 'supplier_users';
+    const SUPPLIER_API_DB = 'supplier_api';
 
     //sms log type
     Const LOGIN_TYPE_SMS = "login_with_sms";
@@ -31,5 +31,13 @@ class Constants
     //SMS
     Const SMS_KAVENEGAR = "kavenegar";
 
+    //Status
+    const STATUS_PENDING = 'pending';
+    const STATUS_ACTIVE = 'active';
+    const STATUS_DEACTIVATE = 'deactivate';
+    //Status
+    const ROLE_ADMIN = 'admin';
+    const ROLE_SALES_MAN = 'sales_man';
+    const ROLE_COUNTER_MAN = 'counter_man';
 
 }
