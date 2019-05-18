@@ -24,6 +24,7 @@ class SupplierUsersTableMigration extends Migration
             $table->bigInteger('income')->default(0);
             $table->bigInteger('award')->default(0);
             $table->string('role')->default(Constants::ROLE_COUNTER_MAN);
+            $table->json('info')->nullable();
             $table->timestamps();
         });
         Schema::table(Constants::SUPPLIER_USERS_DB, function (Blueprint $table) {
