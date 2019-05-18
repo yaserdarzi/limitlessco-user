@@ -13,20 +13,42 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::namespace('Api\V1\CP\Register')->prefix('/v1/cp/register/')->group(function () {
+Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
 
-    //Auth
-    Route::post('otp/sms', 'OTPController@smsOTP');
-    Route::post('otp/verify', 'OTPController@verifyOTP');
+    //Register
+    Route::namespace('Register')->prefix('/register/')->group(function () {
 
-    Route::middleware('cp.register.auth')->group(function () {
-        Route::post('store', 'OTPController@Register');
+        //Auth
+        Route::post('otp/sms', 'OTPController@smsOTP');
+        Route::post('otp/verify', 'OTPController@verifyOTP');
+
+        Route::middleware('cp.register.auth')->group(function () {
+            Route::post('store', 'OTPController@Register');
+
+        });
+    });
+
+    //Supplier
+    Route::namespace('Supplier')->prefix('/supplier/')->group(function () {
+
+        //Auth
+        Route::namespace('Auth')->prefix('/auth/')->group(function () {
+            Route::post('otp/sms', 'OTPController@smsOTP');
+            Route::post('otp/verify', 'OTPController@verifyOTP');
+        });
+        Route::middleware('cp.supplier.auth')->group(function () {
+
+            Route::get('/a', function () {
+                return 1;
+            });
+
+//            Route::middleware('cp.supplier.auth')->group(function () {
+//                Route::post('store', 'OTPController@Register');
+//
+//            });
+        });
 
     });
-});
-Route::namespace('Api\V1')->prefix('/v1/')->group(function () {
 
-    //Get Apps
-    Route::get('apiChecker', 'AppController@apiChecker');
 
 });

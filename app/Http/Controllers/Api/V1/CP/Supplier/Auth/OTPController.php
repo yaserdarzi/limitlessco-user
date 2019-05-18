@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\CP\Register;
+namespace App\Http\Controllers\Api\V1\Cp\Supplier\Auth;
 
-use App\Agency;
-use App\AgencyApp;
-use App\AgencyUser;
+use App\App;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
@@ -17,7 +15,6 @@ use App\UsersLoginToken;
 use App\UsersLoginTokenLog;
 use App\Wallet;
 use Firebase\JWT\JWT;
-use Hashids\Hashids;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 
@@ -54,64 +51,13 @@ class OTPController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 "کد صحیح نمی باشد."
             );
+        $phone = $this->help->phoneChecker($request->input('mobile'), $request->input('country'));
+        if (!$this->CheckUsersLoginToken($phone, $request->input('code')))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                "کد صحیح نمی باشد."
+            );
         return $this->respond($this->verify($phone, $request));
-    }
-
-    public function Register(Request $request)
-    {
-        if (SupplierUser::where(['user_id' => $request->input('user_id')])->exists())
-            throw new ApiException(
-                ApiException::EXCEPTION_NOT_FOUND_404,
-                "کاربر گرامی شما قبلا ثبت نام کردید."
-            );
-        if (AgencyUser::where(['user_id' => $request->input('user_id')])->exists())
-            throw new ApiException(
-                ApiException::EXCEPTION_NOT_FOUND_404,
-                "کاربر گرامی شما قبلا ثبت نام کردید."
-            );
-        if ($request->input('supplier_app_id')) {
-            $supplier = Supplier::create([
-                'name' => '',
-                'image' => '',
-                'tell' => '',
-                'type' => 'percent',
-            ]);
-            SupplierUser::create([
-                'user_id' => $request->input('user_id'),
-                'supplier_id' => $supplier->id,
-                'type' => 'percent',
-                'percent' => 100,
-                'role' => Constants::ROLE_ADMIN
-            ]);
-            foreach (json_decode($request->input('supplier_app_id')) as $value) {
-                SupplierApp::create([
-                    'supplier_id' => $supplier->id,
-                    'app_id' => $value,
-                ]);
-            }
-        }
-        if ($request->input('agency_app_id')) {
-            $agency = Agency::create([
-                'name' => '',
-                'image' => '',
-                'tell' => '',
-                'type' => 'percent',
-            ]);
-            AgencyUser::create([
-                'user_id' => $request->input('user_id'),
-                'agency_id' => $agency->id,
-                'type' => 'percent',
-                'percent' => 100,
-                'role' => Constants::ROLE_ADMIN
-            ]);
-            foreach (json_decode($request->input('agency_app_id')) as $value) {
-                AgencyApp::create([
-                    'agency_id' => $agency->id,
-                    'app_id' => $value,
-                ]);
-            }
-        }
-        return $this->respond(["status" => "success"]);
     }
 
 
@@ -195,47 +141,25 @@ class OTPController extends ApiController
     private function verify($phone, $request)
     {
         $user = User::where(['phone' => $phone])->first();
-        if (!$user) {
-            $hashIds = new Hashids(config("config.hashIds"));
-            $refLink = $hashIds->encode($phone, intval(microtime(true)));
-            $user = User::create([
-                'phone' => $phone,
-                'email' => '',
-                'password' => '',
-                'gmail' => '',
-                'name' => $request->input('name'),
-                'image' => '',
-                'gender' => '',
-                "ref_link" => $refLink,
-                'info' => '',
-                'remember_token' => '',
-            ]);
-            $wallet = Wallet::create([
-                'user_id' => $user->id,
-                'price' => 0,
-            ]);
-            $user->wallet = $wallet;
-        }
-        if (SupplierUser::where(['user_id' => $user->id])->exists())
-            throw new ApiException(
-                ApiException::EXCEPTION_NOT_FOUND_404,
-                "کاربر گرامی شما قبلا ثبت نام کردید."
-            );
-        if (AgencyUser::where(['user_id' => $user->id])->exists())
-            throw new ApiException(
-                ApiException::EXCEPTION_NOT_FOUND_404,
-                "کاربر گرامی شما قبلا ثبت نام کردید."
-            );
         $user->wallet = Wallet::where(['user_id' => $user->id])->first();
-        $this->generateToken($user, $request->header('agent'));
+        if (!$supplierUser = SupplierUser::where(['user_id' => $user->id])->first())
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                "کاربر گرامی شما عرضه کننده نمی باشید."
+            );
+        $appId = SupplierApp::where(['supplier_id' => $supplierUser->supplier_id])->pluck('app_id');
+        $user->apps = App::whereIn('id', $appId)->get();
+        $this->generateToken($user, $request->header('agent'), $appId, $supplierUser->supplier_id);
         UsersLoginToken::where(['login' => $phone, 'token' => $request->input('code')])->delete();
         return $user;
     }
 
-    private function generateToken($user, $agent)
+    private function generateToken($user, $agent, $appId, $supplierId)
     {
         $object = array(
             "user_id" => $user->id,
+            "app_id" => $appId,
+            "supplier_id" => $supplierId,
             "agent" => $agent,
         );
         $token = JWT::encode($object, config("jwt.secret"));
