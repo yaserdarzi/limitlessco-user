@@ -9,7 +9,7 @@ return [
     |
     */
 
-    'hashIds' => env('HASH_IDS', 'test'),
+    'hashIds' => env('HASH_IDS', 'limitless'),
 
 
 ];

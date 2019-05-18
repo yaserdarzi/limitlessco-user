@@ -13,11 +13,13 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::namespace('Api\V1\Auth')->prefix('/v1/')->group(function () {
+Route::namespace('Api\V1\CP\Register')->prefix('/v1/cp/register/')->group(function () {
 
     //Auth
-    Route::post('auth/otp/sms', 'OTPController@smsOTP');
-    Route::post('auth/otp/verify', 'OTPController@verifyOTP');
+    Route::post('otp/sms', 'OTPController@smsOTP');
+    Route::post('otp/verify', 'OTPController@verifyOTP');
+
+
 });
 Route::namespace('Api\V1')->prefix('/v1/')->group(function () {
 

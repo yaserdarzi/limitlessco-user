@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class SupplierTableMigration extends Migration
+class AgencyTableMigration extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class SupplierTableMigration extends Migration
      */
     public function up()
     {
-        Schema::create(Constants::SUPPLIER_DB, function (Blueprint $table) {
+        Schema::create(Constants::AGENCY_DB, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('type_app_id');
             $table->string('name');
@@ -39,6 +39,6 @@ class SupplierTableMigration extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists(Constants::SUPPLIER_DB);
+        Schema::dropIfExists(Constants::AGENCY_DB);
     }
 }

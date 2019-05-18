@@ -5,13 +5,14 @@ namespace App;
 use App\Inside\Constants;
 use Illuminate\Database\Eloquent\Model;
 
-class SupplierApi extends Model
+class AgencyUser extends Model
 {
     protected $casts = [
         'info' => 'object',
     ];
-    protected $table = Constants::SUPPLIER_API_DB;
+    protected $table = Constants::AGENCY_USERS_DB;
     protected $fillable = [
-        'supplier_id', 'app_id', 'info'
+        'user_id', 'agency_id', 'type', 'percent', 'price',
+        'award', 'income', 'role', 'info'
     ];
 }
