@@ -19,7 +19,10 @@ Route::namespace('Api\V1\CP\Register')->prefix('/v1/cp/register/')->group(functi
     Route::post('otp/sms', 'OTPController@smsOTP');
     Route::post('otp/verify', 'OTPController@verifyOTP');
 
+    Route::middleware('cp.register.auth')->group(function () {
+        Route::post('store', 'OTPController@Register');
 
+    });
 });
 Route::namespace('Api\V1')->prefix('/v1/')->group(function () {
 

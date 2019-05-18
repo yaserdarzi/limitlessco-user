@@ -62,6 +62,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
         //Customize
+        'cp.register.auth' => \App\Http\Middleware\CpRegisterAuth::class,
         'appCheck' => \App\Http\Middleware\AppCheck::class,
     ];
 

@@ -14,13 +14,14 @@ class AgencyAppTableMigration extends Migration
      */
     public function up()
     {
-        Schema::create(Constants::AGENCY_API_DB, function (Blueprint $table) {
+        Schema::create(Constants::AGENCY_APP_DB, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('agency_id');
             $table->bigInteger('app_id');
-            $table->json('info');
+            $table->json('info')->nullable();
+            $table->timestamps();
         });
-        Schema::table(Constants::AGENCY_API_DB, function (Blueprint $table) {
+        Schema::table(Constants::AGENCY_APP_DB, function (Blueprint $table) {
             $table->foreign('agency_id')->references('id')->on(Constants::AGENCY_DB)->onDelete('cascade');
             $table->foreign('app_id')->references('id')->on(Constants::APP_DB)->onDelete('cascade');
         });
@@ -33,6 +34,6 @@ class AgencyAppTableMigration extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists(Constants::AGENCY_API_DB);
+        Schema::dropIfExists(Constants::AGENCY_APP_DB);
     }
 }

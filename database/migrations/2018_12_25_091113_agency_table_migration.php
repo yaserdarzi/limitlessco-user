@@ -16,7 +16,6 @@ class AgencyTableMigration extends Migration
     {
         Schema::create(Constants::AGENCY_DB, function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('type_app_id');
             $table->string('name');
             $table->string('image');
             $table->string('tell')->nullable();
@@ -26,7 +25,7 @@ class AgencyTableMigration extends Migration
             $table->bigInteger('award')->default(0);
             $table->bigInteger('income')->default(0);
             $table->string('status')->default(Constants::STATUS_PENDING);
-            $table->json('info');
+            $table->json('info')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

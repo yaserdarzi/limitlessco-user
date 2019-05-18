@@ -17,10 +17,10 @@ class Constants
     const WALLET_INVOICE_DB = 'wallet_invoice';
     const SUPPLIER_DB = 'supplier';
     const SUPPLIER_USERS_DB = 'supplier_users';
-    const SUPPLIER_API_DB = 'supplier_api';
+    const SUPPLIER_APP_DB = 'supplier_app';
     const AGENCY_DB = 'agency';
     const AGENCY_USERS_DB = 'agency_users';
-    const AGENCY_API_DB = 'agency_api';
+    const AGENCY_APP_DB = 'agency_app';
 
     //sms log type
     Const LOGIN_TYPE_SMS = "login_with_sms";

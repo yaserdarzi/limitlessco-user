@@ -14,13 +14,14 @@ class SupplierAppTableMigration extends Migration
      */
     public function up()
     {
-        Schema::create(Constants::SUPPLIER_API_DB, function (Blueprint $table) {
+        Schema::create(Constants::SUPPLIER_APP_DB, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('supplier_id');
             $table->bigInteger('app_id');
-            $table->json('info');
+            $table->json('info')->nullable();
+            $table->timestamps();
         });
-        Schema::table(Constants::SUPPLIER_API_DB, function (Blueprint $table) {
+        Schema::table(Constants::SUPPLIER_APP_DB, function (Blueprint $table) {
             $table->foreign('supplier_id')->references('id')->on(Constants::SUPPLIER_DB)->onDelete('cascade');
             $table->foreign('app_id')->references('id')->on(Constants::APP_DB)->onDelete('cascade');
         });
@@ -33,6 +34,6 @@ class SupplierAppTableMigration extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists(Constants::SUPPLIER_API_DB);
+        Schema::dropIfExists(Constants::SUPPLIER_APP_DB);
     }
 }
