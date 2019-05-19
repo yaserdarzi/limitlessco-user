@@ -22,6 +22,11 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
         Route::post('otp/sms', 'OTPController@smsOTP');
         Route::post('otp/verify', 'OTPController@verifyOTP');
 
+        //App
+        Route::get('app/supplier', 'AppController@appSupplier');
+        Route::get('app/agency', 'AppController@appAgency');
+
+        //Store Register
         Route::middleware('cp.register.auth')->group(function () {
             Route::post('store', 'OTPController@Register');
 

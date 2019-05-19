@@ -13,16 +13,20 @@ class AppTableSeeder extends Seeder
     public function run()
     {
         \App\App::create([
+            'title' => 'گردشگری',
             'app' => 'entertainment',
             'country' => 'IR',
             'is_supplier' => true,
-            'is_agency' => true
+            'is_agency' => true,
+            'is_api' => true
         ]);
         \App\App::create([
+            'title' => 'هتل',
             'app' => 'hotel',
             'country' => 'IR',
             'is_supplier' => true,
-            'is_agency' => true
+            'is_agency' => true,
+            'is_api' => true
         ]);
     }
 }

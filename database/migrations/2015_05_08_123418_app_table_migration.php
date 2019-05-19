@@ -16,10 +16,12 @@ class AppTableMigration extends Migration
     {
         Schema::create(Constants::APP_DB, function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('title');
             $table->string('app');
             $table->string('country');
             $table->boolean('is_supplier')->default(false);
             $table->boolean('is_agency')->default(false);
+            $table->boolean('is_api')->default(false);
             $table->json('info')->nullable();
             $table->timestamps();
             $table->softDeletes();

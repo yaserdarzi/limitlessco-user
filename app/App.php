@@ -14,7 +14,8 @@ class App extends Model
         'info' => 'object',
     ];
     protected $fillable = [
-        'app', 'country', 'is_supplier', 'is_agency', 'info'
+        'title', 'app', 'country', 'is_supplier', 'is_agency',
+        'is_api', 'info'
     ];
     protected $dates = ['deleted_at'];
 }
