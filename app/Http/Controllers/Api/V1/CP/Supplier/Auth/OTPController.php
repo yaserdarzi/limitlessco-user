@@ -149,12 +149,24 @@ class OTPController extends ApiController
             );
         $appId = SupplierApp::where(['supplier_id' => $supplierUser->supplier_id])->pluck('app_id');
         $user->apps = App::whereIn('id', $appId)->get();
-        $this->generateToken($user, $request->header('agent'), $appId, $supplierUser->supplier_id);
+        $this->generateToken($user, $request->header('agent'));
+        $this->generateAppToken($user, $request->header('agent'), $appId, $supplierUser->supplier_id);
         UsersLoginToken::where(['login' => $phone, 'token' => $request->input('code')])->delete();
         return $user;
     }
 
-    private function generateToken($user, $agent, $appId, $supplierId)
+    private function generateToken($user, $agent)
+    {
+        $object = array(
+            "user_id" => $user->id,
+            "agent" => $agent,
+        );
+        $token = JWT::encode($object, config("jwt.secret"));
+        $user->token = $token;
+        return true;
+    }
+
+    private function generateAppToken($user, $agent, $appId, $supplierId)
     {
         $object = array(
             "user_id" => $user->id,
@@ -163,7 +175,7 @@ class OTPController extends ApiController
             "agent" => $agent,
         );
         $token = JWT::encode($object, config("jwt.secret"));
-        $user->token = $token;
+        $user->appToken = $token;
         return true;
     }
 }

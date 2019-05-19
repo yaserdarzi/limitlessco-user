@@ -5,12 +5,10 @@ namespace App\Http\Middleware;
 use App\Exceptions\ApiException;
 use App\Inside\Constants;
 use App\Supplier;
-use App\SupplierUser;
-use App\User;
 use Closure;
 use Firebase\JWT\JWT;
 
-class CpSupplierAuth
+class CpSupplierAppCheck
 {
     /**
      * Handle an incoming request.
@@ -29,19 +27,19 @@ class CpSupplierAuth
             }
             return trim($input);
         }, $request->all());
-        if (!$request->header('Authorization'))
+        if (!$request->header('appToken'))
             throw new ApiException(
                 ApiException::EXCEPTION_BAD_REQUEST_400,
-                'Plz check your Authorization header'
+                'Plz check your appToken header'
             );
-        $token = JWT::decode($request->header('Authorization'), config("jwt.secret"), array('HS256'));
-        if (!SupplierUser::where(['user_id' => $token->user_id])->exists())
+        $token = JWT::decode($request->header('appToken'), config("jwt.secret"), array('HS256'));
+        if (!Supplier::where(['id' => $token->supplier_id, 'status' => Constants::STATUS_ACTIVE])->exists())
             throw new ApiException(
                 ApiException::EXCEPTION_BAD_REQUEST_400,
                 'کاربر گرامی لطفا لاگین کنید.'
             );
-        $input['user_id'] = $token->user_id;
-        $input['agent'] = $token->agent;
+        $input['app_id'] = $token->app_id;
+        $input['supplier_id'] = $token->supplier_id;
         $request->replace($input);
         return $next($request);
     }
