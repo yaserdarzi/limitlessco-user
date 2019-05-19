@@ -147,6 +147,11 @@ class OTPController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 "کاربر گرامی شما عرضه کننده نمی باشید."
             );
+        if (!$supplier = Supplier::where(['id' => $supplierUser->supplier_id, 'status' => Constants::STATUS_ACTIVE])->first())
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                "کاربر گرامی حساب شما فعال نمی باشید."
+            );
         $appId = SupplierApp::where(['supplier_id' => $supplierUser->supplier_id])->pluck('app_id');
         $user->apps = App::whereIn('id', $appId)->get();
         $this->generateToken($user, $request->header('agent'));
