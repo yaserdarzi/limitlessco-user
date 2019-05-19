@@ -175,7 +175,7 @@ class OTPController extends ApiController
     {
         $object = array(
             "user_id" => $user->id,
-            "app_id" => $appId,
+            "apps_id" => $appId,
             "supplier_id" => $supplierId,
             "agent" => $agent,
         );

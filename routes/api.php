@@ -43,9 +43,9 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
         });
         Route::middleware(['cp.supplier.app.check', 'cp.supplier.auth'])->group(function () {
 
-            Route::get('/a', function () {
-                return 1;
-            });
+            //App Checker
+            Route::get('app/checker', 'AppController@appChecker');
+
 
 //            Route::middleware('cp.supplier.auth')->group(function () {
 //                Route::post('store', 'OTPController@Register');

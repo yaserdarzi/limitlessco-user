@@ -38,7 +38,7 @@ class CpSupplierAppCheck
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
                 'کاربر گرامی لطفا لاگین کنید.'
             );
-        $input['app_id'] = $token->app_id;
+        $input['apps_id'] = $token->apps_id;
         $input['supplier_id'] = $token->supplier_id;
         $request->replace($input);
         return $next($request);
