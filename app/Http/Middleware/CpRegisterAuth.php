@@ -28,13 +28,13 @@ class CpRegisterAuth
         }, $request->all());
         if (!$request->header('Authorization'))
             throw new ApiException(
-                ApiException::EXCEPTION_BAD_REQUEST_400,
+                ApiException::EXCEPTION_UNAUTHORIZED_401,
                 'Plz check your Authorization'
             );
         $token = JWT::decode($request->header('Authorization'), config("jwt.secret"), array('HS256'));
         if (!User::where(['id' => $token->user_id])->exists())
             throw new ApiException(
-                ApiException::EXCEPTION_BAD_REQUEST_400,
+                ApiException::EXCEPTION_UNAUTHORIZED_401,
                 'کاربر گرامی لطفا لاگین کنید.'
             );
         $input['user_id'] = $token->user_id;

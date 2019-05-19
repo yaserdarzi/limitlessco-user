@@ -29,13 +29,13 @@ class CpSupplierAppCheck
         }, $request->all());
         if (!$request->header('appToken'))
             throw new ApiException(
-                ApiException::EXCEPTION_BAD_REQUEST_400,
+                ApiException::EXCEPTION_UNAUTHORIZED_401,
                 'Plz check your appToken header'
             );
         $token = JWT::decode($request->header('appToken'), config("jwt.secret"), array('HS256'));
         if (!Supplier::where(['id' => $token->supplier_id, 'status' => Constants::STATUS_ACTIVE])->exists())
             throw new ApiException(
-                ApiException::EXCEPTION_BAD_REQUEST_400,
+                ApiException::EXCEPTION_UNAUTHORIZED_401,
                 'کاربر گرامی لطفا لاگین کنید.'
             );
         $input['app_id'] = $token->app_id;
