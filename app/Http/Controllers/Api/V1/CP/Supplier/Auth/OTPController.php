@@ -153,7 +153,7 @@ class OTPController extends ApiController
                 "کاربر گرامی حساب شما فعال نمی باشید."
             );
         $appId = SupplierApp::where(['supplier_id' => $supplierUser->supplier_id])->pluck('app_id');
-        $user->role = SupplierUser::where(['user_id' => $user->id])->pluck('role');
+        $user->role = SupplierUser::where(['user_id' => $user->id])->first()->role;
         $user->apps = App::whereIn('id', $appId)->get();
         $this->generateToken($user, $request->header('agent'));
         $this->generateAppToken($user, $request->header('agent'), $appId, $supplierUser->supplier_id);

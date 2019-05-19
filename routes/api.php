@@ -43,6 +43,9 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
         });
         Route::middleware(['cp.supplier.app.check', 'cp.supplier.auth'])->group(function () {
 
+            //Supplier Init
+            Route::get('init', 'SupplierController@index');
+
             //App Checker
             Route::get('app/checker', 'AppController@appChecker');
 
