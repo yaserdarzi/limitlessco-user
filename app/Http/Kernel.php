@@ -67,7 +67,8 @@ class Kernel extends HttpKernel
         'cp.register.auth' => \App\Http\Middleware\CpRegisterAuth::class,
         'cp.supplier.app.check' => \App\Http\Middleware\CpSupplierAppCheck::class,
         'cp.supplier.auth' => \App\Http\Middleware\CpSupplierAuth::class,
-        'appCheck' => \App\Http\Middleware\AppCheck::class,
+        'cp.agency.app.check' => \App\Http\Middleware\CpAgencyAppCheck::class,
+        'cp.agency.auth' => \App\Http\Middleware\CpAgencyAuth::class,
     ];
 
     /**

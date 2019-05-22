@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Cp\Supplier\Auth;
 
+use App\Agency;
 use App\App;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
@@ -153,6 +154,7 @@ class OTPController extends ApiController
                 "کاربر گرامی حساب شما فعال نمی باشید."
             );
         $appId = SupplierApp::where(['supplier_id' => $supplierUser->supplier_id])->pluck('app_id');
+        $user->supplier = Supplier::where('id', $supplierUser->supplier_id)->first();
         $user->role = SupplierUser::where(['user_id' => $user->id])->first()->role;
         $user->apps = App::whereIn('id', $appId)->get();
         $this->generateToken($user, $request->header('agent'), $user->role);

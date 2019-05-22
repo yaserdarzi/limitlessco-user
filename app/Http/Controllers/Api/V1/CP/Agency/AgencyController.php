@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\CP\Supplier;
+namespace App\Http\Controllers\Api\V1\CP\Agency;
 
 use App\App;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
-use App\Supplier;
-use App\SupplierApp;
-use App\SupplierUser;
+use App\Agency;
+use App\AgencyApp;
+use App\AgencyUser;
 use App\User;
 use App\Wallet;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 
-class SupplierController extends ApiController
+class AgencyController extends ApiController
 {
 
     /**
@@ -26,19 +26,19 @@ class SupplierController extends ApiController
     {
         $user = User::where(['id' => $request->input('user_id')])->first();
         $user->wallet = Wallet::where(['user_id' => $user->id])->first();
-        if (!$supplierUser = SupplierUser::where(['user_id' => $user->id])->first())
+        if (!$agencyUser = AgencyUser::where(['user_id' => $user->id])->first())
             throw new ApiException(
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
                 "کاربر گرامی شما عرضه کننده نمی باشید."
             );
-        if (!$supplier = Supplier::where(['id' => $supplierUser->supplier_id, 'status' => Constants::STATUS_ACTIVE])->first())
+        if (!$agency = Agency::where(['id' => $agencyUser->agency_id, 'status' => Constants::STATUS_ACTIVE])->first())
             throw new ApiException(
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
                 "کاربر گرامی حساب شما فعال نمی باشید."
             );
-        $appId = SupplierApp::where(['supplier_id' => $supplierUser->supplier_id])->pluck('app_id');
-        $user->supplier = Supplier::where('id', $supplierUser->supplier_id)->first();
-        $user->role = SupplierUser::where(['user_id' => $user->id])->first()->role;
+        $appId = AgencyApp::where(['agency_id' => $agencyUser->agency_id])->pluck('app_id');
+        $user->agency = Agency::where('id', $agencyUser->agency_id)->first();
+        $user->role = AgencyUser::where(['user_id' => $user->id])->first()->role;
         $user->apps = App::whereIn('id', $appId)->get();
         $user->token = $request->header('Authorization');
         $user->appToken = $request->header('appToken');

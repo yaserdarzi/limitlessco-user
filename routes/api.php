@@ -49,14 +49,28 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             //App Checker
             Route::get('app/checker', 'AppController@appChecker');
 
-
-//            Route::middleware('cp.supplier.auth')->group(function () {
-//                Route::post('store', 'OTPController@Register');
-//
-//            });
         });
 
     });
 
+    //Agency
+    Route::namespace('Agency')->prefix('/agency/')->group(function () {
+
+        //Auth
+        Route::namespace('Auth')->prefix('/auth/')->group(function () {
+            Route::post('otp/sms', 'OTPController@smsOTP');
+            Route::post('otp/verify', 'OTPController@verifyOTP');
+        });
+        Route::middleware(['cp.agency.app.check', 'cp.agency.auth'])->group(function () {
+
+            //Supplier Init
+            Route::get('init', 'AgencyController@index');
+
+            //App Checker
+            Route::get('app/checker', 'AppController@appChecker');
+
+        });
+
+    });
 
 });

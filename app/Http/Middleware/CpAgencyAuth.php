@@ -3,11 +3,11 @@
 namespace App\Http\Middleware;
 
 use App\Exceptions\ApiException;
-use App\SupplierUser;
+use App\AgencyUser;
 use Closure;
 use Firebase\JWT\JWT;
 
-class CpSupplierAuth
+class CpAgencyAuth
 {
     /**
      * Handle an incoming request.
@@ -32,7 +32,7 @@ class CpSupplierAuth
                 'Plz check your Authorization header'
             );
         $token = JWT::decode($request->header('Authorization'), config("jwt.secret"), array('HS256'));
-        if (!SupplierUser::where(['user_id' => $token->user_id])->exists())
+        if (!AgencyUser::where(['user_id' => $token->user_id])->exists())
             throw new ApiException(
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
                 'کاربر گرامی لطفا لاگین کنید.'

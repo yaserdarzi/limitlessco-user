@@ -38,7 +38,8 @@ class Constants
     const STATUS_PENDING = 'pending';
     const STATUS_ACTIVE = 'active';
     const STATUS_DEACTIVATE = 'deactivate';
-    //Status
+
+    //Role
     const ROLE_ADMIN = 'admin';
     const ROLE_SALES_MAN = 'sales_man';
     const ROLE_COUNTER_MAN = 'counter_man';

@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1\CP\Supplier;
 
-use App\ApiApp;
 use App\App;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
-use App\Inside\Constants;
 use App\SupplierApp;
-use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 

@@ -3,11 +3,12 @@
 namespace App\Http\Middleware;
 
 use App\Exceptions\ApiException;
-use App\SupplierUser;
+use App\Inside\Constants;
+use App\Agency;
 use Closure;
 use Firebase\JWT\JWT;
 
-class CpSupplierAuth
+class CpAgencyAppCheck
 {
     /**
      * Handle an incoming request.
@@ -26,19 +27,19 @@ class CpSupplierAuth
             }
             return trim($input);
         }, $request->all());
-        if (!$request->header('Authorization'))
+        if (!$request->header('appToken'))
             throw new ApiException(
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
-                'Plz check your Authorization header'
+                'Plz check your appToken header'
             );
-        $token = JWT::decode($request->header('Authorization'), config("jwt.secret"), array('HS256'));
-        if (!SupplierUser::where(['user_id' => $token->user_id])->exists())
+        $token = JWT::decode($request->header('appToken'), config("jwt.secret"), array('HS256'));
+        if (!Agency::where(['id' => $token->agency_id, 'status' => Constants::STATUS_ACTIVE])->exists())
             throw new ApiException(
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
                 'کاربر گرامی لطفا لاگین کنید.'
             );
-        $input['user_id'] = $token->user_id;
-        $input['agent'] = $token->agent;
+        $input['apps_id'] = $token->apps_id;
+        $input['agency_id'] = $token->agency_id;
         $request->replace($input);
         return $next($request);
     }
