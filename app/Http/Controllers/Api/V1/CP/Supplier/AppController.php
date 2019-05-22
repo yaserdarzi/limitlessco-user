@@ -109,7 +109,7 @@ class AppController extends ApiController
             'supplier_id' => $request->input('supplier_id'),
             'app_id' => $app->id,
         ])->get();
-        if (!$supplierApp)
+        if (!sizeof($supplierApp))
             throw new ApiException(
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
                 'کاربر گرامی شما دسترسی به این قسمت را ندارید.'
