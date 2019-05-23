@@ -35,7 +35,7 @@ class SalesController extends ApiController
                 $supplierPrice = $supplierInfo->percent . " درصد ";
                 break;
             case Constants::TYPE_PRICE:
-                $supplierPrice = $supplierInfo->price . " تومان ";
+                $supplierPrice = number_format($supplierInfo->price) . " تومان ";
                 break;
         }
         $sales = Sales::select(
