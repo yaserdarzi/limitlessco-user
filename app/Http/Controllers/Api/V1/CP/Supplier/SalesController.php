@@ -30,7 +30,7 @@ class SalesController extends ApiController
     {
         $sales = Sales::select(
             '*',
-            DB::raw("CASE WHEN logo != '' THEN (concat ( '" . url('') . "/files/sales/', logo) ) ELSE '' END as logo")
+            DB::raw("CASE WHEN logo != '' THEN (concat ( '" . url('') . "/files/sales/', logo) ) ELSE '" . url('/files/sales/default.svg') . "' END as logo")
         )->get();
         foreach ($sales as $value) {
             $supplier = SupplierSales::where([
