@@ -142,6 +142,11 @@ class OTPController extends ApiController
     private function verify($phone, $request)
     {
         $user = User::where(['phone' => $phone])->first();
+        if (!$user)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                "کاربر گرامی شما عرضه کننده نمی باشید."
+            );
         $user->wallet = Wallet::where(['user_id' => $user->id])->first();
         if (!$supplierUser = SupplierUser::where(['user_id' => $user->id])->first())
             throw new ApiException(

@@ -142,10 +142,15 @@ class OTPController extends ApiController
     private function verify($phone, $request)
     {
         $user = User::where(['phone' => $phone])->first();
+        if (!$user)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                "کاربر گرامی شما آژانس نمی باشید."
+            );
         if (!$agencyUser = AgencyUser::where(['user_id' => $user->id])->first())
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
-                "کاربر گرامی شما عرضه کننده نمی باشید."
+                "کاربر گرامی شما آژانس نمی باشید."
             );
         if (!$agency = Agency::where(['id' => $agencyUser->agency_id, 'status' => Constants::STATUS_ACTIVE])->first())
             throw new ApiException(
