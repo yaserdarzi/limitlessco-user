@@ -92,11 +92,6 @@ class AppController extends ApiController
 
     public function appChecker(Request $request)
     {
-        if (!$request->header('appToken'))
-            throw new ApiException(
-                ApiException::EXCEPTION_UNAUTHORIZED_401,
-                'Plz check your appToken header'
-            );
         if (!$request->header('appName'))
             throw new ApiException(
                 ApiException::EXCEPTION_UNAUTHORIZED_401,

@@ -13,6 +13,12 @@ use Illuminate\Http\Request;
 |
 */
 
+Route::namespace('Api\V1')->prefix('/v1/')->group(function () {
+
+    //Get Supplier Active For Sales
+    Route::get('app/get/supplier/active/sales', 'AppController@appGetSupplierActiveSales');
+
+});
 Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
 
     //Register

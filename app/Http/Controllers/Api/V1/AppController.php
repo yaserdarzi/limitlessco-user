@@ -7,6 +7,8 @@ use App\App;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
+use App\Sales;
+use App\SupplierSales;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 
@@ -107,5 +109,40 @@ class AppController extends ApiController
                 'Plz check your apiId header'
             );
         return $this->respond(["app_id" => $appId]);
+    }
+
+    public function appGetSupplierActiveSales(Request $request)
+    {
+
+        switch ($request->header('sales')) {
+            case Constants::SALES_TYPE_API :
+                $type = Constants::SALES_TYPE_API;
+                break;
+            case Constants::SALES_TYPE_JUSTKISH :
+                $type = Constants::SALES_TYPE_JUSTKISH;
+                break;
+            case Constants::SALES_TYPE_AGENCY :
+                $type = Constants::SALES_TYPE_AGENCY;
+                break;
+            case Constants::SALES_TYPE_PERCENT_SITE :
+                $type = Constants::SALES_TYPE_PERCENT_SITE;
+                break;
+            case Constants::SALES_TYPE_SEPEHR :
+                $type = Constants::SALES_TYPE_SEPEHR;
+                break;
+            default:
+                throw new ApiException(
+                    ApiException::EXCEPTION_UNAUTHORIZED_401,
+                    'Plz check your sales header'
+                );
+        }
+        $sales = Sales::where(
+            'type', $type
+        )->first();
+        $supplierSales = SupplierSales::
+        where('capacity_percent', '!=', 0)
+            ->where(['status' => Constants::STATUS_ACTIVE, 'sales_id' => $sales->id])
+            ->pluck('supplier_id');
+        return $this->respond(["supplier_id" => $supplierSales]);
     }
 }
