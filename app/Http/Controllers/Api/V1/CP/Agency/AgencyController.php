@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\CP\Agency;
 
+use App\AgencyWallet;
 use App\App;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
@@ -10,7 +11,6 @@ use App\Agency;
 use App\AgencyApp;
 use App\AgencyUser;
 use App\User;
-use App\Wallet;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 
@@ -25,7 +25,6 @@ class AgencyController extends ApiController
     public function index(Request $request)
     {
         $user = User::where(['id' => $request->input('user_id')])->first();
-        $user->wallet = Wallet::where(['user_id' => $user->id])->first();
         if (!$agencyUser = AgencyUser::where(['user_id' => $user->id])->first())
             throw new ApiException(
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
@@ -36,6 +35,7 @@ class AgencyController extends ApiController
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
                 "کاربر گرامی حساب شما فعال نمی باشید."
             );
+        $user->wallet = AgencyWallet::where(['id' => $agencyUser->agency_id])->first();
         if ($user->image) {
             $user->image = url('/files/user/' . $user->image);
             $user->image_thumb = url('/files/user/thumb/' . $user->image);

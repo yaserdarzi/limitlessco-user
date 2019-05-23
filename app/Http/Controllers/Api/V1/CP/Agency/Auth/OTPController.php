@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Cp\Agency\Auth;
 
+use App\AgencyWallet;
 use App\App;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
@@ -141,7 +142,6 @@ class OTPController extends ApiController
     private function verify($phone, $request)
     {
         $user = User::where(['phone' => $phone])->first();
-        $user->wallet = Wallet::where(['user_id' => $user->id])->first();
         if (!$agencyUser = AgencyUser::where(['user_id' => $user->id])->first())
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
@@ -152,6 +152,7 @@ class OTPController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 "کاربر گرامی حساب شما فعال نمی باشید."
             );
+        $user->wallet = AgencyWallet::where(['id' => $agencyUser->agency_id])->first();
         $appId = AgencyApp::where(['agency_id' => $agencyUser->agency_id])->pluck('app_id');
         $user->agency = Agency::where('id', $agencyUser->agency_id)->first();
         $user->role = AgencyUser::where(['user_id' => $user->id])->first()->role;

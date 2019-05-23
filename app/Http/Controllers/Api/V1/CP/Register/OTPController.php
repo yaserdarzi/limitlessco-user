@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\CP\Register;
 use App\Agency;
 use App\AgencyApp;
 use App\AgencyUser;
+use App\AgencyWallet;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
@@ -103,6 +104,10 @@ class OTPController extends ApiController
                 'type' => 'percent',
                 'percent' => 100,
                 'role' => Constants::ROLE_ADMIN
+            ]);
+            AgencyWallet::create([
+                'agency_id' => $agency->id,
+                'price' => 0
             ]);
             foreach (json_decode($request->input('agency_app_id')) as $value) {
                 AgencyApp::create([

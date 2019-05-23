@@ -21,6 +21,8 @@ class Constants
     const AGENCY_DB = 'agency';
     const AGENCY_USERS_DB = 'agency_users';
     const AGENCY_APP_DB = 'agency_app';
+    const AGENCY_WALLET_DB = 'agency_wallet';
+    const AGENCY_WALLET_INVOICE_DB = 'agency_wallet_invoice';
     const SALES_DB = 'sales';
     const SUPPLIER_SALES_DB = 'supplier_sales';
 
