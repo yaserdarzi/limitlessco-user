@@ -24,6 +24,13 @@ class Constants
     const SALES_DB = 'sales';
     const SUPPLIER_SALES_DB = 'supplier_sales';
 
+    //Sales Type
+    const SALES_TYPE_API = 'api';
+    const SALES_TYPE_JUSTKISH = 'justkish';
+    const SALES_TYPE_AGENCY = 'agency';
+    const SALES_TYPE_PERCENT_SITE = 'percent_site';
+    const SALES_TYPE_SEPEHR= 'sepehr';
+
     //sms log type
     Const LOGIN_TYPE_SMS = "login_with_sms";
     Const LOGIN_TYPE_CALL = "login_with_call";

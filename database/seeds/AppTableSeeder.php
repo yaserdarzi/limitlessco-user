@@ -1,6 +1,5 @@
 <?php
 
-use Firebase\JWT\JWT;
 use Illuminate\Database\Seeder;
 
 class AppTableSeeder extends Seeder
