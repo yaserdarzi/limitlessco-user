@@ -16,7 +16,6 @@ class SalesTableMigration extends Migration
     {
         Schema::create(Constants::SALES_DB, function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('app_id');
             $table->string('title');
             $table->string('logo');
             $table->string('type');
@@ -24,9 +23,6 @@ class SalesTableMigration extends Migration
             $table->json('info')->nullable();
             $table->timestamps();
             $table->softDeletes();
-        });
-        Schema::table(Constants::SALES_DB, function (Blueprint $table) {
-            $table->foreign('app_id')->references('id')->on(Constants::APP_DB)->onDelete('cascade');
         });
     }
 

@@ -49,6 +49,9 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             //App Checker
             Route::get('app/checker', 'AppController@appChecker');
 
+            //Sales
+            Route::get('sales', 'SalesController@index');
+            Route::post('sales', 'SalesController@store');
         });
 
     });

@@ -53,4 +53,7 @@ class Constants
     const ROLE_SALES_MAN = 'sales_man';
     const ROLE_COUNTER_MAN = 'counter_man';
 
+    //Type Price
+    const TYPE_PERCENT= "percent";
+    const TYPE_PRICE = "price";
 }

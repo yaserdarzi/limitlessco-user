@@ -12,7 +12,7 @@ class SupplierSales extends Model
     ];
     protected $table = Constants::SUPPLIER_SALES_DB;
     protected $fillable = [
-        'app_id', 'supplier_id', 'sales_id', 'capacity_percent', 'type_price',
+        'supplier_id', 'sales_id', 'capacity_percent', 'type_price',
         'price', 'percent', 'status', 'info'
     ];
 }

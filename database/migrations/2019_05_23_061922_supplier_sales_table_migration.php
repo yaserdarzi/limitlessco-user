@@ -16,7 +16,6 @@ class SupplierSalesTableMigration extends Migration
     {
         Schema::create(Constants::SUPPLIER_SALES_DB, function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('app_id');
             $table->bigInteger('supplier_id');
             $table->bigInteger('sales_id');
             $table->bigInteger('capacity_percent');
@@ -28,7 +27,6 @@ class SupplierSalesTableMigration extends Migration
             $table->timestamps();
         });
         Schema::table(Constants::SUPPLIER_SALES_DB, function (Blueprint $table) {
-            $table->foreign('app_id')->references('id')->on(Constants::APP_DB)->onDelete('cascade');
             $table->foreign('supplier_id')->references('id')->on(Constants::SUPPLIER_DB)->onDelete('cascade');
             $table->foreign('sales_id')->references('id')->on(Constants::SALES_DB)->onDelete('cascade');
         });

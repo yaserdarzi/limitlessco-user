@@ -14,7 +14,7 @@ class Sales extends Model
         'info' => 'object',
     ];
     protected $fillable = [
-        'app_id', 'title', 'logo', 'type', 'count_sellers', 'info'
+        'title', 'logo', 'type', 'count_sellers', 'info'
     ];
 
     protected $dates = ['deleted_at'];
