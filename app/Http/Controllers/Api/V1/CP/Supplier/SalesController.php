@@ -33,10 +33,23 @@ class SalesController extends ApiController
             DB::raw("CASE WHEN logo != '' THEN (concat ( '" . url('') . "/files/sales/', logo) ) ELSE '' END as logo")
         )->get();
         foreach ($sales as $value) {
-            $value->supplier = SupplierSales::where([
+            $supplier = SupplierSales::where([
                 'supplier_id' => $request->input('supplier_id'),
                 'sales_id' => $value->id
             ])->first();
+            if (!$supplier)
+                $supplier = [
+                    'supplier_id' => $request->input('supplier_id'),
+                    'sales_id' => $value->id,
+                    'capacity_percent' => 0,
+                    'type_price' => Constants::TYPE_PERCENT,
+                    'price' => 0,
+                    'percent' => 0,
+                    'status' => Constants::STATUS_DEACTIVATE,
+                    'info' => ""
+                ];
+            $value->supplier = $supplier;
+
         }
         return $this->respond($sales);
     }
