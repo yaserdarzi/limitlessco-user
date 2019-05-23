@@ -21,6 +21,8 @@ class Constants
     const AGENCY_DB = 'agency';
     const AGENCY_USERS_DB = 'agency_users';
     const AGENCY_APP_DB = 'agency_app';
+    const SALES_DB = 'sales';
+    const SUPPLIER_SALES_DB = 'supplier_sales';
 
     //sms log type
     Const LOGIN_TYPE_SMS = "login_with_sms";
