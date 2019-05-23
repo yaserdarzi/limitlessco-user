@@ -7,6 +7,7 @@ use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
 use App\Inside\Helpers;
 use App\Sales;
+use App\Supplier;
 use App\SupplierSales;
 use Illuminate\Http\Request;
 use App\Http\Requests;
@@ -28,6 +29,15 @@ class SalesController extends ApiController
      */
     public function index(Request $request)
     {
+        $supplierInfo = Supplier::where(['id' => $request->input('supplier_id')])->first();
+        switch ($supplierInfo->type) {
+            case Constants::TYPE_PERCENT:
+                $supplierPrice = $supplierInfo->percent . " درصد ";
+                break;
+            case Constants::TYPE_PRICE:
+                $supplierPrice = $supplierInfo->price . " تومان ";
+                break;
+        }
         $sales = Sales::select(
             '*',
             DB::raw("CASE WHEN logo != '' THEN (concat ( '" . url('') . "/files/sales/', logo) ) ELSE '" . url('/files/sales/default.svg') . "' END as logo")
@@ -49,9 +59,8 @@ class SalesController extends ApiController
                     'info' => ""
                 ];
             $value->supplier = $supplier;
-
         }
-        return $this->respond($sales);
+        return $this->respond(['sales' => $sales, 'supplier_price' => $supplierPrice]);
     }
 
     /**
