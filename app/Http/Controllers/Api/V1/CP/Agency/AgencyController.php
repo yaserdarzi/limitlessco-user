@@ -36,8 +36,22 @@ class AgencyController extends ApiController
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
                 "کاربر گرامی حساب شما فعال نمی باشید."
             );
+        if ($user->image) {
+            $user->image = url('/files/user/' . $user->image);
+            $user->image_thumb = url('/files/user/thumb/' . $user->image);
+        } else {
+            $user->image = url('/files/user/defaultAvatar.svg');
+            $user->image_thumb = url('/files/user/defaultAvatar.svg');
+        }
         $appId = AgencyApp::where(['agency_id' => $agencyUser->agency_id])->pluck('app_id');
         $user->agency = Agency::where('id', $agencyUser->agency_id)->first();
+        if ($user->agency->image) {
+            $user->agency->image = url('/files/agency/' . $user->agency->image);
+            $user->agency->image_thumb = url('/files/agency/thumb/' . $user->agency->image);
+        } else {
+            $user->agency->image = url('/files/agency/defaultAvatar.svg');
+            $user->agency->image_thumb = url('/files/agency/defaultAvatar.svg');
+        }
         $user->role = AgencyUser::where(['user_id' => $user->id])->first()->role;
         $user->apps = App::whereIn('id', $appId)->get();
         $user->token = $request->header('Authorization');

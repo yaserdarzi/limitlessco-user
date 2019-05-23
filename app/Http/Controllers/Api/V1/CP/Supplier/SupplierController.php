@@ -36,8 +36,22 @@ class SupplierController extends ApiController
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
                 "کاربر گرامی حساب شما فعال نمی باشید."
             );
+        if ($user->image) {
+            $user->image = url('/files/user/' . $user->image);
+            $user->image_thumb = url('/files/user/thumb/' . $user->image);
+        } else {
+            $user->image = url('/files/user/defaultAvatar.svg');
+            $user->image_thumb = url('/files/user/defaultAvatar.svg');
+        }
         $appId = SupplierApp::where(['supplier_id' => $supplierUser->supplier_id])->pluck('app_id');
         $user->supplier = Supplier::where('id', $supplierUser->supplier_id)->first();
+        if ($user->supplier->image) {
+            $user->supplier->image = url('/files/supplier/' . $user->supplier->image);
+            $user->supplier->image_thumb = url('/files/supplier/thumb/' . $user->supplier->image);
+        } else {
+            $user->supplier->image = url('/files/supplier/defaultAvatar.svg');
+            $user->supplier->image_thumb = url('/files/supplier/defaultAvatar.svg');
+        }
         $user->role = SupplierUser::where(['user_id' => $user->id])->first()->role;
         $user->apps = App::whereIn('id', $appId)->get();
         $user->token = $request->header('Authorization');
