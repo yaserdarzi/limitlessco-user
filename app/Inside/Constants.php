@@ -25,13 +25,16 @@ class Constants
     const AGENCY_WALLET_INVOICE_DB = 'agency_wallet_invoice';
     const SALES_DB = 'sales';
     const SUPPLIER_SALES_DB = 'supplier_sales';
+    const SHOPPING_DB = 'shopping';
+    const SHOPPING_BAG_DB = 'shopping_bag';
+    const SHOPPING_INVOICE_DB = 'shopping_invoice';
 
     //Sales Type
     const SALES_TYPE_API = 'api';
     const SALES_TYPE_JUSTKISH = 'justkish';
     const SALES_TYPE_AGENCY = 'agency';
     const SALES_TYPE_PERCENT_SITE = 'percent_site';
-    const SALES_TYPE_SEPEHR= 'sepehr';
+    const SALES_TYPE_SEPEHR = 'sepehr';
 
     //sms log type
     Const LOGIN_TYPE_SMS = "login_with_sms";
@@ -56,6 +59,12 @@ class Constants
     const ROLE_COUNTER_MAN = 'counter_man';
 
     //Type Price
-    const TYPE_PERCENT= "percent";
+    const TYPE_PERCENT = "percent";
     const TYPE_PRICE = "price";
+    //Shopping Status
+    const SHOPPING_STATUS_SHOPPING = "shopping";
+    const SHOPPING_STATUS_PAYMENT = "payment";
+    const SHOPPING_STATUS_SUCCESS = "success";
+    const SHOPPING_STATUS_FINISH = "finish";
+    const SHOPPING_STATUS_RETURN = "return";
 }
