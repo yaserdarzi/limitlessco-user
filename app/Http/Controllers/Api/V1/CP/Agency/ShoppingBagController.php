@@ -233,21 +233,23 @@ class ShoppingBagController extends ApiController
                     'type' => Constants::SALES_TYPE_AGENCY,
                     'supplier_id' => $value->supplier_id
                 ])->first();
-            if ($supplierSales->type_price == Constants::TYPE_PERCENT)
-                $incomeAgency += ($value->price - $percent) * floatval("0." . $supplierSales->percent);
-            elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
-                $incomeAgency = $incomeAgency + $supplierSales->percent;
+            if ($supplierSales)
+                if ($supplierSales->type_price == Constants::TYPE_PERCENT)
+                    $incomeAgency += ($value->price - $percent) * floatval("0." . $supplierSales->percent);
+                elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
+                    $incomeAgency = $incomeAgency + $supplierSales->percent;
             $supplierUser = SupplierUser::where([
                 'user_id' => $request->input('user_id'),
                 'supplier_id' => $value->supplier_id
             ])->first();
-            if ($supplierUser->type == Constants::TYPE_PERCENT)
-                if ($supplierUser->percent != 100)
-                    $incomeYou = $incomeAgency * floatval("0." . $supplierUser->percent);
-                else
-                    $incomeYou = $incomeAgency;
-            elseif ($supplierUser->type == Constants::TYPE_PRICE)
-                $incomeYou = $incomeYou + $supplierUser->price;
+            if ($supplierUser)
+                if ($supplierUser->type == Constants::TYPE_PERCENT)
+                    if ($supplierUser->percent != 100)
+                        $incomeYou = $incomeAgency * floatval("0." . $supplierUser->percent);
+                    else
+                        $incomeYou = $incomeAgency;
+                elseif ($supplierUser->type == Constants::TYPE_PRICE)
+                    $incomeYou = $incomeYou + $supplierUser->price;
         }
         $room = DB::connection(Constants::CONNECTION_HOTEL)
             ->table(Constants::APP_HOTEL_DB_ROOM_DB)
