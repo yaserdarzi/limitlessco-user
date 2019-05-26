@@ -7,6 +7,7 @@ use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
 use App\Sales;
 use App\ShoppingBag;
+use App\ShoppingBagExpire;
 use App\SupplierSales;
 use Illuminate\Http\Request;
 use App\Http\Requests;
@@ -22,8 +23,14 @@ class ShoppingBagController extends ApiController
      */
     public function index(Request $request)
     {
-        $shoppingBag = ShoppingBag::where('customer_id', Constants::AGENCY_DB . "-" . $request->input('agency_id'))
-            ->get();
+        $shoppingBagExpire = ShoppingBagExpire::where([
+            'customer_id' => Constants::AGENCY_DB . "-" . $request->input('agency_id'),
+            'status' => Constants::SHOPPING_STATUS_SHOPPING
+        ])->first();
+        $shoppingBag = [];
+        if ($shoppingBagExpire)
+            $shoppingBag = ShoppingBag::where('customer_id', $shoppingBagExpire->customer_id)
+                ->get();
 //        foreach ($shoppingBag as $value)
         return $this->respond(["incomeAgency" => 1, "incomeYou" => 1, "shoppingBag" => $shoppingBag]);
     }
@@ -116,6 +123,22 @@ class ShoppingBagController extends ApiController
 
 
     ///////////////////private function///////////////////////
+
+    private function expireShopping($app_id, $customer_id)
+    {
+
+        if (ShoppingBagExpire::where(['customer_id' => $customer_id])->exists())
+            ShoppingBagExpire::
+            where([
+                'customer_id' => $customer_id
+            ])->update(['expire_time' => date('Y-m-d H:i:s', strtotime("+10 minutes"))]);
+        else
+            ShoppingBagExpire::create([
+                'app_id' => $app_id,
+                'customer_id' => $customer_id,
+                'expire_time' => date('Y-m-d H:i:s', strtotime("+10 minutes"))
+            ]);
+    }
 
     private function addToShoppingBagHotel($supplier_id, $request)
     {
@@ -212,7 +235,6 @@ class ShoppingBagController extends ApiController
                 'count' => $request->input('count'),
                 'price_all' => $priceAll,
                 'percent_all' => $percentAll,
-                'expire_time' => date('Y-m-d H:i:s', strtotime("+10 minutes")),
                 'shopping' => ["roomEpisode" => $roomEpisode->toArray(), "hotel" => (array)$hotel, "room" => (array)$room]
             ]);
         foreach ($roomEpisode as $key => $value) {
@@ -225,6 +247,7 @@ class ShoppingBagController extends ApiController
                 ->where('id', $value->id)
                 ->decrement('capacity_remaining', $request->input('count'));
         }
+        $this->expireShopping($request->input('app_id'), Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id'));
         return ["status" => "success"];
     }
 }

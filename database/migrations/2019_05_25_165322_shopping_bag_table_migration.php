@@ -30,8 +30,6 @@ class ShoppingBagTableMigration extends Migration
             $table->bigInteger('count')->default(1);
             $table->bigInteger('price_all')->default(0);
             $table->bigInteger('percent_all')->default(0);
-            $table->timestamp('expire_time')->default(date('Y-m-d H:i:s', strtotime("+10 minutes")));
-            $table->string('status')->default(Constants::SHOPPING_STATUS_SHOPPING);
             $table->json('shopping')->nullable();
             $table->timestamps();
         });

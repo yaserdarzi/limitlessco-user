@@ -42,9 +42,10 @@ class Constants
     const AGENCY_WALLET_INVOICE_DB = 'agency_wallet_invoice';
     const SALES_DB = 'sales';
     const SUPPLIER_SALES_DB = 'supplier_sales';
-    const SHOPPING_DB = 'shopping';
     const SHOPPING_BAG_DB = 'shopping_bag';
+    const SHOPPING_BAG_EXPIRE_DB = 'shopping_bag_expire';
     const SHOPPING_INVOICE_DB = 'shopping_invoice';
+    const SHOPPING_DB = 'shopping';
 
     //Sales Type
     const SALES_TYPE_API = 'api';
@@ -81,6 +82,7 @@ class Constants
 
     //Shopping Status
     const SHOPPING_STATUS_SHOPPING = "shopping";
+    const SHOPPING_STATUS_DELETE= "delete";
     const SHOPPING_STATUS_PAYMENT = "payment";
     const SHOPPING_STATUS_SUCCESS = "success";
     const SHOPPING_STATUS_FINISH = "finish";

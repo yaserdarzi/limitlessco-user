@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Inside\Constants;
 use App\ShoppingBag;
+use App\ShoppingBagExpire;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -40,17 +41,24 @@ class ShoppingBagExpireTimeCheck extends Command
      */
     public function handle()
     {
-        $shoppingBag = ShoppingBag::
-        where('expire_time', '<', date('Y-m-d H:i:s', strtotime('now')))
+        $shoppingBagExpire = ShoppingBagExpire::where('expire_time', '<', date('Y-m-d H:i:s', strtotime('now')))
             ->where([
                 'status' => Constants::SHOPPING_STATUS_SHOPPING
             ])->first();
-        if ($shoppingBag)
-            switch (explode('-', $shoppingBag->shopping_id)[0]) {
-                case Constants::APP_NAME_HOTEL:
-                    $this->hotelCheck($shoppingBag);
-                    break;
-            }
+        ShoppingBagExpire::where([
+            'id' => $shoppingBagExpire->id,
+            'status' => Constants::SHOPPING_STATUS_DELETE
+        ])->first();
+        $shoppingBag = ShoppingBag::where([
+            'customer_id' => $shoppingBagExpire->customer_id
+        ])->get();
+        if (sizeof($shoppingBag))
+            foreach ($shoppingBag as $value)
+                switch (explode('-', $value->shopping_id)[0]) {
+                    case Constants::APP_NAME_HOTEL:
+                        $this->hotelCheck($value);
+                        break;
+                }
     }
 
     ///////////////////////private function/////////////////////////////
