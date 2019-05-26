@@ -34,6 +34,7 @@ class ShoppingTableMigration extends Migration
             $table->bigInteger('percent_all')->default(0);
             $table->bigInteger('income_agency')->default(0);
             $table->bigInteger('income_you')->default(0);
+            $table->bigInteger('price_payment')->default(0);
             $table->string('status')->default(Constants::SHOPPING_STATUS_SUCCESS);
             $table->json('shopping')->nullable();
             $table->timestamps();

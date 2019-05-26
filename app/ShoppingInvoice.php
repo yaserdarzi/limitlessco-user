@@ -14,8 +14,8 @@ class ShoppingInvoice extends Model
     protected $fillable = [
         'app_id', 'shopping_id', 'customer_id', 'phone', 'name',
         'count_all', 'price_all', 'percent_all', 'income_all_agency',
-        'income_all_you', 'code_coupon', 'type_status', 'status',
-        'type', 'invoice_status', 'payment_token', 'ref_id', 'market',
-        'info',
+        'income_all_you', 'price_payment', 'code_coupon', 'type_status',
+        'status', 'type', 'invoice_status', 'payment_token', 'ref_id',
+        'market', 'info',
     ];
 }
