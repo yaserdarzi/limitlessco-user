@@ -98,7 +98,6 @@ class PaymentController extends ApiController
     {
         $customer_id = Constants::AGENCY_DB . "-" . $request->input('agency_id') . "-" . $request->input('user_id');
         $incomeAgency = 0;
-        $incomeYou = 0;
         $priceAll = 0;
         $percentAll = 0;
         $shoppingBag = ShoppingBag::where('customer_id', $customer_id)->get();
@@ -108,23 +107,23 @@ class PaymentController extends ApiController
                 'کاربر گرامی ، سبد خرید شما خالی می باشد.'
             );
         ShoppingBagExpire::where([
-            'customer_id' => $customer_id,
-            'status' => Constants::SHOPPING_STATUS_SHOPPING
-        ])->first();
+            'customer_id' => $customer_id
+        ])->update(['status' => Constants::SHOPPING_STATUS_PAYMENT]);
         foreach ($shoppingBag as $value) {
             $priceAll = $priceAll + $value->price_all;
             $percentAll = $percentAll + $value->percent_all;
             $incomeAgency = $incomeAgency + $value->income_agency;
-            $incomeYou = $incomeYou + $value->income_you;
-            $value->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date));
-            $value->date_end_persian = null;
-            if ($value->date_end)
-                $value->date_end_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date_end));
         }
         $pricePayment = $priceAll - $percentAll - $incomeAgency;
         $wallet = AgencyWallet::where(['agency_id' => $request->input('agency_id')])->first();
-        dd($shoppingBag);
-        dd($request->all(), $wallet);
-
+        if ($wallet->price <= $pricePayment)
+            $walletPayment = $pricePayment - $wallet->price;
+        else
+            $walletPayment = $wallet->price - $pricePayment;
+        return $this->respond([
+            'pricePayment' => $pricePayment,
+            'walletPrice' => $wallet->price,
+            'walletPayment' => $walletPayment
+        ]);
     }
 }
