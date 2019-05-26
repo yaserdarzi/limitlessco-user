@@ -78,6 +78,13 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             //App Checker
             Route::get('app/checker', 'AppController@appChecker');
 
+            Route::middleware(['cp.agency.app.name'])->group(function () {
+
+                //Shopping
+                Route::get('shoppingBag', 'ShoppingBagController@index');
+                Route::post('shoppingBag', 'ShoppingBagController@store');
+
+            });
         });
 
     });

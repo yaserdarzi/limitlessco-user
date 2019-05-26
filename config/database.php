@@ -78,6 +78,21 @@ return [
             'sslmode' => 'prefer',
         ],
 
+        'pgsql_hotel' => [
+            'driver' => 'pgsql',
+            'url' => env('DATABASE_URL_HOTEL'),
+            'host' => env('DB_HOST_HOTEL', '127.0.0.1'),
+            'port' => env('DB_PORT_HOTEL', '5432'),
+            'database' => env('DB_DATABASE_HOTEL', 'forge'),
+            'username' => env('DB_USERNAME_HOTEL', 'forge'),
+            'password' => env('DB_PASSWORD_HOTEL', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'schema' => 'public',
+            'sslmode' => 'prefer',
+        ],
+
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DATABASE_URL'),

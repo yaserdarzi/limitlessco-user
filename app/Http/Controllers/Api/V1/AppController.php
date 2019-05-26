@@ -113,7 +113,6 @@ class AppController extends ApiController
 
     public function appGetSupplierActiveSales(Request $request)
     {
-
         switch ($request->header('sales')) {
             case Constants::SALES_TYPE_API :
                 $type = Constants::SALES_TYPE_API;

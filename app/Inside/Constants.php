@@ -5,6 +5,23 @@ namespace App\Inside;
 
 class Constants
 {
+    //App Name
+    const APP_NAME_HOTEL = "hotel";
+
+    //Database Connection
+    const CONNECTION_HOTEL = "pgsql_hotel";
+
+    //Database Hotel
+    const APP_HOTEL_DB_HOTEL_DB = 'hotel';
+    const APP_HOTEL_DB_HOTEL_SUPPLIER_DB = 'hotel_supplier';
+    const APP_HOTEL_DB_HOTEL_GALLERY_DB = 'hotel_gallery';
+    const APP_HOTEL_DB_HOTEL_TOOLS_DB = 'hotel_tools';
+    const APP_HOTEL_DB_HOTEL_DISTANCE_DB = 'hotel_distance';
+    const APP_HOTEL_DB_ROOM_DB = 'room';
+    const APP_HOTEL_DB_ROOM_GALLERY_DB = 'room_gallery';
+    const APP_HOTEL_DB_ROOM_TOOLS_DB = 'room_tools';
+    const APP_HOTEL_DB_ROOM_EPISODE_DB = 'room_episode';
+
     //Database
     const USERS_DB = 'users';
     const PASSWORD_RESETS_DB = 'password_resets';
@@ -61,6 +78,7 @@ class Constants
     //Type Price
     const TYPE_PERCENT = "percent";
     const TYPE_PRICE = "price";
+
     //Shopping Status
     const SHOPPING_STATUS_SHOPPING = "shopping";
     const SHOPPING_STATUS_PAYMENT = "payment";
