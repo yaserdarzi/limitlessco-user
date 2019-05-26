@@ -126,17 +126,20 @@ class ShoppingBagController extends ApiController
 
     private function expireShopping($app_id, $customer_id)
     {
-
         if (ShoppingBagExpire::where(['customer_id' => $customer_id])->exists())
             ShoppingBagExpire::
             where([
                 'customer_id' => $customer_id
-            ])->update(['expire_time' => date('Y-m-d H:i:s', strtotime("+10 minutes"))]);
+            ])->update([
+                'expire_time' => date('Y-m-d H:i:s', strtotime("+10 minutes")),
+                'status' => Constants::SHOPPING_STATUS_SHOPPING
+            ]);
         else
             ShoppingBagExpire::create([
                 'app_id' => $app_id,
                 'customer_id' => $customer_id,
-                'expire_time' => date('Y-m-d H:i:s', strtotime("+10 minutes"))
+                'expire_time' => date('Y-m-d H:i:s', strtotime("+10 minutes")),
+                'status' => Constants::SHOPPING_STATUS_SHOPPING
             ]);
     }
 
