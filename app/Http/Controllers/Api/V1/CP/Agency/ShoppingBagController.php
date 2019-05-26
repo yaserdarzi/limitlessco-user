@@ -24,7 +24,8 @@ class ShoppingBagController extends ApiController
     {
         $shoppingBag = ShoppingBag::where('customer_id', Constants::AGENCY_DB . "-" . $request->input('agency_id'))
             ->get();
-        return $this->respond($shoppingBag);
+//        foreach ($shoppingBag as $value)
+        return $this->respond(["incomeAgency" => 1, "incomeYou" => 1, "shoppingBag" => $shoppingBag]);
     }
 
     /**
