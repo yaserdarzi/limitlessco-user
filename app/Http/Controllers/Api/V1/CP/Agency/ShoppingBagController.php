@@ -31,14 +31,19 @@ class ShoppingBagController extends ApiController
         $shoppingBag = [];
         $incomeAgency = 0;
         $incomeYou = 0;
+        $priceAll = 0;
+        $percentAll = 0;
         if ($shoppingBagExpire) {
             $shoppingBag = ShoppingBag::where('customer_id', $shoppingBagExpire->customer_id)->get();
             foreach ($shoppingBag as $value) {
+                $priceAll = $priceAll + $value->price_all;
+                $percentAll = $percentAll + $value->percent_all;
                 $incomeAgency = $incomeAgency + $value->income_agency;
                 $incomeYou = $incomeYou + $value->income_you;
             }
         }
-        return $this->respond(["incomeAgency" => $incomeAgency, "incomeYou" => $incomeYou, "shoppingBag" => $shoppingBag]);
+        $pricePayment = $priceAll - $percentAll - $incomeAgency;
+        return $this->respond(["pricePayment" => number_format($pricePayment), "priceAll" => number_format($priceAll), "percentAll" => number_format($percentAll), "incomeAgency" => number_format($incomeAgency), "incomeYou" => number_format($incomeYou), "shoppingBag" => $shoppingBag]);
     }
 
     /**
