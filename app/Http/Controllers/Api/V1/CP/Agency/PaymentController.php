@@ -106,9 +106,6 @@ class PaymentController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، سبد خرید شما خالی می باشد.'
             );
-        ShoppingBagExpire::where([
-            'customer_id' => $customer_id
-        ])->update(['status' => Constants::SHOPPING_STATUS_PAYMENT]);
         foreach ($shoppingBag as $value) {
             $priceAll = $priceAll + $value->price_all;
             $percentAll = $percentAll + $value->percent_all;
