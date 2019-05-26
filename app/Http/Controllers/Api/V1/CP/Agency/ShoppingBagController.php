@@ -25,7 +25,7 @@ class ShoppingBagController extends ApiController
     public function index(Request $request)
     {
         $shoppingBagExpire = ShoppingBagExpire::where([
-            'customer_id' => Constants::AGENCY_DB . "-" . $request->input('agency_id'),
+            'customer_id' => Constants::AGENCY_DB . "-" . $request->input('agency_id') . "-" . $request->input('user_id'),
             'status' => Constants::SHOPPING_STATUS_SHOPPING
         ])->first();
         $shoppingBag = [];
@@ -259,14 +259,14 @@ class ShoppingBagController extends ApiController
             ->table(Constants::APP_HOTEL_DB_HOTEL_DB)
             ->where('id', $room->hotel_id)
             ->first();
-        if ($shopping = ShoppingBag::where(['date' => $startDay->format('Y-m-d'), 'date_end' => $endDay->format('Y-m-d'), 'app_id' => $request->input('app_id'), 'shopping_id' => $request->input('app_title') . "-" . $request->input('room_id'), 'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id')])->first())
+        if ($shopping = ShoppingBag::where(['date' => $startDay->format('Y-m-d'), 'date_end' => $endDay->format('Y-m-d'), 'app_id' => $request->input('app_id'), 'shopping_id' => $request->input('app_title') . "-" . $request->input('room_id'), 'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id')])->first())
             ShoppingBag::
             where([
                 'app_id' => $request->input('app_id'),
                 'date' => $startDay->format('Y-m-d'),
                 'date_end' => $endDay->format('Y-m-d'),
                 'shopping_id' => $request->input('app_title') . "-" . $request->input('room_id'),
-                'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id')
+                'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id')
             ])->update([
                 'count' => $shopping->count + $request->input('count'),
                 'price_all' => $priceAll * ($shopping->count + $request->input('count')),
@@ -278,7 +278,7 @@ class ShoppingBagController extends ApiController
             ShoppingBag::create([
                 'app_id' => $request->input('app_id'),
                 'shopping_id' => $request->input('app_title') . "-" . $request->input('room_id'),
-                'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id'),
+                'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id'),
                 'title' => $hotel->name,
                 'title_more' => $room->title,
                 'date' => $startDay->format('Y-m-d'),
@@ -300,7 +300,7 @@ class ShoppingBagController extends ApiController
                 ->where('id', $value->id)
                 ->decrement('capacity_remaining', $request->input('count'));
         }
-        $this->expireShopping($request->input('app_id'), Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id'));
+        $this->expireShopping($request->input('app_id'), Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id'));
         return ["status" => "success"];
     }
 }
