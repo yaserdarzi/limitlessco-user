@@ -133,6 +133,18 @@ class ShoppingBagController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'plz check your id'
             );
+        $shoppingBag = ShoppingBag::where([
+            'app_id' => $request->input('app_id'),
+            'id' => $id,
+            'customer_id' => $customer_id
+        ])->get();
+        if (sizeof($shoppingBag))
+            foreach ($shoppingBag as $value)
+                switch (explode('-', $value->shopping_id)[0]) {
+                    case Constants::APP_NAME_HOTEL:
+                        $this->hotelCheck($value);
+                        break;
+                }
         ShoppingBag::where(['app_id' => $request->input('app_id'), 'id' => $id, 'customer_id' => $customer_id])->delete();
         return $this->respond(['status' => 'success']);
     }
@@ -142,12 +154,39 @@ class ShoppingBagController extends ApiController
     public function destroyAll(Request $request)
     {
         $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id');
-        ShoppingBagExpire::where(['app_id' => $request->input('app_id'), 'customer_id' => $customer_id])->delete();
+        $shoppingBag = ShoppingBag::where([
+            'app_id' => $request->input('app_id'),
+            'customer_id' => $customer_id
+        ])->get();
+        if (sizeof($shoppingBag))
+            foreach ($shoppingBag as $value)
+                switch (explode('-', $value->shopping_id)[0]) {
+                    case Constants::APP_NAME_HOTEL:
+                        $this->hotelCheck($value);
+                        break;
+                }
         ShoppingBag::where(['app_id' => $request->input('app_id'), 'customer_id' => $customer_id])->delete();
+        ShoppingBagExpire::where(['app_id' => $request->input('app_id'), 'customer_id' => $customer_id])->delete();
         return $this->respond(['status' => 'success']);
     }
 
     ///////////////////private function///////////////////////
+
+    private function hotelCheck($shoppingBag)
+    {
+        foreach ($shoppingBag->shopping->roomEpisode as $value) {
+            echo "episode= $value->id \n";
+            DB::connection(Constants::CONNECTION_HOTEL)
+                ->table(Constants::APP_HOTEL_DB_ROOM_EPISODE_DB)
+                ->where('id', $value->id)
+                ->decrement('capacity_filled', $shoppingBag->count);
+            DB::connection(Constants::CONNECTION_HOTEL)
+                ->table(Constants::APP_HOTEL_DB_ROOM_EPISODE_DB)
+                ->where('id', $value->id)
+                ->increment('capacity_remaining', $shoppingBag->count);
+        }
+        ShoppingBag::where('id', $shoppingBag->id)->delete();
+    }
 
     private function expireShopping($app_id, $customer_id)
     {
