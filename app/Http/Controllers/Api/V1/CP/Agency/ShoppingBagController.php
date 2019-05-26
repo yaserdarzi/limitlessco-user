@@ -175,7 +175,6 @@ class ShoppingBagController extends ApiController
     private function hotelCheck($shoppingBag)
     {
         foreach ($shoppingBag->shopping->roomEpisode as $value) {
-            echo "episode= $value->id \n";
             DB::connection(Constants::CONNECTION_HOTEL)
                 ->table(Constants::APP_HOTEL_DB_ROOM_EPISODE_DB)
                 ->where('id', $value->id)
