@@ -13,6 +13,7 @@ use App\SupplierUser;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use Illuminate\Support\Facades\DB;
+use Morilog\Jalali\CalendarUtils;
 
 class ShoppingBagController extends ApiController
 {
@@ -40,6 +41,10 @@ class ShoppingBagController extends ApiController
                 $percentAll = $percentAll + $value->percent_all;
                 $incomeAgency = $incomeAgency + $value->income_agency;
                 $incomeYou = $incomeYou + $value->income_you;
+                $value->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date));
+                $value->date_end_persian = null;
+                if ($value->date_end)
+                    $value->date_end_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date_end));
             }
         }
         $pricePayment = $priceAll - $percentAll - $incomeAgency;
