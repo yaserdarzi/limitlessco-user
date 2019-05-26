@@ -81,8 +81,8 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             Route::middleware(['cp.agency.app.name'])->group(function () {
 
                 //Shopping
-                Route::get('shoppingBag', 'ShoppingBagController@index');
-                Route::post('shoppingBag', 'ShoppingBagController@store');
+                Route::delete('shoppingBag', 'ShoppingBagController@destroyAll');
+                Route::resource('shoppingBag', 'ShoppingBagController');
 
             });
         });

@@ -127,19 +127,34 @@ class ShoppingBagController extends ApiController
      */
     public function destroy($id, Request $request)
     {
-        //
+        $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id');
+        if (!ShoppingBag::where(['app_id' => $request->input('app_id'), 'id' => $id, 'customer_id' => $customer_id])->exists())
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'plz check your id'
+            );
+        ShoppingBag::where(['app_id' => $request->input('app_id'), 'id' => $id, 'customer_id' => $customer_id])->delete();
+        return $this->respond(['status' => 'success']);
     }
 
     ///////////////////public function///////////////////////
 
+    public function destroyAll(Request $request)
+    {
+        $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id');
+        ShoppingBagExpire::where(['app_id' => $request->input('app_id'), 'customer_id' => $customer_id])->delete();
+        ShoppingBag::where(['app_id' => $request->input('app_id'), 'customer_id' => $customer_id])->delete();
+        return $this->respond(['status' => 'success']);
+    }
 
     ///////////////////private function///////////////////////
 
     private function expireShopping($app_id, $customer_id)
     {
-        if (ShoppingBagExpire::where(['customer_id' => $customer_id])->exists())
+        if (ShoppingBagExpire::where(['app_id' => $app_id, 'customer_id' => $customer_id])->exists())
             ShoppingBagExpire::
             where([
+                'app_id' => $app_id,
                 'customer_id' => $customer_id
             ])->update([
                 'expire_time' => date('Y-m-d H:i:s', strtotime("+10 minutes")),
