@@ -84,6 +84,9 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
                 Route::delete('shoppingBag', 'ShoppingBagController@destroyAll');
                 Route::resource('shoppingBag', 'ShoppingBagController');
 
+                //Payment
+                Route::post('checkout', 'PaymentController@checkout');
+
             });
         });
 

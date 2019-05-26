@@ -48,7 +48,7 @@ class ShoppingBagController extends ApiController
             }
         }
         $pricePayment = $priceAll - $percentAll - $incomeAgency;
-        return $this->respond(["pricePayment" => number_format($pricePayment), "priceAll" => number_format($priceAll), "percentAll" => number_format($percentAll), "incomeAgency" => number_format($incomeAgency), "incomeYou" => number_format($incomeYou), "shoppingBag" => $shoppingBag]);
+        return $this->respond(["pricePayment" => $pricePayment, "priceAll" => $priceAll, "percentAll" => $percentAll, "incomeAgency" => $incomeAgency, "incomeYou" => $incomeYou, "shoppingBag" => $shoppingBag]);
     }
 
     /**
@@ -133,13 +133,12 @@ class ShoppingBagController extends ApiController
     public function destroy($id, Request $request)
     {
         $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id');
-        if (!ShoppingBag::where(['app_id' => $request->input('app_id'), 'id' => $id, 'customer_id' => $customer_id])->exists())
+        if (!ShoppingBag::where(['id' => $id, 'customer_id' => $customer_id])->exists())
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'plz check your id'
             );
         $shoppingBag = ShoppingBag::where([
-            'app_id' => $request->input('app_id'),
             'id' => $id,
             'customer_id' => $customer_id
         ])->get();
@@ -150,7 +149,7 @@ class ShoppingBagController extends ApiController
                         $this->hotelCheck($value);
                         break;
                 }
-        ShoppingBag::where(['app_id' => $request->input('app_id'), 'id' => $id, 'customer_id' => $customer_id])->delete();
+        ShoppingBag::where(['id' => $id, 'customer_id' => $customer_id])->delete();
         return $this->respond(['status' => 'success']);
     }
 
@@ -160,7 +159,6 @@ class ShoppingBagController extends ApiController
     {
         $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id');
         $shoppingBag = ShoppingBag::where([
-            'app_id' => $request->input('app_id'),
             'customer_id' => $customer_id
         ])->get();
         if (sizeof($shoppingBag))
@@ -170,8 +168,8 @@ class ShoppingBagController extends ApiController
                         $this->hotelCheck($value);
                         break;
                 }
-        ShoppingBag::where(['app_id' => $request->input('app_id'), 'customer_id' => $customer_id])->delete();
-        ShoppingBagExpire::where(['app_id' => $request->input('app_id'), 'customer_id' => $customer_id])->delete();
+        ShoppingBag::where(['customer_id' => $customer_id])->delete();
+        ShoppingBagExpire::where(['customer_id' => $customer_id])->delete();
         return $this->respond(['status' => 'success']);
     }
 
@@ -192,12 +190,11 @@ class ShoppingBagController extends ApiController
         ShoppingBag::where('id', $shoppingBag->id)->delete();
     }
 
-    private function expireShopping($app_id, $customer_id)
+    private function expireShopping($customer_id)
     {
-        if (ShoppingBagExpire::where(['app_id' => $app_id, 'customer_id' => $customer_id])->exists())
+        if (ShoppingBagExpire::where(['customer_id' => $customer_id])->exists())
             ShoppingBagExpire::
             where([
-                'app_id' => $app_id,
                 'customer_id' => $customer_id
             ])->update([
                 'expire_time' => date('Y-m-d H:i:s', strtotime("+10 minutes")),
@@ -205,7 +202,6 @@ class ShoppingBagController extends ApiController
             ]);
         else
             ShoppingBagExpire::create([
-                'app_id' => $app_id,
                 'customer_id' => $customer_id,
                 'expire_time' => date('Y-m-d H:i:s', strtotime("+10 minutes")),
                 'status' => Constants::SHOPPING_STATUS_SHOPPING
@@ -240,7 +236,6 @@ class ShoppingBagController extends ApiController
             $date = strtotime(date('Y-m-d', strtotime($startDay->format('Y-m-d') . " +" . $i . " days")));
             $roomToday = DB::connection(Constants::CONNECTION_HOTEL)
                 ->table(Constants::APP_HOTEL_DB_ROOM_EPISODE_DB)
-                ->where('app_id', $request->input('app_id'))
                 ->whereIn('supplier_id', $supplier_id)
                 ->where([
                     'status' => Constants::STATUS_ACTIVE,
@@ -258,7 +253,6 @@ class ShoppingBagController extends ApiController
         }
         $roomEpisode = DB::connection(Constants::CONNECTION_HOTEL)
             ->table(Constants::APP_HOTEL_DB_ROOM_EPISODE_DB)
-            ->where('app_id', $request->input('app_id'))
             ->whereIn('supplier_id', $supplier_id)
             ->whereBetween('date', [$startDay, $endDay])
             ->where([
@@ -317,10 +311,9 @@ class ShoppingBagController extends ApiController
             ->table(Constants::APP_HOTEL_DB_HOTEL_DB)
             ->where('id', $room->hotel_id)
             ->first();
-        if ($shopping = ShoppingBag::where(['date' => $startDay->format('Y-m-d'), 'date_end' => $endDay->format('Y-m-d'), 'app_id' => $request->input('app_id'), 'shopping_id' => $request->input('app_title') . "-" . $request->input('room_id'), 'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id')])->first())
+        if ($shopping = ShoppingBag::where(['date' => $startDay->format('Y-m-d'), 'date_end' => $endDay->format('Y-m-d'), 'shopping_id' => $request->input('app_title') . "-" . $request->input('room_id'), 'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id')])->first())
             ShoppingBag::
             where([
-                'app_id' => $request->input('app_id'),
                 'date' => $startDay->format('Y-m-d'),
                 'date_end' => $endDay->format('Y-m-d'),
                 'shopping_id' => $request->input('app_title') . "-" . $request->input('room_id'),
@@ -358,7 +351,7 @@ class ShoppingBagController extends ApiController
                 ->where('id', $value->id)
                 ->decrement('capacity_remaining', $request->input('count'));
         }
-        $this->expireShopping($request->input('app_id'), Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id'));
+        $this->expireShopping(Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id'));
         return ["status" => "success"];
     }
 }
