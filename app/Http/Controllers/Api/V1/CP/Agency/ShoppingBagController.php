@@ -9,6 +9,7 @@ use App\Sales;
 use App\ShoppingBag;
 use App\ShoppingBagExpire;
 use App\SupplierSales;
+use App\SupplierUser;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use Illuminate\Support\Facades\DB;
@@ -28,11 +29,16 @@ class ShoppingBagController extends ApiController
             'status' => Constants::SHOPPING_STATUS_SHOPPING
         ])->first();
         $shoppingBag = [];
-        if ($shoppingBagExpire)
-            $shoppingBag = ShoppingBag::where('customer_id', $shoppingBagExpire->customer_id)
-                ->get();
-//        foreach ($shoppingBag as $value)
-        return $this->respond(["incomeAgency" => 1, "incomeYou" => 1, "shoppingBag" => $shoppingBag]);
+        $incomeAgency = 0;
+        $incomeYou = 0;
+        if ($shoppingBagExpire) {
+            $shoppingBag = ShoppingBag::where('customer_id', $shoppingBagExpire->customer_id)->get();
+            foreach ($shoppingBag as $value) {
+                $incomeAgency = $incomeAgency + $value->income_agency;
+                $incomeYou = $incomeYou + $value->income_you;
+            }
+        }
+        return $this->respond(["incomeAgency" => $incomeAgency, "incomeYou" => $incomeYou, "shoppingBag" => $shoppingBag]);
     }
 
     /**
@@ -200,14 +206,43 @@ class ShoppingBagController extends ApiController
             ->get();
         $priceAll = 0;
         $percentAll = 0;
+        $incomeAgency = 0;
+        $incomeYou = 0;
         foreach ($roomEpisode as $key => $value) {
             $priceAll = $priceAll + $value->price;
+            $percent = 0;
             if ($value->type_percent == Constants::TYPE_PRICE) {
                 $percentAll = $percentAll + $value->percent;
+                $percent = $value->percent;
             } elseif ($value->type_percent == Constants::TYPE_PERCENT) {
-                $floatPercent = floatval("0." . $value->percent);
-                $percentAll = $percentAll + ($value->price * $floatPercent);
+                if ($value->percent < 100) {
+                    $floatPercent = floatval("0." . $value->percent);
+                    $percentAll = $percentAll + ($value->price * $floatPercent);
+                    $percent = ($value->price * $floatPercent);
+                } else
+                    $percentAll = $percentAll + $value->price;
             }
+            $supplierSales = SupplierSales::
+            join(Constants::SALES_DB, Constants::SALES_DB . '.id', '=', Constants::SUPPLIER_SALES_DB . '.sales_id')
+                ->where([
+                    'type' => Constants::SALES_TYPE_AGENCY,
+                    'supplier_id' => $value->supplier_id
+                ])->first();
+            if ($supplierSales->type_price == Constants::TYPE_PERCENT)
+                $incomeAgency += ($value->price - $percent) * floatval("0." . $supplierSales->percent);
+            elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
+                $incomeAgency = $incomeAgency + $supplierSales->percent;
+            $supplierUser = SupplierUser::where([
+                'user_id' => $request->input('user_id'),
+                'supplier_id' => $value->supplier_id
+            ])->first();
+            if ($supplierUser->type == Constants::TYPE_PERCENT)
+                if ($supplierUser->percent != 100)
+                    $incomeYou = $incomeAgency * floatval("0." . $supplierUser->percent);
+                else
+                    $incomeYou = $incomeAgency;
+            elseif ($supplierUser->type == Constants::TYPE_PRICE)
+                $incomeYou = $incomeYou + $supplierUser->price;
         }
         $room = DB::connection(Constants::CONNECTION_HOTEL)
             ->table(Constants::APP_HOTEL_DB_ROOM_DB)
@@ -217,7 +252,7 @@ class ShoppingBagController extends ApiController
             ->table(Constants::APP_HOTEL_DB_HOTEL_DB)
             ->where('id', $room->hotel_id)
             ->first();
-        if (ShoppingBag::where(['date' => $startDay->format('Y-m-d'), 'date_end' => $endDay->format('Y-m-d'), 'app_id' => $request->input('app_id'), 'shopping_id' => $request->input('app_title') . "-" . $request->input('room_id'), 'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id')])->exists())
+        if ($shopping = ShoppingBag::where(['date' => $startDay->format('Y-m-d'), 'date_end' => $endDay->format('Y-m-d'), 'app_id' => $request->input('app_id'), 'shopping_id' => $request->input('app_title') . "-" . $request->input('room_id'), 'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id')])->first())
             ShoppingBag::
             where([
                 'app_id' => $request->input('app_id'),
@@ -225,7 +260,13 @@ class ShoppingBagController extends ApiController
                 'date_end' => $endDay->format('Y-m-d'),
                 'shopping_id' => $request->input('app_title') . "-" . $request->input('room_id'),
                 'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id')
-            ])->increment('count');
+            ])->update([
+                'count' => $shopping->count + $request->input('count'),
+                'price_all' => $priceAll * ($shopping->count + $request->input('count')),
+                'percent_all' => $percentAll * ($shopping->count + $request->input('count')),
+                'income_agency' => $incomeAgency * ($shopping->count + $request->input('count')),
+                'income_you' => $incomeYou * ($shopping->count + $request->input('count'))
+            ]);
         else
             ShoppingBag::create([
                 'app_id' => $request->input('app_id'),
@@ -236,8 +277,10 @@ class ShoppingBagController extends ApiController
                 'date' => $startDay->format('Y-m-d'),
                 'date_end' => $endDay->format('Y-m-d'),
                 'count' => $request->input('count'),
-                'price_all' => $priceAll,
-                'percent_all' => $percentAll,
+                'price_all' => $priceAll * $request->input('count'),
+                'percent_all' => $percentAll * $request->input('count'),
+                'income_agency' => intval($incomeAgency * $request->input('count')),
+                'income_you' => intval($incomeYou * $request->input('count')),
                 'shopping' => ["roomEpisode" => $roomEpisode->toArray(), "hotel" => (array)$hotel, "room" => (array)$room]
             ]);
         foreach ($roomEpisode as $key => $value) {

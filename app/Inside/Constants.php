@@ -35,6 +35,8 @@ class Constants
     const SUPPLIER_DB = 'supplier';
     const SUPPLIER_USERS_DB = 'supplier_users';
     const SUPPLIER_APP_DB = 'supplier_app';
+    const SUPPLIER_WALLET_DB = 'supplier_wallet';
+    const SUPPLIER_WALLET_INVOICE_DB = 'supplier_wallet_invoice';
     const AGENCY_DB = 'agency';
     const AGENCY_USERS_DB = 'agency_users';
     const AGENCY_APP_DB = 'agency_app';
@@ -82,7 +84,7 @@ class Constants
 
     //Shopping Status
     const SHOPPING_STATUS_SHOPPING = "shopping";
-    const SHOPPING_STATUS_DELETE= "delete";
+    const SHOPPING_STATUS_DELETE = "delete";
     const SHOPPING_STATUS_PAYMENT = "payment";
     const SHOPPING_STATUS_SUCCESS = "success";
     const SHOPPING_STATUS_FINISH = "finish";

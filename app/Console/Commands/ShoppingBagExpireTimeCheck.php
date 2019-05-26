@@ -45,20 +45,22 @@ class ShoppingBagExpireTimeCheck extends Command
             ->where([
                 'status' => Constants::SHOPPING_STATUS_SHOPPING
             ])->first();
-        ShoppingBagExpire::where([
-            'id' => $shoppingBagExpire->id
-        ])->update(['status' => Constants::SHOPPING_STATUS_DELETE]);
-        $shoppingBag = ShoppingBag::where([
-            'customer_id' => $shoppingBagExpire->customer_id
-        ])->get();
-        if (sizeof($shoppingBag))
-            foreach ($shoppingBag as $value)
-                switch (explode('-', $value->shopping_id)[0]) {
-                    case Constants::APP_NAME_HOTEL:
-                        $this->hotelCheck($value);
-                        $this->deleteShoppingBagExpire($shoppingBagExpire->id);
-                        break;
-                }
+        if ($shoppingBagExpire) {
+            ShoppingBagExpire::where([
+                'id' => $shoppingBagExpire->id
+            ])->update(['status' => Constants::SHOPPING_STATUS_DELETE]);
+            $shoppingBag = ShoppingBag::where([
+                'customer_id' => $shoppingBagExpire->customer_id
+            ])->get();
+            if (sizeof($shoppingBag))
+                foreach ($shoppingBag as $value)
+                    switch (explode('-', $value->shopping_id)[0]) {
+                        case Constants::APP_NAME_HOTEL:
+                            $this->hotelCheck($value);
+                            $this->deleteShoppingBagExpire($shoppingBagExpire->id);
+                            break;
+                    }
+        }
     }
 
     ///////////////////////private function/////////////////////////////

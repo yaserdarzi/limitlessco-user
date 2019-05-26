@@ -24,6 +24,8 @@ class ShoppingInvoiceTableMigration extends Migration
             $table->bigInteger('count_all')->default(0);
             $table->bigInteger('price_all')->default(0);
             $table->bigInteger('percent_all')->default(0);
+            $table->bigInteger('income_all_agency')->default(0);
+            $table->bigInteger('income_all_you')->default(0);
             $table->string('code_coupon')->nullable();
             $table->string('type_status');
             $table->string('status');
