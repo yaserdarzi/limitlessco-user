@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\CP\Agency;
 
+use App\AgencyUser;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
@@ -9,7 +10,6 @@ use App\Sales;
 use App\ShoppingBag;
 use App\ShoppingBagExpire;
 use App\SupplierSales;
-use App\SupplierUser;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use Illuminate\Support\Facades\DB;
@@ -292,18 +292,18 @@ class ShoppingBagController extends ApiController
                     $incomeAgency += ($value->price - $percent) * floatval("0." . $supplierSales->percent);
                 elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
                     $incomeAgency = $incomeAgency + $supplierSales->percent;
-            $supplierUser = SupplierUser::where([
+            $agencyUser = AgencyUser::where([
                 'user_id' => $request->input('user_id'),
-                'supplier_id' => $value->supplier_id
+                'agency_id' => $request->input('agency_id')
             ])->first();
-            if ($supplierUser)
-                if ($supplierUser->type == Constants::TYPE_PERCENT)
-                    if ($supplierUser->percent != 100)
-                        $incomeYou = $incomeAgency * floatval("0." . $supplierUser->percent);
+            if ($agencyUser)
+                if ($agencyUser->type == Constants::TYPE_PERCENT)
+                    if ($agencyUser->percent != 100)
+                        $incomeYou = $incomeAgency * floatval("0." . $agencyUser->percent);
                     else
                         $incomeYou = $incomeAgency;
-                elseif ($supplierUser->type == Constants::TYPE_PRICE)
-                    $incomeYou = $incomeYou + $supplierUser->price;
+                elseif ($agencyUser->type == Constants::TYPE_PRICE)
+                    $incomeYou = $incomeYou + $agencyUser->price;
         }
         $room = DB::connection(Constants::CONNECTION_HOTEL)
             ->table(Constants::APP_HOTEL_DB_ROOM_DB)
