@@ -211,6 +211,7 @@ class ShoppingBagController extends ApiController
                 'count' => $request->input('count'),
                 'price_all' => $priceAll,
                 'percent_all' => $percentAll,
+                'expire_time' => date('Y-m-d H:i:s', strtotime("+10 minutes")),
                 'shopping' => ["roomEpisode" => $roomEpisode->toArray(), "hotel" => (array)$hotel, "room" => (array)$room]
             ]);
         foreach ($roomEpisode as $key => $value) {
