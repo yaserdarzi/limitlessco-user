@@ -15,7 +15,7 @@ return [
     'supportsCredentials' => false,
     'allowedOrigins' => ['*'],
     'allowedOriginsPatterns' => [],
-    'allowedHeaders' => ['Content-Type', 'Accept', 'X-Requested-With', 'agent', 'appToken', 'appName', 'Authorization', 'market', 'X-Debug'],
+    'allowedHeaders' => ['Content-Type', 'Accept', 'X-Requested-With', 'agent', 'appToken', 'AppName', 'Authorization', 'market', 'X-Debug'],
     'allowedMethods' => ['*'],
     'exposedHeaders' => [],
     'maxAge' => 0,
