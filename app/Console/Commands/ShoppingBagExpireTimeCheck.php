@@ -48,14 +48,14 @@ class ShoppingBagExpireTimeCheck extends Command
         if ($shoppingBag)
             switch (explode('-', $shoppingBag->shopping_id)[0]) {
                 case Constants::APP_NAME_HOTEL:
-                    $this->hotelCheck($shoppingBag, explode('-', $shoppingBag->shopping_id)[1]);
+                    $this->hotelCheck($shoppingBag);
                     break;
             }
     }
 
     ///////////////////////private function/////////////////////////////
 
-    private function hotelCheck($shoppingBag, $room_id)
+    private function hotelCheck($shoppingBag)
     {
         echo "hotel \n";
         foreach ($shoppingBag->shopping->roomEpisode as $value) {
