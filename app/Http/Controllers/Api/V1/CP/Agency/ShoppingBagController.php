@@ -34,6 +34,7 @@ class ShoppingBagController extends ApiController
         $incomeYou = 0;
         $priceAll = 0;
         $percentAll = 0;
+        $countAll = 0;
         if ($shoppingBagExpire) {
             $shoppingBag = ShoppingBag::where('customer_id', $shoppingBagExpire->customer_id)->get();
             foreach ($shoppingBag as $value) {
@@ -41,6 +42,7 @@ class ShoppingBagController extends ApiController
                 $percentAll = $percentAll + $value->percent_all;
                 $incomeAgency = $incomeAgency + $value->income_agency;
                 $incomeYou = $incomeYou + $value->income_you;
+                $countAll = $countAll + $value->count;
                 $value->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date));
                 $value->date_end_persian = null;
                 if ($value->date_end)
@@ -48,7 +50,7 @@ class ShoppingBagController extends ApiController
             }
         }
         $pricePayment = $priceAll - $percentAll - $incomeAgency;
-        return $this->respond(["pricePayment" => $pricePayment, "priceAll" => $priceAll, "percentAll" => $percentAll, "incomeAgency" => $incomeAgency, "incomeYou" => $incomeYou, "shoppingBag" => $shoppingBag]);
+        return $this->respond(["pricePayment" => $pricePayment, "countAll" => $countAll, "priceAll" => $priceAll, "percentAll" => $percentAll, "incomeAgency" => $incomeAgency, "incomeYou" => $incomeYou, "shoppingBag" => $shoppingBag]);
     }
 
     /**
