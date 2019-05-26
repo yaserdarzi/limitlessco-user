@@ -50,7 +50,15 @@ class ShoppingBagController extends ApiController
             }
         }
         $pricePayment = $priceAll - $percentAll - $incomeAgency;
-        return $this->respond(["pricePayment" => $pricePayment, "countAll" => $countAll, "priceAll" => $priceAll, "percentAll" => $percentAll, "incomeAgency" => $incomeAgency, "incomeYou" => $incomeYou, "shoppingBag" => $shoppingBag]);
+        return $this->respond([
+            "pricePayment" => $pricePayment,
+            "countAll" => $countAll,
+            "priceAll" => $priceAll,
+            "percentAll" => $percentAll,
+            "incomeAgency" => $incomeAgency,
+            "incomeYou" => $incomeYou,
+            "shoppingBag" => $shoppingBag
+        ]);
     }
 
     /**
