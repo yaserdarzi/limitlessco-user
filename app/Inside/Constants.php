@@ -95,6 +95,7 @@ class Constants
     const INVOICE_MARKET_ZARINPAL = 'zarinpal';
     const INVOICE_MARKET_MELLAT = 'mellat';
     const INVOICE_MARKET_DIRECT = 'direct';
+    const INVOICE_MARKET_WALLET = 'wallet';
     //Invoice Type
     const INVOICE_TYPE_SHOPPING = 'shopping';
     const INVOICE_TYPE_WITHDRAW = 'withdraw';

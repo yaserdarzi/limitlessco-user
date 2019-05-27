@@ -67,6 +67,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
 
         //Zarinpall Callback
         Route::any('shoppingPaymentPortalCallback', 'Payment\ZarinpallController@portalCallback')->name('api.cp.agency.shopping.portal.callback');
+        Route::any('shoppingPaymentWalletPortalCallback', 'Payment\ZarinpallController@walletPortalCallback')->name('api.cp.agency.shopping.wallet.portal.callback');
 
         //Auth
         Route::namespace('Auth')->prefix('/auth/')->group(function () {

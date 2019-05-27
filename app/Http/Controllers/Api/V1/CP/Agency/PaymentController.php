@@ -80,7 +80,7 @@ class PaymentController extends ApiController
         if ($wallet->price <= $pricePayment)
             $walletPayment = $pricePayment - $wallet->price;
         else
-            $walletPayment = $wallet->price - $pricePayment;
+            $walletPayment = 0;
         $data = [
             'priceAll' => $priceAll,
             'percentAll' => $percentAll,
@@ -175,7 +175,7 @@ class PaymentController extends ApiController
         if ($wallet->price <= $pricePayment)
             $walletPayment = $pricePayment - $wallet->price;
         else
-            $walletPayment = $wallet->price - $pricePayment;
+            $walletPayment = 0;
         return $this->respond([
             'pricePayment' => $pricePayment,
             'walletPrice' => $wallet->price,
