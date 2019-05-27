@@ -101,7 +101,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             Route::get('report/chart', 'ReportController@chart');
 
             //Ticket
-//            Route::get('getFactor/{factor_id}', 'FactorController@getFactor');
+            Route::get('getTicket', 'TicketController@show');
             Route::get('ticket', 'TicketController@index');
 
             //Agency User
