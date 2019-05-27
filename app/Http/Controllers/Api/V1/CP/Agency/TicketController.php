@@ -8,6 +8,7 @@ use App\Inside\Constants;
 use App\Shopping;
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use Morilog\Jalali\CalendarUtils;
 
 class TicketController extends ApiController
 {
@@ -32,7 +33,11 @@ class TicketController extends ApiController
                 ->orWhere('phone', 'LIKE', "%$search%");
         }
         $shopping = $shopping->take(10)->skip($skip)
-            ->orderBy('created_at', 'desc')->get();
+            ->orderBy('created_at', 'desc')->get()->map(function ($value){
+                $value->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date));
+                $value->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->created_at));
+                return $value;
+            });
         return $this->respond($shopping);
     }
 

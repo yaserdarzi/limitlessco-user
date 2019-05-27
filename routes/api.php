@@ -76,7 +76,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
         });
         Route::middleware(['cp.agency.app.check', 'cp.agency.auth'])->group(function () {
 
-            //Supplier Init
+            //Agency Init
             Route::get('init', 'AgencyController@index');
             Route::post('update', 'AgencyController@update');
             Route::post('user/update', 'AgencyController@userUpdate');
@@ -103,6 +103,10 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             //Ticket
 //            Route::get('getFactor/{factor_id}', 'FactorController@getFactor');
             Route::get('ticket', 'TicketController@index');
+
+            //Agency User
+            Route::post('user/update/{user_id}', 'AgencyUserController@update');
+            Route::resource('user', 'AgencyUserController');
 
         });
 
