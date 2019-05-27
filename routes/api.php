@@ -65,6 +65,9 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
     //Agency
     Route::namespace('Agency')->prefix('/agency/')->group(function () {
 
+        //Zarinpall Callback
+        Route::any('shoppingPaymentPortalCallback', 'Payment\ZarinpallController@portalCallback')->name('api.cp.agency.shopping.portal.callback');
+
         //Auth
         Route::namespace('Auth')->prefix('/auth/')->group(function () {
             Route::post('otp/sms', 'OTPController@smsOTP');
@@ -84,10 +87,11 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
                 Route::delete('shoppingBag', 'ShoppingBagController@destroyAll');
                 Route::resource('shoppingBag', 'ShoppingBagController');
 
-                //Payment
-                Route::post('checkout', 'PaymentController@checkout');
-
             });
+
+            //Payment
+            Route::post('checkout', 'PaymentController@checkout');
+            Route::post('payment', 'PaymentController@store');
         });
 
     });
