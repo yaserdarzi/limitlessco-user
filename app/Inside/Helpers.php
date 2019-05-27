@@ -3,6 +3,8 @@
 
 namespace App\Inside;
 
+use App\Shopping;
+
 class Helpers
 {
     public function priceNumberDigitsToNormal($price)
@@ -57,5 +59,15 @@ class Helpers
         }
 
         return [$newWidth, $newHeight];
+    }
+
+    public function voucher($appName)
+    {
+        $voucher = Shopping::count();
+        $zero = '';
+        if (strlen($voucher) < 8)
+            for ($i = strlen($voucher); $i < 8; $i++)
+                $zero = $zero . '0';
+        return substr($appName, 0, 1) . "-" . $zero . $voucher;
     }
 }

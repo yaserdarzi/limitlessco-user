@@ -89,4 +89,26 @@ class Constants
     const SHOPPING_STATUS_SUCCESS = "success";
     const SHOPPING_STATUS_FINISH = "finish";
     const SHOPPING_STATUS_RETURN = "return";
+
+
+    //Invoice Market
+    const INVOICE_MARKET_ZARINPAL = 'zarinpal';
+    const INVOICE_MARKET_MELLAT = 'mellat';
+    const INVOICE_MARKET_DIRECT = 'direct';
+    //Invoice Type
+    const INVOICE_TYPE_SHOPPING = 'shopping';
+    const INVOICE_TYPE_WITHDRAW = 'withdraw';
+    //Invoice Status
+    const INVOICE_STATUS_PENDING = 'pending';
+    const INVOICE_STATUS_SUCCESS = 'success';
+    const INVOICE_STATUS_FAILED = 'failed';
+    //Invoice Type Status
+    const INVOICE_TYPE_STATUS_PRICE = 'price';
+    const INVOICE_TYPE_STATUS_CREDIT = 'credit';
+    const INVOICE_TYPE_STATUS_REQUEST = 'request';
+    //Invoice Invoice Status
+    const INVOICE_INVOICE_STATUS_SHOPPING = 'خرید';
+    const INVOICE_INVOICE_STATUS_INCREMENT = 'افزایش';
+    const INVOICE_INVOICE_STATUS_DECREMENT = 'کاهش';
+    const INVOICE_INVOICE_STATUS_WITHDRAW = 'تصویه حساب';
 }

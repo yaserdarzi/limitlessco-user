@@ -12,7 +12,7 @@ class ShoppingBag extends Model
     ];
     protected $table = Constants::SHOPPING_BAG_DB;
     protected $fillable = [
-        'app_id', 'shopping_id', 'customer_id', 'title', 'title_more',
+        'shopping_id', 'customer_id', 'title', 'title_more',
         'date', 'date_end', 'start_hours', 'end_hours', 'price_fee',
         'percent_fee', 'count', 'price_all', 'percent_all',
         'income_agency', 'income_you', 'shopping'

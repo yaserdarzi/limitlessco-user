@@ -16,7 +16,6 @@ class ShoppingBagTableMigration extends Migration
     {
         Schema::create(Constants::SHOPPING_BAG_DB, function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('app_id');
             $table->string('shopping_id');
             $table->string('customer_id');
             $table->string('title');
@@ -34,9 +33,6 @@ class ShoppingBagTableMigration extends Migration
             $table->bigInteger('income_you')->default(0);
             $table->json('shopping')->nullable();
             $table->timestamps();
-        });
-        Schema::table(Constants::SHOPPING_BAG_DB, function (Blueprint $table) {
-            $table->foreign('app_id')->references('id')->on(Constants::APP_DB)->onDelete('cascade');
         });
     }
 

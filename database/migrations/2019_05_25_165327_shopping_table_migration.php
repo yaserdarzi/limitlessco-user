@@ -16,11 +16,12 @@ class ShoppingTableMigration extends Migration
     {
         Schema::create(Constants::SHOPPING_DB, function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('app_id');
             $table->string('shopping_id');
             $table->string('customer_id');
             $table->bigInteger('shopping_invoice_id');
             $table->string('voucher');
+            $table->string('name')->nullable();
+            $table->string('phone')->nullable();
             $table->string('title');
             $table->string('title_more')->nullable();
             $table->timestamp('date');
@@ -40,7 +41,6 @@ class ShoppingTableMigration extends Migration
             $table->timestamps();
         });
         Schema::table(Constants::SHOPPING_DB, function (Blueprint $table) {
-            $table->foreign('app_id')->references('id')->on(Constants::APP_DB)->onDelete('cascade');
             $table->foreign('shopping_invoice_id')->references('id')->on(Constants::SHOPPING_INVOICE_DB)->onDelete('cascade');
         });
     }

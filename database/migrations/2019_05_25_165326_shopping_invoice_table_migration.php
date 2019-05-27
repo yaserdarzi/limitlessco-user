@@ -16,11 +16,9 @@ class ShoppingInvoiceTableMigration extends Migration
     {
         Schema::create(Constants::SHOPPING_INVOICE_DB, function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('app_id');
-            $table->string('shopping_id');
             $table->string('customer_id');
-            $table->string('phone')->nullable();
             $table->string('name')->nullable();
+            $table->string('phone')->nullable();
             $table->bigInteger('count_all')->default(0);
             $table->bigInteger('price_all')->default(0);
             $table->bigInteger('percent_all')->default(0);
@@ -37,9 +35,6 @@ class ShoppingInvoiceTableMigration extends Migration
             $table->string('market');
             $table->json('info')->nullable();
             $table->timestamps();
-        });
-        Schema::table(Constants::SHOPPING_INVOICE_DB, function (Blueprint $table) {
-            $table->foreign('app_id')->references('id')->on(Constants::APP_DB)->onDelete('cascade');
         });
     }
 

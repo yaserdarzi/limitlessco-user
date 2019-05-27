@@ -12,6 +12,6 @@ class ShoppingBagExpire extends Model
     ];
     protected $table = Constants::SHOPPING_BAG_EXPIRE_DB;
     protected $fillable = [
-        'app_id', 'customer_id', 'expire_time', 'status'
+        'customer_id', 'expire_time', 'status'
     ];
 }

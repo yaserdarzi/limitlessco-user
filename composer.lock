@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b352ff786330a975d6c928ee9b81d5d6",
-    "content-hash": "31900c04fedae7f106ea4c5c533d6c13",
+    "hash": "0d17527005af2fb37b6a29d9b2f0a243",
+    "content-hash": "5a29a4da59fbc21589aa52dd0bf69cbc",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1904,6 +1904,54 @@
             "time": "2018-07-19 23:38:55"
         },
         {
+            "name": "rasulian/laravel-zarinpal",
+            "version": "v1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mehranrasulian/laravel-zarinpal.git",
+                "reference": "b474fa31106707febb7c42406912400fa5767414"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mehranrasulian/laravel-zarinpal/zipball/b474fa31106707febb7c42406912400fa5767414",
+                "reference": "b474fa31106707febb7c42406912400fa5767414",
+                "shasum": ""
+            },
+            "require": {
+                "wmateam/curling": "^0.7.5"
+            },
+            "require-dev": {
+                "orchestra/testbench": "~3.0",
+                "phpunit/phpunit": "^6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Rasulian\\ZarinPal\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mehran Rasulian",
+                    "email": "mehran.rasulian@gmail.com"
+                }
+            ],
+            "description": "A Laravel package to accept and verify payments from ZarinPal gateway based on REST",
+            "keywords": [
+                "gateway",
+                "laravel",
+                "zarinpal",
+                "درگاه پرداخت",
+                "زرین پال",
+                "لاراول"
+            ],
+            "time": "2017-10-13 11:49:18"
+        },
+        {
             "name": "swiftmailer/swiftmailer",
             "version": "v6.2.1",
             "source": {
@@ -3140,6 +3188,52 @@
                 "environment"
             ],
             "time": "2019-03-06 09:39:45"
+        },
+        {
+            "name": "wmateam/curling",
+            "version": "0.7.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wmateam/curling.git",
+                "reference": "4a100028590127556ad54b6a77bc16b7a5f74a4a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wmateam/curling/zipball/4a100028590127556ad54b6a77bc16b7a5f74a4a",
+                "reference": "4a100028590127556ad54b6a77bc16b7a5f74a4a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.0.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "wmateam\\curling\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mohammad Javad Afkari",
+                    "email": "wmateam@gmail.com"
+                }
+            ],
+            "description": "CURL request Handler for PHP",
+            "homepage": "https://github.com/wmateam/curling",
+            "keywords": [
+                "curl",
+                "php",
+                "request",
+                "response"
+            ],
+            "time": "2018-04-21 20:18:48"
         }
     ],
     "packages-dev": [

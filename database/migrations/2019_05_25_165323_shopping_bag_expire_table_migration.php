@@ -16,14 +16,10 @@ class ShoppingBagExpireTableMigration extends Migration
     {
         Schema::create(Constants::SHOPPING_BAG_EXPIRE_DB, function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('app_id');
             $table->string('customer_id');
             $table->timestamp('expire_time')->default(date('Y-m-d H:i:s', strtotime("+10 minutes")));
             $table->string('status')->default(Constants::SHOPPING_STATUS_SHOPPING);
             $table->timestamps();
-        });
-        Schema::table(Constants::SHOPPING_BAG_EXPIRE_DB, function (Blueprint $table) {
-            $table->foreign('app_id')->references('id')->on(Constants::APP_DB)->onDelete('cascade');
         });
     }
 
