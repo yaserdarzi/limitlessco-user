@@ -78,6 +78,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
 
             //Supplier Init
             Route::get('init', 'AgencyController@index');
+            Route::post('update', 'AgencyController@update');
 
             //App Checker
             Route::get('app/checker', 'AppController@appChecker');
@@ -93,6 +94,11 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             //Payment
             Route::post('checkout', 'PaymentController@checkout');
             Route::post('payment', 'PaymentController@store');
+
+            //Report
+            Route::get('report/sales', 'ReportController@sales');
+            Route::get('report/chart', 'ReportController@chart');
+
         });
 
     });

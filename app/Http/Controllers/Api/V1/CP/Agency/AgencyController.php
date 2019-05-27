@@ -10,12 +10,20 @@ use App\Inside\Constants;
 use App\Agency;
 use App\AgencyApp;
 use App\AgencyUser;
+use App\Inside\Helpers;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use Intervention\Image\Facades\Image;
 
 class AgencyController extends ApiController
 {
+    protected $help;
+
+    public function __construct()
+    {
+        $this->help = new Helpers();
+    }
 
     /**
      * Display a listing of the resource.
@@ -37,20 +45,20 @@ class AgencyController extends ApiController
             );
         $user->wallet = AgencyWallet::where(['id' => $agencyUser->agency_id])->first();
         if ($user->image) {
-            $user->image = url('/files/user/' . $user->image);
             $user->image_thumb = url('/files/user/thumb/' . $user->image);
+            $user->image = url('/files/user/' . $user->image);
         } else {
-            $user->image = url('/files/user/defaultAvatar.svg');
             $user->image_thumb = url('/files/user/defaultAvatar.svg');
+            $user->image = url('/files/user/defaultAvatar.svg');
         }
         $appId = AgencyApp::where(['agency_id' => $agencyUser->agency_id])->pluck('app_id');
         $user->agency = Agency::where('id', $agencyUser->agency_id)->first();
         if ($user->agency->image) {
-            $user->agency->image = url('/files/agency/' . $user->agency->image);
             $user->agency->image_thumb = url('/files/agency/thumb/' . $user->agency->image);
+            $user->agency->image = url('/files/agency/' . $user->agency->image);
         } else {
-            $user->agency->image = url('/files/agency/defaultAvatar.svg');
             $user->agency->image_thumb = url('/files/agency/defaultAvatar.svg');
+            $user->agency->image = url('/files/agency/defaultAvatar.svg');
         }
         $user->role = AgencyUser::where(['user_id' => $user->id])->first()->role;
         $user->apps = App::whereIn('id', $appId)->get();
@@ -109,9 +117,51 @@ class AgencyController extends ApiController
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        if ($request->input('role') != Constants::ROLE_ADMIN)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی شما دسترسی به این قسمت ندارید.'
+            );
+        if (!$request->input('name'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن نام آژانس اجباری می باشد.'
+            );
+        if (!$request->input('tell'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن شماره آژانس اجباری می باشد.'
+            );
+        $info = Agency::find($request->input('agency_id'));
+        $image = $info->image;
+        if ($request->file('image')) {
+            \Storage::disk('upload')->makeDirectory('/agency/');
+            \Storage::disk('upload')->makeDirectory('/agency/thumb/');
+            $image = md5(\File::get($request->file('image'))) . '.' . $request->file('image')->getClientOriginalExtension();
+            $exists = \Storage::disk('upload')->has('/agency/' . $image);
+            if ($exists == null)
+                \Storage::disk('upload')->put('/agency/' . $image, \File::get($request->file('image')->getRealPath()));
+            //generate thumbnail
+            $image_resize = Image::make($request->file('image')->getRealPath());
+            //get width and height of image
+            $data = getimagesize($request->file('image'));
+            $imageWidth = $data[0];
+            $imageHeight = $data[1];
+            $newDimen = $this->help->getScaledDimension($imageWidth, $imageHeight, 200, 200, false);
+            $image_resize->resize($newDimen[0], $newDimen[1]);
+            $thumb = public_path('/files/agency/thumb/' . $image);
+            $image_resize->save($thumb);
+        }
+        Agency::where(['id' => $request->input('agency_id')])
+            ->update([
+                'name' => $request->input('name'),
+                'tell' => $request->input('tell'),
+                'image' => $image
+            ]);
+        return $this->index($request);
+
     }
 
     /**

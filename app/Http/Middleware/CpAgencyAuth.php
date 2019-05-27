@@ -32,12 +32,13 @@ class CpAgencyAuth
                 'Plz check your Authorization header'
             );
         $token = JWT::decode($request->header('Authorization'), config("jwt.secret"), array('HS256'));
-        if (!AgencyUser::where(['user_id' => $token->user_id])->exists())
+        if (!AgencyUser::where(['user_id' => $token->user_id, 'agency_id' => $request->input('agency_id')])->exists())
             throw new ApiException(
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
                 'کاربر گرامی لطفا لاگین کنید.'
             );
         $input['user_id'] = $token->user_id;
+        $input['role'] = $token->role;
         $input['agent'] = $token->agent;
         $request->replace($input);
         return $next($request);
