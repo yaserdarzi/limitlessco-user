@@ -95,6 +95,11 @@ class ReportController extends ApiController
 
     public function sales(Request $request)
     {
+        if ($request->input('role') != Constants::ROLE_ADMIN)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی شما دسترسی به این قسمت ندارید.'
+            );
         $data['incomeAllAgency'] = 0;
         $data['countAll'] = 0;
         if ($request->input('role') == Constants::ROLE_ADMIN) {
@@ -111,6 +116,11 @@ class ReportController extends ApiController
 
     public function chart(Request $request)
     {
+        if ($request->input('role') != Constants::ROLE_ADMIN)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی شما دسترسی به این قسمت ندارید.'
+            );
         $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-";
         $first = Jalalian::forge(strtotime('now'))->format('%Y/%m/%d');
         for ($i = 0; $i <= 6; $i++) {

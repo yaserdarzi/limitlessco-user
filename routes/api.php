@@ -108,6 +108,10 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             Route::post('user/update/{user_id}', 'AgencyUserController@update');
             Route::resource('user', 'AgencyUserController');
 
+            //Wallet
+            Route::get('wallet', 'WalletController@index');
+            Route::post('wallet', 'WalletController@store');
+
         });
 
     });

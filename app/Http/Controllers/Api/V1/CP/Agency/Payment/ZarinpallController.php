@@ -159,7 +159,7 @@ class ZarinpallController extends ApiController
                 $agency_id = explode('-', $shoppingInvoice->customer_id)[1];
                 $wallet = AgencyWallet::where('agency_id', $agency_id)->first();
                 $walletPaymentTokenAgencyCount = AgencyWalletInvoice::count();
-                $walletPaymentTokenAgency = "a-" . '-' . ++$walletPaymentTokenAgencyCount;
+                $walletPaymentTokenAgency = "a-"  . ++$walletPaymentTokenAgencyCount;
                 AgencyWalletInvoice::create([
                     'agency_id' => $agency_id,
                     'wallet_id' => $wallet->id,
@@ -244,7 +244,7 @@ class ZarinpallController extends ApiController
         $agency_id = explode('-', $shoppingInvoice->customer_id)[1];
         $wallet = AgencyWallet::where('agency_id', $agency_id)->first();
         $walletPaymentTokenAgencyCount = AgencyWalletInvoice::count();
-        $walletPaymentTokenAgency = "a-" . '-' . ++$walletPaymentTokenAgencyCount;
+        $walletPaymentTokenAgency = "a-" . ++$walletPaymentTokenAgencyCount;
         AgencyWalletInvoice::create([
             'agency_id' => $agency_id,
             'wallet_id' => $wallet->id,
@@ -344,7 +344,7 @@ class ZarinpallController extends ApiController
                 $agency_id = explode('-', $shoppingInvoice->customer_id)[1];
                 $wallet = AgencyWallet::where('agency_id', $agency_id)->first();
                 $walletPaymentTokenAgencyCount = AgencyWalletInvoice::count();
-                $walletPaymentTokenAgency = "a-" . '-' . ++$walletPaymentTokenAgencyCount;
+                $walletPaymentTokenAgency = "a-" . ++$walletPaymentTokenAgencyCount;
                 AgencyWalletInvoice::create([
                     'agency_id' => $agency_id,
                     'wallet_id' => $wallet->id,
@@ -361,7 +361,7 @@ class ZarinpallController extends ApiController
                     'info' => ['wallet' => $wallet, 'zarinpal' => $verify],
                 ]);
                 $walletPaymentTokenAgencyCount = AgencyWalletInvoice::count();
-                $walletPaymentTokenAgency = "a-" . '-' . ++$walletPaymentTokenAgencyCount;
+                $walletPaymentTokenAgency = "a-" .  ++$walletPaymentTokenAgencyCount;
                 AgencyWalletInvoice::create([
                     'agency_id' => $agency_id,
                     'wallet_id' => $wallet->id,

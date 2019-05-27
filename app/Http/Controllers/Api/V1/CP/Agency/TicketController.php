@@ -8,7 +8,6 @@ use App\Inside\Constants;
 use App\Shopping;
 use Illuminate\Http\Request;
 use App\Http\Requests;
-use Illuminate\Support\Facades\DB;
 use Morilog\Jalali\CalendarUtils;
 
 class TicketController extends ApiController
@@ -71,9 +70,17 @@ class TicketController extends ApiController
      */
     public function show(Request $request)
     {
+        $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-";
         $shopping = Shopping::where([
             'id' => $request->input('id'),
-        ])->first();
+        ])->where('customer_id', 'like', "%{$customer_id}%")->first();
+        if (!$shopping)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی شما دسترسی به این قسمت ندارید.'
+            );
+        $shopping->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($shopping->date));
+        $shopping->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($shopping->created_at));
         return $this->respond($shopping);
     }
 
