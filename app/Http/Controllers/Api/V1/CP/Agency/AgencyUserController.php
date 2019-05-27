@@ -257,18 +257,17 @@ class AgencyUserController extends ApiController
      */
     public function destroy($id, Request $request)
     {
-//        $agencyAgent = AgencyAgent::where(['id' => $request->input('agency_agent_id')])->first();
-//        if ($agencyAgent->type != "admin")
-//            throw new ApiException(
-//                ApiException::EXCEPTION_BAD_REQUEST_400,
-//                'your not admin'
-//            );
-//        if (!AgencyAgent::where("id", $id)->exists())
-//            throw new ApiException(
-//                ApiException::EXCEPTION_BAD_REQUEST_400,
-//                'plz check your id'
-//            );
-//        AgencyAgent::where(['id' => $id])->delete();
-//        return $this->respond(["status" => "success"]);
+        if ($request->input('role') != Constants::ROLE_ADMIN)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی شما دسترسی به این قسمت ندارید.'
+            );
+        if (!AgencyUser::where(['id' => $id, ['role', '!=', Constants::ROLE_ADMIN]])->exists())
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                "کاربر گرامی شما دسترسی لازم برای حرف را ندارید."
+            );
+        AgencyUser::where(['id' => $id, 'agency_id' => $request->input('agency_id')])->delete();
+        return $this->respond(["status" => "success"]);
     }
 }
