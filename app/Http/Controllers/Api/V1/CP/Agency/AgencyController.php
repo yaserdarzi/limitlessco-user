@@ -177,4 +177,39 @@ class AgencyController extends ApiController
 
     ///////////////////public function///////////////////////
 
+
+    public function userUpdate(Request $request)
+    {
+        if (!$request->input('name'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن نام آژانس اجباری می باشد.'
+            );
+        $info = User::find($request->input('user_id'));
+        $image = $info->image;
+        if ($request->file('image')) {
+            \Storage::disk('upload')->makeDirectory('/user/');
+            \Storage::disk('upload')->makeDirectory('/user/thumb/');
+            $image = md5(\File::get($request->file('image'))) . '.' . $request->file('image')->getClientOriginalExtension();
+            $exists = \Storage::disk('upload')->has('/user/' . $image);
+            if ($exists == null)
+                \Storage::disk('upload')->put('/user/' . $image, \File::get($request->file('image')->getRealPath()));
+            //generate thumbnail
+            $image_resize = Image::make($request->file('image')->getRealPath());
+            //get width and height of image
+            $data = getimagesize($request->file('image'));
+            $imageWidth = $data[0];
+            $imageHeight = $data[1];
+            $newDimen = $this->help->getScaledDimension($imageWidth, $imageHeight, 200, 200, false);
+            $image_resize->resize($newDimen[0], $newDimen[1]);
+            $thumb = public_path('/files/user/thumb/' . $image);
+            $image_resize->save($thumb);
+        }
+        User::where(['id' => $request->input('user_id')])
+            ->update([
+                'name' => $request->input('name'),
+                'image' => $image
+            ]);
+        return $this->index($request);
+    }
 }
