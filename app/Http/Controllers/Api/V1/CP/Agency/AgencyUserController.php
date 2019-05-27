@@ -84,10 +84,10 @@ class AgencyUserController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد کردن شماره همراه اجباری می باشد.'
             );
-        if (!$request->input('percent'))
+        if (!$request->input('price'))
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
-                'کاربر گرامی ، وارد کردن درصد کمیسیون اجباری می باشد.'
+                'کاربر گرامی ، وارد کردن مبلغ کمیسیون اجباری می باشد.'
             );
         $phone = $this->help->phoneChecker($request->input('phone'), 'IR');
         $user = User::where(['phone' => $phone])->first();
@@ -119,8 +119,8 @@ class AgencyUserController extends ApiController
         AgencyUser::create([
             'user_id' => $user->id,
             'agency_id' => $request->input('agency_id'),
-            'type' => 'percent',
-            'percent' => $request->input('percent'),
+            'type' => Constants::TYPE_PRICE,
+            'price' => $request->input('price'),
             'role' => Constants::ROLE_COUNTER_MAN
         ]);
         return $this->respond(["status" => "success"]);
