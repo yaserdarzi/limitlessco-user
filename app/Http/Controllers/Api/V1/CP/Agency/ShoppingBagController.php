@@ -200,7 +200,7 @@ class ShoppingBagController extends ApiController
         ShoppingBag::where('id', $shoppingBag->id)->delete();
     }
 
-    private function expireShopping($customer_id)
+    private function expireShopping($app_id, $customer_id)
     {
         if (ShoppingBagExpire::where(['customer_id' => $customer_id])->exists())
             ShoppingBagExpire::
@@ -212,6 +212,7 @@ class ShoppingBagController extends ApiController
             ]);
         else
             ShoppingBagExpire::create([
+                'app_id' => $app_id,
                 'customer_id' => $customer_id,
                 'expire_time' => date('Y-m-d H:i:s', strtotime("+10 minutes")),
                 'status' => Constants::SHOPPING_STATUS_SHOPPING
@@ -361,7 +362,7 @@ class ShoppingBagController extends ApiController
                 ->where('id', $value->id)
                 ->decrement('capacity_remaining', $request->input('count'));
         }
-        $this->expireShopping(Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id'));
+        $this->expireShopping($request->input('app_id'), Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id'));
         return ["status" => "success"];
     }
 }
