@@ -12,6 +12,7 @@ use App\Shopping;
 use App\ShoppingBag;
 use App\ShoppingBagExpire;
 use App\ShoppingInvoice;
+use App\WalletInvoice;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use Rasulian\ZarinPal\Payment;
@@ -62,6 +63,43 @@ class ZarinpallController extends ApiController
                     'plz check your type'
                 );
         }
+    }
+
+    public function storePaymentWallet(Request $request)
+    {
+        $zarinPal = new Payment();
+        $helper = new Helpers();
+        $agency_id = $request->input('agency_id');
+        $price = $helper->priceNumberDigitsToNormal($request->input('price'));
+        $wallet = AgencyWallet::where('agency_id', $agency_id)->first();
+        $walletPaymentTokenAgencyCount = AgencyWalletInvoice::count();
+        $walletPaymentTokenAgency = "a-" . ++$walletPaymentTokenAgencyCount;
+        $invoice = AgencyWalletInvoice::create([
+            'agency_id' => $agency_id,
+            'wallet_id' => $wallet->id,
+            'price_before' => $wallet->price,
+            'price' => $price,
+            'price_after' => intval($wallet->price + $price),
+            'price_all' => $price,
+            'type_status' => Constants::INVOICE_TYPE_STATUS_PRICE,
+            'status' => Constants::INVOICE_STATUS_PENDING,
+            'type' => Constants::INVOICE_TYPE_WALLET,
+            'invoice_status' => Constants::INVOICE_INVOICE_STATUS_WALLET . " - " . Constants::INVOICE_INVOICE_STATUS_INCREMENT,
+            'payment_token' => $walletPaymentTokenAgency,
+            'market' => Constants::INVOICE_MARKET_ZARINPAL,
+            'info' => ['wallet' => $wallet],
+        ]);
+        // Doing the payment
+        $payment = $zarinPal->request(
+            intval($invoice->price),
+            [
+                'invoice' => $invoice->id
+            ],
+            route('api.cp.agency.wallet.callback')
+        );
+        if ($payment->get('result') == 'warning')
+            throw new ApiException(ApiException::EXCEPTION_BAD_REQUEST_400, $payment->get('error'));
+        return $this->respond(["url" => $payment->get('url')]);
     }
 
     /**
@@ -159,7 +197,7 @@ class ZarinpallController extends ApiController
                 $agency_id = explode('-', $shoppingInvoice->customer_id)[1];
                 $wallet = AgencyWallet::where('agency_id', $agency_id)->first();
                 $walletPaymentTokenAgencyCount = AgencyWalletInvoice::count();
-                $walletPaymentTokenAgency = "a-"  . ++$walletPaymentTokenAgencyCount;
+                $walletPaymentTokenAgency = "a-" . ++$walletPaymentTokenAgencyCount;
                 AgencyWalletInvoice::create([
                     'agency_id' => $agency_id,
                     'wallet_id' => $wallet->id,
@@ -330,7 +368,6 @@ class ZarinpallController extends ApiController
         return $this->respond(["url" => $payment->get('url')]);
     }
 
-
     public function walletPortalCallback(Request $request)
     {
         $zarinPal = new Payment();
@@ -361,7 +398,7 @@ class ZarinpallController extends ApiController
                     'info' => ['wallet' => $wallet, 'zarinpal' => $verify],
                 ]);
                 $walletPaymentTokenAgencyCount = AgencyWalletInvoice::count();
-                $walletPaymentTokenAgency = "a-" .  ++$walletPaymentTokenAgencyCount;
+                $walletPaymentTokenAgency = "a-" . ++$walletPaymentTokenAgencyCount;
                 AgencyWalletInvoice::create([
                     'agency_id' => $agency_id,
                     'wallet_id' => $wallet->id,
@@ -418,6 +455,34 @@ class ZarinpallController extends ApiController
                 $shoppingInvoice->status = Constants::INVOICE_STATUS_FAILED;
                 $shoppingInvoice->save();
                 ShoppingBagExpire::where(['customer_id' => $shoppingInvoice->customer_id])->update(["status" => Constants::SHOPPING_STATUS_SHOPPING]);
+            }
+//            return redirect('http://agency.justkish.com/failed-message?token=' . $factorInvoice->payment_token);
+            return $this->respond(["status" => "failed"]);
+        }
+    }
+
+    public function walletCallback(Request $request)
+    {
+        $zarinPal = new Payment();
+        // Verify the payment
+        $authority = $request->input('Authority');
+        $invoice = AgencyWalletInvoice::find($request->input('invoice'));
+        $verify = $zarinPal->verify(intval($invoice->price), $authority);
+        if ($verify->get('result') == 'success') {
+            if ($invoice->status == Constants::INVOICE_STATUS_PENDING) {
+                $agency_id = $invoice->agency_id;
+                AgencyWallet::where('agency_id', $agency_id)->update([
+                    'price' => $invoice->price_after
+                ]);
+                $invoice->status = Constants::INVOICE_STATUS_SUCCESS;
+                $invoice->save();
+            }
+//            return redirect('http://agency.justkish.com/success-message?token=' . $factorInvoice->payment_token . '&factor_id=' . $factor->id);
+            return $this->respond(["status" => "success"]);
+        } else {
+            if ($invoice->status == Constants::INVOICE_STATUS_PENDING) {
+                $invoice->status = Constants::INVOICE_STATUS_FAILED;
+                $invoice->save();
             }
 //            return redirect('http://agency.justkish.com/failed-message?token=' . $factorInvoice->payment_token);
             return $this->respond(["status" => "failed"]);
