@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\CP\Agency;
 
+use App\Agency;
 use App\AgencyUser;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
@@ -9,6 +10,7 @@ use App\Inside\Constants;
 use App\Sales;
 use App\ShoppingBag;
 use App\ShoppingBagExpire;
+use App\SupplierAgency;
 use App\SupplierSales;
 use Illuminate\Http\Request;
 use App\Http\Requests;
@@ -84,14 +86,23 @@ class ShoppingBagController extends ApiController
                 'کاربر گرامی ، وارد کردن تعداد اجباری می باشد.'
             );
         //get supplier
-        $type = Constants::SALES_TYPE_AGENCY;
-        $sales = Sales::where(
-            'type', $type
-        )->first();
-        $supplier_id = SupplierSales::
-        where('capacity_percent', '!=', 0)
-            ->where(['status' => Constants::STATUS_ACTIVE, 'sales_id' => $sales->id])
-            ->pluck('supplier_id');
+        $agency = Agency::where('id', $request->input('agency_id'))->first();
+        $supplier_id = [];
+        if (in_array(Constants::AGENCY_INTRODUCTION_SALES, $agency->introduction)) {
+            $type = Constants::SALES_TYPE_AGENCY;
+            $sales = Sales::where(
+                'type', $type
+            )->first();
+            $supplier_id = array_unique(array_merge($supplier_id, SupplierSales::
+            where('capacity_percent', '!=', 0)
+                ->where(['status' => Constants::STATUS_ACTIVE, 'sales_id' => $sales->id])
+                ->pluck('supplier_id')->toArray()));
+        }
+        if (in_array(Constants::AGENCY_INTRODUCTION_AGENCY, $agency->introduction))
+            $supplier_id = array_unique(array_merge($supplier_id, SupplierAgency::
+            where('capacity_percent', '!=', 0)
+                ->where(['status' => Constants::STATUS_ACTIVE, 'agency_id' => $request->input('agency_id')])
+                ->pluck('supplier_id')->toArray()));
         switch ($request->input('app_title')) {
             case Constants::APP_NAME_HOTEL:
                 return $this->respond($this->addToShoppingBagHotel($supplier_id, $request));
@@ -274,6 +285,7 @@ class ShoppingBagController extends ApiController
         $percentAll = 0;
         $incomeAgency = 0;
         $incomeYou = 0;
+        $agency = Agency::where('id', $request->input('agency_id'))->first();
         foreach ($roomEpisode as $key => $value) {
             $priceAll = $priceAll + $value->price;
             $percent = 0;
@@ -288,17 +300,28 @@ class ShoppingBagController extends ApiController
                 } else
                     $percentAll = $percentAll + $value->price;
             }
-            $supplierSales = SupplierSales::
-            join(Constants::SALES_DB, Constants::SALES_DB . '.id', '=', Constants::SUPPLIER_SALES_DB . '.sales_id')
-                ->where([
-                    'type' => Constants::SALES_TYPE_AGENCY,
+            if (in_array(Constants::AGENCY_INTRODUCTION_AGENCY, $agency->introduction)) {
+                $supplierAgency = SupplierAgency::where([
                     'supplier_id' => $value->supplier_id
                 ])->first();
-            if ($supplierSales)
-                if ($supplierSales->type_price == Constants::TYPE_PERCENT)
-                    $incomeAgency += ($value->price - $percent) * floatval("0." . $supplierSales->percent);
-                elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
-                    $incomeAgency = $incomeAgency + $supplierSales->percent;
+                if ($supplierAgency)
+                    if ($supplierAgency->type_price == Constants::TYPE_PERCENT)
+                        $incomeAgency += ($value->price - $percent) * floatval("0." . $supplierAgency->percent);
+                    elseif ($supplierAgency->type_price == Constants::TYPE_PRICE)
+                        $incomeAgency = $incomeAgency + $supplierAgency->percent;
+            } elseif (in_array(Constants::AGENCY_INTRODUCTION_SALES, $agency->introduction)) {
+                $supplierSales = SupplierSales::
+                join(Constants::SALES_DB, Constants::SALES_DB . '.id', '=', Constants::SUPPLIER_SALES_DB . '.sales_id')
+                    ->where([
+                        'type' => Constants::SALES_TYPE_AGENCY,
+                        'supplier_id' => $value->supplier_id
+                    ])->first();
+                if ($supplierSales)
+                    if ($supplierSales->type_price == Constants::TYPE_PERCENT)
+                        $incomeAgency += ($value->price - $percent) * floatval("0." . $supplierSales->percent);
+                    elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
+                        $incomeAgency = $incomeAgency + $supplierSales->percent;
+            }
             $agencyUser = AgencyUser::where([
                 'user_id' => $request->input('user_id'),
                 'agency_id' => $request->input('agency_id')
