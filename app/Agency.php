@@ -10,11 +10,12 @@ class Agency extends Model
 {
     use SoftDeletes;
     protected $casts = [
+        'introduction' => 'object',
         'info' => 'object',
     ];
     protected $table = Constants::AGENCY_DB;
     protected $fillable = [
         'name', 'image', 'tell', 'type', 'percent', 'price',
-        'award', 'income', 'status', 'info'
+        'award', 'income', 'status', 'introduction', 'info'
     ];
 }

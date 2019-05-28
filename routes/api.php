@@ -81,6 +81,9 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
         });
         Route::middleware(['cp.agency.app.check', 'cp.agency.auth'])->group(function () {
 
+            //Get Supplier Active For Sales
+            Route::get('app/get/supplier', 'AppController@getSupplier');
+
             //Agency Init
             Route::get('init', 'AgencyController@index');
             Route::post('update', 'AgencyController@update');

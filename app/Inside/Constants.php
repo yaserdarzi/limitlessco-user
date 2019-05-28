@@ -44,10 +44,17 @@ class Constants
     const AGENCY_WALLET_INVOICE_DB = 'agency_wallet_invoice';
     const SALES_DB = 'sales';
     const SUPPLIER_SALES_DB = 'supplier_sales';
+    const SUPPLIER_AGENCY_CATEGORY_DB = 'supplier_agency_category';
+    const SUPPLIER_AGENCY_DB = 'supplier_agency';
     const SHOPPING_BAG_DB = 'shopping_bag';
     const SHOPPING_BAG_EXPIRE_DB = 'shopping_bag_expire';
     const SHOPPING_INVOICE_DB = 'shopping_invoice';
     const SHOPPING_DB = 'shopping';
+
+    //Agency Introduction
+    const AGENCY_INTRODUCTION_SALES = 'sales';
+    const AGENCY_INTRODUCTION_SUPPLIER = 'supplier';
+    const AGENCY_INTRODUCTION_AGENCY = 'agency';
 
     //Sales Type
     const SALES_TYPE_API = 'api';
@@ -89,7 +96,6 @@ class Constants
     const SHOPPING_STATUS_SUCCESS = "success";
     const SHOPPING_STATUS_FINISH = "finish";
     const SHOPPING_STATUS_RETURN = "return";
-
 
     //Invoice Market
     const INVOICE_MARKET_ZARINPAL = 'zarinpal';

@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers\Api\V1\CP\Agency;
 
+use App\Agency;
 use App\App;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\AgencyApp;
+use App\Inside\Constants;
+use App\Sales;
+use App\SupplierAgency;
+use App\SupplierSales;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 
@@ -110,5 +115,40 @@ class AppController extends ApiController
                 'کاربر گرامی شما دسترسی به این قسمت را ندارید.'
             );
         return $this->respond(["app_id" => $app->id]);
+    }
+
+    public function getSupplier(Request $request)
+    {
+        $agency = Agency::where('id', $request->input('agency_id'))->first();
+        $supplierSalesID = [];
+        $supplierAgencyID = [];
+        if (in_array(Constants::AGENCY_INTRODUCTION_SALES, $agency->introduction))
+            $supplierSalesID = $this->getSupplierSales($request);
+        if (in_array(Constants::AGENCY_INTRODUCTION_AGENCY, $agency->introduction))
+            $supplierAgencyID = $this->getSupplierAgency($request);
+        return $this->respond(["supplier_sales" => $supplierSalesID, "supplier_agency" => $supplierAgencyID]);
+    }
+
+    ///////////////////public function///////////////////////
+
+    private function getSupplierSales(Request $request)
+    {
+        $sales = Sales::where(
+            'type', Constants::SALES_TYPE_AGENCY
+        )->first();
+        $supplierSales = SupplierSales::
+        where('capacity_percent', '!=', 0)
+            ->where(['status' => Constants::STATUS_ACTIVE, 'sales_id' => $sales->id])
+            ->pluck('supplier_id');
+        return $supplierSales;
+    }
+
+    private function getSupplierAgency(Request $request)
+    {
+        $supplierAgency = SupplierAgency::
+        where('capacity_percent', '!=', 0)
+            ->where(['status' => Constants::STATUS_ACTIVE, 'agency_id' => $request->input('agency_id')])
+            ->pluck('supplier_id');
+        return $supplierAgency;
     }
 }
