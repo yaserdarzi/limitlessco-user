@@ -68,6 +68,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             Route::resource('agency/category', 'SupplierAgencyCategoryController');
 
             //Supplier Agency
+            Route::post('agency/update/{supplier_agency_id}', 'SupplierAgencyController@update');
             Route::resource('agency', 'SupplierAgencyController');
 
         });

@@ -16,4 +16,14 @@ class SupplierAgency extends Model
         'capacity_percent', 'type_price', 'price', 'percent', 'award',
         'status', 'info'
     ];
+
+    public function agency()
+    {
+        return $this->hasOne(Agency::class, 'id', 'agency_id')->where('deleted_at', null);
+    }
+
+    public function category()
+    {
+        return $this->hasOne(SupplierAgencyCategory::class, 'id', 'supplier_agency_category_id');
+    }
 }

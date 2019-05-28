@@ -302,6 +302,7 @@ class ShoppingBagController extends ApiController
             }
             if (in_array(Constants::AGENCY_INTRODUCTION_AGENCY, $agency->introduction)) {
                 $supplierAgency = SupplierAgency::where([
+                    'status' => Constants::STATUS_ACTIVE,
                     'supplier_id' => $value->supplier_id
                 ])->first();
                 if ($supplierAgency)
@@ -313,6 +314,7 @@ class ShoppingBagController extends ApiController
                 $supplierSales = SupplierSales::
                 join(Constants::SALES_DB, Constants::SALES_DB . '.id', '=', Constants::SUPPLIER_SALES_DB . '.sales_id')
                     ->where([
+                        'status' => Constants::STATUS_ACTIVE,
                         'type' => Constants::SALES_TYPE_AGENCY,
                         'supplier_id' => $value->supplier_id
                     ])->first();
