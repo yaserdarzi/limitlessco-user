@@ -58,6 +58,10 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             //Sales
             Route::get('sales', 'SalesController@index');
             Route::post('sales', 'SalesController@store');
+
+            //Voucher
+            Route::get('voucher', 'VoucherController@index');
+            Route::post('voucher', 'VoucherController@store');
         });
 
     });
