@@ -62,6 +62,14 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             //Voucher
             Route::get('voucher', 'VoucherController@index');
             Route::post('voucher', 'VoucherController@store');
+
+            //Supplier Agency Category
+            Route::post('agency/category/update/{supplier_agency_category_id}', 'SupplierAgencyCategoryController@update');
+            Route::resource('agency/category', 'SupplierAgencyCategoryController');
+
+            //Supplier Agency
+            Route::resource('agency', 'SupplierAgencyController');
+
         });
 
     });

@@ -23,6 +23,7 @@ class SupplierAgencyTableMigration extends Migration
             $table->string('type_price')->default(Constants::TYPE_PERCENT);
             $table->bigInteger('price')->default(0);
             $table->bigInteger('percent')->default(0);
+            $table->bigInteger('award')->default(0);
             $table->string('status')->default(Constants::STATUS_ACTIVE);
             $table->json('info')->nullable();
             $table->timestamps();

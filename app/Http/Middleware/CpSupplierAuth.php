@@ -38,6 +38,7 @@ class CpSupplierAuth
                 'کاربر گرامی لطفا لاگین کنید.'
             );
         $input['user_id'] = $token->user_id;
+        $input['role'] = $token->role;
         $input['agent'] = $token->agent;
         $request->replace($input);
         return $next($request);
