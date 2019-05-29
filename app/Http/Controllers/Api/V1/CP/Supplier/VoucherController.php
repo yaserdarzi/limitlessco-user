@@ -21,7 +21,7 @@ class VoucherController extends ApiController
     {
         if (!$request->input('voucher'))
             throw new ApiException(
-                ApiException::EXCEPTION_UNAUTHORIZED_401,
+                ApiException::EXCEPTION_NOT_FOUND_404,
                 "کاربر گرامی وارد کردن واچر اجباری می باشد."
             );
         $shopping = Shopping::where([
@@ -29,7 +29,7 @@ class VoucherController extends ApiController
         ])->first();
         if (!$shopping)
             throw new ApiException(
-                ApiException::EXCEPTION_UNAUTHORIZED_401,
+                ApiException::EXCEPTION_NOT_FOUND_404,
                 "کاربر گرامی لطفا واچر خود را بررسی نمایید."
             );
         switch (explode('-', $shopping->shopping_id)[0]) {
@@ -38,7 +38,7 @@ class VoucherController extends ApiController
                 break;
             default:
                 throw new ApiException(
-                    ApiException::EXCEPTION_UNAUTHORIZED_401,
+                    ApiException::EXCEPTION_NOT_FOUND_404,
                     "کاربر گرامی لطفا واچر خود را بررسی نمایید."
                 );
         }
@@ -64,7 +64,7 @@ class VoucherController extends ApiController
     {
         if (!$request->input('voucher'))
             throw new ApiException(
-                ApiException::EXCEPTION_UNAUTHORIZED_401,
+                ApiException::EXCEPTION_NOT_FOUND_404,
                 "کاربر گرامی وارد کردن واچر اجباری می باشد."
             );
         $shopping = Shopping::where([
@@ -72,7 +72,7 @@ class VoucherController extends ApiController
         ])->first();
         if (!$shopping)
             throw new ApiException(
-                ApiException::EXCEPTION_UNAUTHORIZED_401,
+                ApiException::EXCEPTION_NOT_FOUND_404,
                 "کاربر گرامی لطفا واچر خود را بررسی نمایید."
             );
         switch (explode('-', $shopping->shopping_id)[0]) {
@@ -82,7 +82,7 @@ class VoucherController extends ApiController
                 break;
             default:
                 throw new ApiException(
-                    ApiException::EXCEPTION_UNAUTHORIZED_401,
+                    ApiException::EXCEPTION_NOT_FOUND_404,
                     "کاربر گرامی لطفا واچر خود را بررسی نمایید."
                 );
         }
@@ -143,13 +143,13 @@ class VoucherController extends ApiController
     {
         if (!in_array($shopping->shopping->hotel->app_id, $request->input('apps_id')))
             throw new ApiException(
-                ApiException::EXCEPTION_UNAUTHORIZED_401,
+                ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی شما دسترسی به این قسمت ندارید.'
             );
         foreach ($shopping->shopping->roomEpisode as $value)
             if ($value->supplier_id != $request->input('supplier_id'))
                 throw new ApiException(
-                    ApiException::EXCEPTION_UNAUTHORIZED_401,
+                    ApiException::EXCEPTION_NOT_FOUND_404,
                     'کاربر گرامی شما واچر مورد نظر برای شما نمی باشد.'
                 );
         return $shopping;
@@ -159,7 +159,7 @@ class VoucherController extends ApiController
     {
         if ($shopping->status != Constants::SHOPPING_STATUS_SUCCESS)
             throw new ApiException(
-                ApiException::EXCEPTION_UNAUTHORIZED_401,
+                ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی واچر مورد نظر شما قبلا استفاده شده است.'
             );
         Shopping::where('id', $shopping->id)->update(['status' => Constants::SHOPPING_STATUS_FINISH]);
