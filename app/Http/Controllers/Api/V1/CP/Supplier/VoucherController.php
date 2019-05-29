@@ -8,6 +8,7 @@ use App\Inside\Constants;
 use App\Shopping;
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use Morilog\Jalali\CalendarUtils;
 
 class VoucherController extends ApiController
 {
@@ -152,6 +153,10 @@ class VoucherController extends ApiController
                     ApiException::EXCEPTION_NOT_FOUND_404,
                     'کاربر گرامی شما واچر مورد نظر برای شما نمی باشد.'
                 );
+        $shopping->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($shopping->date));
+        $shopping->date_end_persian = null;
+        if ($shopping->date_end)
+            $shopping->date_end_persian = CalendarUtils::strftime('Y-m-d', strtotime($shopping->date_end));
         return $shopping;
     }
 
