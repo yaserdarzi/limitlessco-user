@@ -61,6 +61,51 @@ class OTPController extends ApiController
         return $this->respond($this->verify($phone, $request));
     }
 
+    public function login(Request $request)
+    {
+        if (!$request->header('agent'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'Plz check your agent'
+            );
+        if (!$request->input('appID'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، لطفا appId را وارد نمایید.'
+            );
+        if (!$request->input('secret'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، لطفا secret را وارد نمایید.'
+            );
+        $phone = $this->help->base64url_decode($request->input('secret'));
+        $phone = $this->help->phoneChecker($phone);
+        $user = User::where(['phone' => $phone])->first();
+        if (!$user)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                "کاربر گرامی شما وب سرویس نمی باشید."
+            );
+        if (!$apiUser = ApiUser::where(['user_id' => $user->id])->first())
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                "کاربر گرامی شما وب سرویس نمی باشید."
+            );
+        if (!$api = Api::where(['id' => $request->input('appID'), 'status' => Constants::STATUS_ACTIVE])->first())
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                "کاربر گرامی حساب شما فعال نمی باشید."
+            );
+        $user->wallet = ApiWallet::where(['id' => $api->api_id])->first();
+        $appId = ApiApp::where(['api_id' => $apiUser->api_id])->pluck('app_id');
+        $user->Api = Api::where('id', $apiUser->api_id)->first();
+        $user->role = ApiUser::where(['user_id' => $user->id])->first()->role;
+        $user->apps = App::whereIn('id', $appId)->get();
+        $this->generateToken($user, $request->header('agent'), $user->role);
+        $this->generateAppToken($user, $request->header('agent'), $appId, $apiUser->api_id);
+        UsersLoginToken::where(['login' => $phone, 'token' => $request->input('code')])->delete();
+        return $this->respond($user);
+    }
 
     ////////////////////private function///////////////////////
 

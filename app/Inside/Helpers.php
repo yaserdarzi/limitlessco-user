@@ -13,10 +13,8 @@ class Helpers
         return $this->normalizePhoneNumber($price);
     }
 
-    public function phoneChecker($phone, $country)
+    public function phoneChecker($phone, $country = "IR")
     {
-        if (!$country)
-            $country = "IR";
         $phoneUtil = \libphonenumber\PhoneNumberUtil::getInstance();
         $phoneNumber = $phoneUtil->parse($phone, $country);
         $phone = $phoneUtil->format($phoneNumber, \libphonenumber\PhoneNumberFormat::E164);
@@ -69,5 +67,19 @@ class Helpers
             for ($i = strlen($voucher); $i < 8; $i++)
                 $zero = $zero . '0';
         return substr($appName, 0, 1) . "-" . $zero . $voucher;
+    }
+
+    public function base64url_encode($plainText)
+    {
+        $base64 = base64_encode($plainText);
+        $base64url = strtr($base64, '+/=', '-_,');
+        return $base64url;
+    }
+
+    public function base64url_decode($plainText)
+    {
+        $base64url = strtr($plainText, '-_,', '+/=');
+        $base64 = base64_decode($base64url);
+        return $base64;
     }
 }

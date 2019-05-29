@@ -47,6 +47,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             Route::post('otp/sms', 'OTPController@smsOTP');
             Route::post('otp/verify', 'OTPController@verifyOTP');
         });
+
         Route::middleware(['cp.supplier.app.check', 'cp.supplier.auth'])->group(function () {
 
             //Supplier Init
@@ -145,6 +146,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
         Route::namespace('Auth')->prefix('/auth/')->group(function () {
             Route::post('otp/sms', 'OTPController@smsOTP');
             Route::post('otp/verify', 'OTPController@verifyOTP');
+            Route::post('login', 'OTPController@login');
         });
 
         Route::middleware(['cp.api.app.check', 'cp.api.auth'])->group(function () {
