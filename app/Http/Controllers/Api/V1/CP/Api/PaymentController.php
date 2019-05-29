@@ -238,7 +238,7 @@ class PaymentController extends ApiController
             'invoice_status' => Constants::INVOICE_INVOICE_STATUS_SHOPPING,
             'payment_token' => $shoppingPaymentToken,
             'market' => Constants::INVOICE_MARKET_WALLET,
-            'info' => ["roomEpisode" => $roomEpisode->toArray(), "hotel" => (array)$hotel, "room" => (array)$room],
+            'info' => ["shopping" => ["roomEpisode" => $roomEpisode->toArray(), "hotel" => (array)$hotel, "room" => (array)$room]],
         ]);
         $wallet = ApiWallet::where('api_id', $request->input('api_id'))->first();
         $walletPaymentTokenApiCount = ApiWalletInvoice::count();

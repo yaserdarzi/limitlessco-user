@@ -169,7 +169,7 @@ class ZarinpallController extends ApiController
             'invoice_status' => Constants::INVOICE_INVOICE_STATUS_SHOPPING,
             'payment_token' => $shoppingPaymentToken,
             'market' => Constants::INVOICE_MARKET_ZARINPAL,
-            'info' => $shoppingBag,
+            'info' => ["shopping" => $shoppingBag]
         ]);
         // Doing the payment
         $payment = $zarinPal->request(
@@ -277,7 +277,7 @@ class ZarinpallController extends ApiController
             'invoice_status' => Constants::INVOICE_INVOICE_STATUS_SHOPPING,
             'payment_token' => $shoppingPaymentToken,
             'market' => Constants::INVOICE_MARKET_WALLET,
-            'info' => $shoppingBag,
+            'info' => ["shopping" => $shoppingBag]
         ]);
         $agency_id = explode('-', $shoppingInvoice->customer_id)[1];
         $wallet = AgencyWallet::where('agency_id', $agency_id)->first();
@@ -352,7 +352,7 @@ class ZarinpallController extends ApiController
             'type' => Constants::INVOICE_TYPE_SHOPPING,
             'invoice_status' => Constants::INVOICE_INVOICE_STATUS_SHOPPING,
             'payment_token' => $shoppingPaymentToken,
-            'market' => Constants::INVOICE_MARKET_ZARINPAL . " - " . Constants::INVOICE_MARKET_MELLAT,
+            'market' => Constants::INVOICE_MARKET_ZARINPAL . " - " . Constants::INVOICE_MARKET_WALLET,
             'info' => ["shopping" => $shoppingBag, "walletPayment" => $data['walletPayment']]
         ]);
         // Doing the payment
