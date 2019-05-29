@@ -178,6 +178,10 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             Route::get('wallet', 'WalletController@index');
             Route::post('wallet', 'WalletController@store');
 
+            //Hotel Payment
+            Route::post('payment/hotel', 'PaymentController@PaymentHotel');
+
+
         });
 
     });
