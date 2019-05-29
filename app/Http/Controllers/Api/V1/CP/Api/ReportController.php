@@ -10,6 +10,7 @@ use App\Shopping;
 use App\ShoppingInvoice;
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use Morilog\Jalali\CalendarUtils;
 use Morilog\Jalali\Jalalian;
 
 class ReportController extends ApiController
@@ -107,6 +108,7 @@ class ReportController extends ApiController
             $data['shoppingInvoice'] = ShoppingInvoice::where('customer_id', 'like', "%{$customer_id}%")
                 ->get();
             foreach ($data['shoppingInvoice'] as $value) {
+                $value->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->created_at));
                 $data['countAll'] = $data['countAll'] + $value->count_all;
                 $data['incomeAllApi'] = $data['incomeAllApi'] + $value->income_all_api;
             }
