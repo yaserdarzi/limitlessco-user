@@ -51,6 +51,8 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
 
             //Supplier Init
             Route::get('init', 'SupplierController@index');
+            Route::post('update', 'SupplierController@update');
+            Route::post('user/update', 'SupplierController@userUpdate');
 
             //App Checker
             Route::get('app/checker', 'AppController@appChecker');

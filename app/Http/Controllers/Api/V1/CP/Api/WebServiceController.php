@@ -156,7 +156,7 @@ class WebServiceController extends ApiController
         if (!$request->input('name'))
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
-                'کاربر گرامی ، وارد کردن نام آژانس اجباری می باشد.'
+                'کاربر گرامی ، وارد کردن نام اجباری می باشد.'
             );
         $info = User::find($request->input('user_id'));
         $image = $info->image;
