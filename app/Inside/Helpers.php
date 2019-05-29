@@ -15,6 +15,8 @@ class Helpers
 
     public function phoneChecker($phone, $country = "IR")
     {
+        if (!$country)
+            $country = "IR";
         $phoneUtil = \libphonenumber\PhoneNumberUtil::getInstance();
         $phoneNumber = $phoneUtil->parse($phone, $country);
         $phone = $phoneUtil->format($phoneNumber, \libphonenumber\PhoneNumberFormat::E164);

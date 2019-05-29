@@ -41,21 +41,25 @@ class SupplierAgencyController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی شما دسترسی به این قسمت ندارید.'
             );
-        $supplierAgency = SupplierAgency::
-        with(['agency', 'category'])
-            ->where([
-                'status' => Constants::STATUS_ACTIVE,
-                'supplier_id' => $request->input('supplier_id')
-            ])->get()->map(function ($value) {
-                if ($value->agency->image) {
-                    $value->agency->image_thumb = url('/files/agency/thumb/' . $value->agency->image);
-                    $value->agency->image = url('/files/agency/' . $value->agency->image);
-                } else {
-                    $value->agency->image_thumb = url('/files/agency/defaultAvatar.svg');
-                    $value->agency->image = url('/files/agency/defaultAvatar.svg');
-                }
-                return $value;
-            });
+        $supplierAgency = SupplierAgency::with(['agency', 'category', 'user']);
+//        if ($request->input('search'))
+//            $supplierAgency = $supplierAgency->where([
+//                'status' => Constants::STATUS_ACTIVE,
+//                'supplier_id' => $request->input('supplier_id')
+//            ]);
+        $supplierAgency = $supplierAgency->where([
+            'status' => Constants::STATUS_ACTIVE,
+            'supplier_id' => $request->input('supplier_id')
+        ])->get()->map(function ($value) {
+            if ($value->agency->image) {
+                $value->agency->image_thumb = url('/files/agency/thumb/' . $value->agency->image);
+                $value->agency->image = url('/files/agency/' . $value->agency->image);
+            } else {
+                $value->agency->image_thumb = url('/files/agency/defaultAvatar.svg');
+                $value->agency->image = url('/files/agency/defaultAvatar.svg');
+            }
+            return $value;
+        });
         return $this->respond($supplierAgency);
     }
 

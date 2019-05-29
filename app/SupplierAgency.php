@@ -26,4 +26,11 @@ class SupplierAgency extends Model
     {
         return $this->hasOne(SupplierAgencyCategory::class, 'id', 'supplier_agency_category_id');
     }
+
+    public function user()
+    {
+        return $this->hasOne(AgencyUser::class, 'user_id', 'agency_id')
+            ->join(Constants::USERS_DB, Constants::USERS_DB . '.id', '=' , Constants::AGENCY_USERS_DB . '.user_id')
+            ->where('role', Constants::ROLE_ADMIN);
+    }
 }
