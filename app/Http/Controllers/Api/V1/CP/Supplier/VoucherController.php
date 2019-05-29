@@ -155,6 +155,7 @@ class VoucherController extends ApiController
                 );
         $shopping->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($shopping->date));
         $shopping->date_end_persian = null;
+        $shopping->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($shopping->created_at));
         if ($shopping->date_end)
             $shopping->date_end_persian = CalendarUtils::strftime('Y-m-d', strtotime($shopping->date_end));
         return $shopping;
