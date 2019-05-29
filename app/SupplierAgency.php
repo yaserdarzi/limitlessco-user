@@ -29,8 +29,8 @@ class SupplierAgency extends Model
 
     public function user()
     {
-        return $this->hasOne(AgencyUser::class, 'user_id', 'agency_id');
-//            ->join(Constants::USERS_DB, Constants::USERS_DB . '.id', '=', Constants::AGENCY_USERS_DB . '.user_id')
-//            ->where(Constants::AGENCY_USERS_DB . '.role', Constants::ROLE_ADMIN);
+        return $this->hasOne(AgencyUser::class, 'agency_id', 'agency_id')
+            ->join(Constants::USERS_DB, Constants::USERS_DB . '.id', '=', Constants::AGENCY_USERS_DB . '.user_id')
+            ->where(Constants::AGENCY_USERS_DB . '.role', Constants::ROLE_ADMIN);
     }
 }
