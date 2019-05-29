@@ -147,7 +147,10 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
 
         Route::middleware(['cp.api.app.check', 'cp.api.auth'])->group(function () {
 
-            //Agency Init
+            //Get Supplier Active For Sales
+            Route::get('app/get/supplier', 'AppController@getSupplier');
+
+            //Api Init
             Route::get('init', 'WebServiceController@index');
             Route::post('update', 'WebServiceController@update');
             Route::post('user/update', 'WebServiceController@userUpdate');

@@ -129,7 +129,7 @@ class AppController extends ApiController
         return $this->respond(["supplier_sales" => $supplierSalesID, "supplier_agency" => $supplierAgencyID]);
     }
 
-    ///////////////////public function///////////////////////
+    ///////////////////private function///////////////////////
 
     private function getSupplierSales(Request $request)
     {

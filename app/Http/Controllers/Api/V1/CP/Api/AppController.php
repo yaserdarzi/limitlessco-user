@@ -118,7 +118,18 @@ class AppController extends ApiController
     }
 
 
-    ///////////////////public function///////////////////////
+    public function getSupplier(Request $request)
+    {
+        $sales = Sales::where(
+            'type', Constants::SALES_TYPE_API
+        )->first();
+        $supplierSales = SupplierSales::
+        where('capacity_percent', '!=', 0)
+            ->where(['status' => Constants::STATUS_ACTIVE, 'sales_id' => $sales->id])
+            ->pluck('supplier_id');
+        return $this->respond($supplierSales);
+    }
 
+    ///////////////////private function///////////////////////
 
 }
