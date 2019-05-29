@@ -50,6 +50,13 @@ class Constants
     const SHOPPING_BAG_EXPIRE_DB = 'shopping_bag_expire';
     const SHOPPING_INVOICE_DB = 'shopping_invoice';
     const SHOPPING_DB = 'shopping';
+    const API_DB = 'api';
+    const API_APP_DB = 'api_app';
+    const API_USERS_DB = 'api_users';
+    const API_WALLET_DB = 'api_wallet';
+    const API_WALLET_INVOICE_DB = 'api_wallet_invoice';
+
+
 
     //Agency Introduction
     const AGENCY_INTRODUCTION_SALES = 'sales';
@@ -84,6 +91,7 @@ class Constants
     const ROLE_ADMIN = 'admin';
     const ROLE_SALES_MAN = 'sales_man';
     const ROLE_COUNTER_MAN = 'counter_man';
+    const ROLE_DEVELOPER = 'developer';
 
     //Type Price
     const TYPE_PERCENT = "percent";

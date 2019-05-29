@@ -133,4 +133,45 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
 
     });
 
+    //Api
+    Route::namespace('Api')->prefix('/api/')->group(function () {
+
+        //Zarinpall Callback
+        Route::any('walletCallback', 'Payment\ZarinpallController@walletCallback')->name('api.cp.api.wallet.callback');
+
+        //Auth
+        Route::namespace('Auth')->prefix('/auth/')->group(function () {
+            Route::post('otp/sms', 'OTPController@smsOTP');
+            Route::post('otp/verify', 'OTPController@verifyOTP');
+        });
+
+        Route::middleware(['cp.api.app.check', 'cp.api.auth'])->group(function () {
+
+            //Agency Init
+            Route::get('init', 'WebServiceController@index');
+            Route::post('update', 'WebServiceController@update');
+            Route::post('user/update', 'WebServiceController@userUpdate');
+
+            //App Checker
+            Route::get('app/checker', 'AppController@appChecker');
+
+            //Report
+            Route::get('report/sales', 'ReportController@sales');
+            Route::get('report/chart', 'ReportController@chart');
+
+            //Ticket
+            Route::get('getTicket', 'TicketController@show');
+            Route::get('ticket', 'TicketController@index');
+
+            //Api User
+            Route::post('user/update/{user_id}', 'ApiUserController@update');
+            Route::resource('user', 'ApiUserController');
+
+            //Wallet
+            Route::get('wallet', 'WalletController@index');
+            Route::post('wallet', 'WalletController@store');
+
+        });
+
+    });
 });

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\CP\Agency;
+namespace App\Http\Controllers\Api\V1\CP\Api;
 
-use App\AgencyWallet;
-use App\AgencyWalletInvoice;
+use App\ApiWallet;
+use App\ApiWalletInvoice;
 use App\Exceptions\ApiException;
-use App\Http\Controllers\Api\V1\CP\Agency\Payment\ZarinpallController;
+use App\Http\Controllers\Api\V1\CP\Api\Payment\ZarinpallController;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
 use Illuminate\Http\Request;
@@ -35,8 +35,8 @@ class WalletController extends ApiController
             $toDate = date('Y-m-d', strtotime($toDate[0] . '-' . $toDate[1] . '-' . $toDate[2]));
             $fromDate = date('Y-m-d', strtotime($fromDate [0] . '-' . $fromDate [1] . '-' . $fromDate [2]));
         }
-        $data["wallet"] = AgencyWallet::where('agency_id', $request->input('agency_id'))->first();
-        $data["walletInvoice"] = AgencyWalletInvoice::where('agency_id', $request->input('agency_id'));
+        $data["wallet"] = ApiWallet::where('api_id', $request->input('api_id'))->first();
+        $data["walletInvoice"] = ApiWalletInvoice::where('api_id', $request->input('api_id'));
         if ($request->input('start_date') && $request->input('end_date'))
             $data["walletInvoice"] = $data["walletInvoice"]->where('created_at', '>', $fromDate)->where('created_at', '<=', $toDate);
         $data["walletInvoice"] = $data["walletInvoice"]->orderBy('created_at', 'desc')->get();
@@ -130,5 +130,6 @@ class WalletController extends ApiController
     }
 
     ///////////////////public function///////////////////////
+
 
 }
