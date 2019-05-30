@@ -135,7 +135,11 @@ class ReportController extends ApiController
                     $value->price_supplier = 0;
             }
             $data['countAll'] = $data['countAll'] + $value->count_all;
+            $value->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date));
+            $value->date_end_persian = null;
             $value->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->created_at));
+            if ($value->date_end)
+                $value->date_end_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date_end));
         }
         return $this->respond($data);
     }
@@ -183,7 +187,63 @@ class ReportController extends ApiController
                     $value->price_supplier = 0;
             }
             $data['countAll'] = $data['countAll'] + $value->count_all;
+            $value->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date));
+            $value->date_end_persian = null;
             $value->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->created_at));
+            if ($value->date_end)
+                $value->date_end_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date_end));
+        }
+        return $this->respond($data);
+    }
+
+    public function cancel(Request $request)
+    {
+        if ($request->input('role') != Constants::ROLE_ADMIN)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی شما دسترسی به این قسمت ندارید.'
+            );
+        if (!$request->input('from'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی وارد کردن تاریخ شروع اجباری می باشد.'
+            );
+        if (!$request->input('to'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی وارد کردن تاریخ پایان اجباری می باشد.'
+            );
+        $arrayStartDate = explode('/', $request->input('from'));
+        $arrayEndDate = explode('/', $request->input('to'));
+        $toDate = \Morilog\Jalali\CalendarUtils::toGregorian($arrayEndDate[0], $arrayEndDate[1], $arrayEndDate[2]);
+        $fromDate = \Morilog\Jalali\CalendarUtils::toGregorian($arrayStartDate[0], $arrayStartDate[1], $arrayStartDate[2]);
+        $toDate = date('Y-m-d', strtotime($toDate[0] . '-' . $toDate[1] . '-' . $toDate[2]));
+        $fromDate = date('Y-m-d', strtotime($fromDate [0] . '-' . $fromDate [1] . '-' . $fromDate [2]));
+        $data['countAll'] = 0;
+        $data['shopping'] = Shopping::
+        where([
+            'supplier_id' => $request->input('supplier_id'),
+            'status' => Constants::SHOPPING_STATUS_RETURN
+        ])->whereBetween(
+            'created_at', [$fromDate, $toDate]
+        )->get();
+        $supplier = Supplier::where(['id' => $request->input('supplier_id')])->first();
+        foreach ($data['shopping'] as $key => $value) {
+            if ($supplier->type == Constants::TYPE_PRICE)
+                $value->price_supplier = $value->price_payment - $supplier->price;
+            elseif ($supplier->type == Constants::TYPE_PERCENT) {
+                if ($supplier->percent < 100) {
+                    $floatPercent = floatval("0." . $supplier->percent);
+                    $value->price_supplier = $value->price_payment - ($value->price_payment * $floatPercent);
+                } else
+                    $value->price_supplier = 0;
+            }
+            $data['countAll'] = $data['countAll'] + $value->count_all;
+            $value->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date));
+            $value->date_end_persian = null;
+            $value->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->created_at));
+            if ($value->date_end)
+                $value->date_end_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date_end));
         }
         return $this->respond($data);
     }
