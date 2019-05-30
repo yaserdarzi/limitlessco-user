@@ -26,7 +26,8 @@ class SettingController extends ApiController
     {
         return $this->respond([
             "Authorization" => $request->header('Authorization'),
-            "AppToken" => $request->header('appToken'),
+            "appToken" => $request->header('appToken'),
+            "baseUrl" => "http://apihotel.limitlessco.ir",
         ]);
     }
 
