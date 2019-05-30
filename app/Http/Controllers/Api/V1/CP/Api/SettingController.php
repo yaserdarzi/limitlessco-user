@@ -2,15 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\CP\Api;
 
-use App\Api;
-use App\ApiApp;
-use App\ApiUser;
-use App\ApiWallet;
-use App\App;
-use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
-use App\Inside\Constants;
-use App\User;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 
