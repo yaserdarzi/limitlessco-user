@@ -174,6 +174,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             //Ticket
             Route::get('getTicket', 'TicketController@show');
             Route::get('ticket', 'TicketController@index');
+            Route::post('ticket/paymentToken', 'TicketController@ticketPaymentToken');
 
             //Api User
             Route::post('user/update/{user_id}', 'ApiUserController@update');

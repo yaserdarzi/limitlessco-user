@@ -10,6 +10,7 @@ use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use Morilog\Jalali\CalendarUtils;
 
 class WalletController extends ApiController
 {
@@ -39,7 +40,10 @@ class WalletController extends ApiController
         $data["walletInvoice"] = ApiWalletInvoice::where('api_id', $request->input('api_id'));
         if ($request->input('start_date') && $request->input('end_date'))
             $data["walletInvoice"] = $data["walletInvoice"]->where('created_at', '>', $fromDate)->where('created_at', '<=', $toDate);
-        $data["walletInvoice"] = $data["walletInvoice"]->orderBy('created_at', 'desc')->get();
+        $data["walletInvoice"] = $data["walletInvoice"]->orderBy('created_at', 'desc')
+            ->get()->map(function ($value) {
+                $value->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->created_at));
+            });
         return $this->respond($data);
     }
 

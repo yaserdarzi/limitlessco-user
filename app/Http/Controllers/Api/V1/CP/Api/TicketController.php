@@ -120,5 +120,10 @@ class TicketController extends ApiController
 
     ///////////////////public function///////////////////////
 
+    public function ticketPaymentToken(Request $request)
+    {
+        dd($request->all());
+
+    }
 
 }
