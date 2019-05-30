@@ -156,7 +156,7 @@ class TicketController extends ApiController
         if ($shopping->check_out)
             $shopping->check_out = CalendarUtils::strftime('Y-m-d', strtotime($shopping->check_out));
         $shopping->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($shopping->created_at));
-        return $this->respond($shopping);
+        return $shopping;
     }
 
 }
