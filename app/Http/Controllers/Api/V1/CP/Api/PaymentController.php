@@ -298,7 +298,7 @@ class PaymentController extends ApiController
                 ->where('id', $value->id)
                 ->decrement('capacity_remaining', 1);
         }
-        return ["status" => "success", "paymentToken" => $walletPaymentTokenApi];
+        return ["status" => "success", "paymentToken" => $shoppingPaymentToken];
     }
 
 }

@@ -6,6 +6,7 @@ use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
 use App\Shopping;
+use App\ShoppingInvoice;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use Morilog\Jalali\CalendarUtils;
@@ -122,8 +123,40 @@ class TicketController extends ApiController
 
     public function ticketPaymentToken(Request $request)
     {
-        dd($request->all());
-
+        $customer_id = Constants::SALES_TYPE_API . "-" . $request->input('api_id') . "-";
+        $shoppingInvoice = ShoppingInvoice::where([
+            'payment_token' => $request->input('payment_token'),
+            ['customer_id', 'like', "%{$customer_id}%"]
+        ])->first();
+        if (!$shoppingInvoice)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی شما دسترسی به این قسمت ندارید.'
+            );
+        $shopping = Shopping::where([
+            'shopping_invoice_id' => $shoppingInvoice->id,
+        ])->where('customer_id', 'like', "%{$customer_id}%")
+            ->select(
+                'voucher',
+                'name',
+                'phone',
+                'title',
+                'title_more',
+                'date as check_in',
+                'date_end as check_out',
+                'count',
+                'price_payment'
+            )->first();
+        if (!$shopping)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی شما دسترسی به این قسمت ندارید.'
+            );
+        $shopping->check_in = CalendarUtils::strftime('Y-m-d', strtotime($shopping->check_in));
+        if ($shopping->check_out)
+            $shopping->check_out = CalendarUtils::strftime('Y-m-d', strtotime($shopping->check_out));
+        $shopping->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($shopping->created_at));
+        return $this->respond($shopping);
     }
 
 }
