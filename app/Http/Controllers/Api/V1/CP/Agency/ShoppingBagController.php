@@ -41,7 +41,7 @@ class ShoppingBagController extends ApiController
             foreach ($shoppingBag as $value) {
                 $priceAll = $priceAll + $value->price_all;
                 $percentAll = $percentAll + $value->percent_all;
-                $incomeAgency = $incomeAgency + $value->income_agency;
+                $incomeAgency = $incomeAgency + $value->income_all;
                 $incomeYou = $incomeYou + $value->income_you;
                 $countAll = $countAll + $value->count;
                 $value->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date));
@@ -357,7 +357,7 @@ class ShoppingBagController extends ApiController
                 'count' => $shopping->count + $request->input('count'),
                 'price_all' => $priceAll * ($shopping->count + $request->input('count')),
                 'percent_all' => $percentAll * ($shopping->count + $request->input('count')),
-                'income_agency' => $incomeAgency * ($shopping->count + $request->input('count')),
+                'income_all' => $incomeAgency * ($shopping->count + $request->input('count')),
                 'income_you' => $incomeYou * ($shopping->count + $request->input('count'))
             ]);
         else
@@ -371,7 +371,7 @@ class ShoppingBagController extends ApiController
                 'count' => $request->input('count'),
                 'price_all' => $priceAll * $request->input('count'),
                 'percent_all' => $percentAll * $request->input('count'),
-                'income_agency' => intval($incomeAgency * $request->input('count')),
+                'income_all' => intval($incomeAgency * $request->input('count')),
                 'income_you' => intval($incomeYou * $request->input('count')),
                 'shopping' => ["roomEpisode" => $roomEpisode->toArray(), "hotel" => (array)$hotel, "room" => (array)$room]
             ]);

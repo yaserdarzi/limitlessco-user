@@ -69,7 +69,7 @@ class PaymentController extends ApiController
             $priceAll = $priceAll + $value->price_all;
             $countAll = $countAll + $value->count;
             $percentAll = $percentAll + $value->percent_all;
-            $incomeAgency = $incomeAgency + $value->income_agency;
+            $incomeAgency = $incomeAgency + $value->income_all;
             $incomeYou = $incomeYou + $value->income_you;
         }
         ShoppingBagExpire::where([
@@ -168,7 +168,7 @@ class PaymentController extends ApiController
         foreach ($shoppingBag as $value) {
             $priceAll = $priceAll + $value->price_all;
             $percentAll = $percentAll + $value->percent_all;
-            $incomeAgency = $incomeAgency + $value->income_agency;
+            $incomeAgency = $incomeAgency + $value->income_all;
         }
         $pricePayment = $priceAll - $percentAll - $incomeAgency;
         $wallet = AgencyWallet::where(['agency_id' => $request->input('agency_id')])->first();

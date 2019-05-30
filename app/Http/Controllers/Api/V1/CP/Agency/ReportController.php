@@ -109,7 +109,7 @@ class ReportController extends ApiController
                 ->get();
             foreach ($data['shoppingInvoice'] as $value) {
                 $data['countAll'] = $data['countAll'] + $value->count_all;
-                $data['incomeAllAgency'] = $data['incomeAllAgency'] + $value->income_all_agency;
+                $data['incomeAllAgency'] = $data['incomeAllAgency'] + $value->income_all;
                 $value->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->created_at));
             }
         }
