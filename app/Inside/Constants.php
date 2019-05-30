@@ -56,7 +56,8 @@ class Constants
     const API_WALLET_DB = 'api_wallet';
     const API_WALLET_INVOICE_DB = 'api_wallet_invoice';
 
-
+    //Supplier Price Default
+    const SUPPLIER_PRICE_DEFAULT = 3000;
 
     //Agency Introduction
     const AGENCY_INTRODUCTION_SALES = 'sales';

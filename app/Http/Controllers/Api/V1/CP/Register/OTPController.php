@@ -75,8 +75,9 @@ class OTPController extends ApiController
                 'name' => '',
                 'image' => '',
                 'tell' => '',
-                'status'=>Constants::STATUS_ACTIVE,
-                'type' => 'percent',
+                'status' => Constants::STATUS_ACTIVE,
+                'type' => 'price',
+                'price' => Constants::SUPPLIER_PRICE_DEFAULT
             ]);
             SupplierUser::create([
                 'user_id' => $request->input('user_id'),
@@ -98,7 +99,7 @@ class OTPController extends ApiController
                 'image' => '',
                 'tell' => '',
                 'type' => 'percent',
-                'status'=>Constants::STATUS_ACTIVE,
+                'status' => Constants::STATUS_ACTIVE,
                 'introduction' => [Constants::AGENCY_INTRODUCTION_SALES]
             ]);
             AgencyUser::create([

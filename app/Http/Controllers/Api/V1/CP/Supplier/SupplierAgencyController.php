@@ -158,6 +158,7 @@ class SupplierAgencyController extends ApiController
                 'image' => '',
                 'tell' => '',
                 'type' => 'percent',
+                'status' => Constants::STATUS_ACTIVE,
                 'introduction' => [Constants::AGENCY_INTRODUCTION_AGENCY]
             ]);
             AgencyUser::create([
