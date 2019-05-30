@@ -98,7 +98,7 @@ class OTPController extends ApiController
             );
         $user->wallet = ApiWallet::where(['id' => $api->api_id])->first();
         $appId = ApiApp::where(['api_id' => $apiUser->api_id])->pluck('app_id');
-        $user->Api = Api::where('id', $apiUser->api_id)->first();
+        $user->api = Api::where('id', $apiUser->api_id)->first();
         $user->role = ApiUser::where(['user_id' => $user->id])->first()->role;
         $user->apps = App::whereIn('id', $appId)->get();
         $this->generateToken($user, $request->header('agent'), $user->role);
