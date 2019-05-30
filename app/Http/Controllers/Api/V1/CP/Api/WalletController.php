@@ -43,6 +43,7 @@ class WalletController extends ApiController
         $data["walletInvoice"] = $data["walletInvoice"]->orderBy('created_at', 'desc')
             ->get()->map(function ($value) {
                 $value->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->created_at));
+                return $value;
             });
         return $this->respond($data);
     }
