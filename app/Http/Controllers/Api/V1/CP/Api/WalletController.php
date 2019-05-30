@@ -71,6 +71,11 @@ class WalletController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد کردن مبلغ اجباری می باشد.'
             );
+        if (!$request->input('base_url'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن base_url اجباری می باشد.'
+            );
         switch ($request->header('market')) {
             case Constants::MARKET_ZARINPAL:
                 $zarinpal = new ZarinpallController();

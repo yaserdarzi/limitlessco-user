@@ -53,6 +53,11 @@ class PaymentController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد کردن شماره همراه اجباری می باشد.'
             );
+        if (!$request->input('base_url'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن base_url اجباری می باشد.'
+            );
         $customer_id = Constants::AGENCY_DB . "-" . $request->input('agency_id') . "-" . $request->input('user_id');
         $incomeAgency = 0;
         $incomeYou = 0;

@@ -67,7 +67,7 @@ class ZarinpallController extends ApiController
             'invoice_status' => Constants::INVOICE_INVOICE_STATUS_WALLET . " - " . Constants::INVOICE_INVOICE_STATUS_INCREMENT,
             'payment_token' => $walletPaymentTokenApi,
             'market' => Constants::INVOICE_MARKET_ZARINPAL,
-            'info' => ['wallet' => $wallet],
+            'info' => ['wallet' => $wallet, "base_url" => $request->input('base_url')],
         ]);
         // Doing the payment
         $payment = $zarinPal->request(
@@ -146,15 +146,13 @@ class ZarinpallController extends ApiController
                 $invoice->status = Constants::INVOICE_STATUS_SUCCESS;
                 $invoice->save();
             }
-//            return redirect('http://api.justkish.com/success-message?token=' . $factorInvoice->payment_token . '&factor_id=' . $factor->id);
-            return $this->respond(["status" => "success"]);
+            return redirect($invoice->info->base_url . '/success?token=' . $invoice->payment_token);
         } else {
             if ($invoice->status == Constants::INVOICE_STATUS_PENDING) {
                 $invoice->status = Constants::INVOICE_STATUS_FAILED;
                 $invoice->save();
             }
-//            return redirect('http://api.justkish.com/failed-message?token=' . $factorInvoice->payment_token);
-            return $this->respond(["status" => "failed"]);
+            return redirect($invoice->info->base_url . '/failed?token=' . $invoice->payment_token);
         }
     }
 
