@@ -124,6 +124,9 @@ class SupplierAgencyController extends ApiController
                     ApiException::EXCEPTION_NOT_FOUND_404,
                     'کاربر گرامی ، آژانس مورد نظر قبلا در سیستم شما ثبت شده است.'
                 );
+            $agencyUpdate = Agency::find($agency->agency_id);
+            $agencyUpdate->introduction = array_merge($agencyUpdate->introduction, [Constants::AGENCY_INTRODUCTION_AGENCY]);
+            $agencyUpdate->save();
             $agency_id = $agency->agency_id;
         } else {
             $user = User::where(['phone' => $phone])->first();
@@ -155,6 +158,7 @@ class SupplierAgencyController extends ApiController
                 'image' => '',
                 'tell' => '',
                 'type' => 'percent',
+                'introduction' => [Constants::AGENCY_INTRODUCTION_AGENCY]
             ]);
             AgencyUser::create([
                 'user_id' => $user->id,

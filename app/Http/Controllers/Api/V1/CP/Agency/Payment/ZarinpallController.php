@@ -213,10 +213,11 @@ class ZarinpallController extends ApiController
                     'market' => Constants::INVOICE_MARKET_ZARINPAL,
                     'info' => ['wallet' => $wallet, 'zarinpal' => $verify],
                 ]);
-                foreach ($shoppingInvoice->info as $value) {
+                foreach ($shoppingInvoice->info->shopping as $value) {
                     Shopping::create([
                         'shopping_id' => $value->shopping_id,
                         'customer_id' => $value->customer_id,
+                        'supplier_id' => $value->shopping->roomEpisode[0]->supplier_id,
                         'shopping_invoice_id' => $shoppingInvoice->id,
                         'voucher' => $helper->voucher(explode('-', $value->shopping_id)[0]),
                         'name' => $shoppingInvoice->name,
@@ -301,10 +302,11 @@ class ZarinpallController extends ApiController
         AgencyWallet::where('agency_id', $agency_id)->update([
             'price' => intval($wallet->price - $data['pricePayment'])
         ]);
-        foreach ($shoppingInvoice->info as $value) {
+        foreach ($shoppingInvoice->info->shopping as $value) {
             Shopping::create([
                 'shopping_id' => $value->shopping_id,
                 'customer_id' => $value->customer_id,
+                'supplier_id' => $value->shopping->roomEpisode[0]->supplier_id,
                 'shopping_invoice_id' => $shoppingInvoice->id,
                 'voucher' => $helper->voucher(explode('-', $value->shopping_id)[0]),
                 'name' => $shoppingInvoice->name,
@@ -421,6 +423,7 @@ class ZarinpallController extends ApiController
                     Shopping::create([
                         'shopping_id' => $value->shopping_id,
                         'customer_id' => $value->customer_id,
+                        'supplier_id' => $value->shopping->roomEpisode[0]->supplier_id,
                         'shopping_invoice_id' => $shoppingInvoice->id,
                         'voucher' => $helper->voucher(explode('-', $value->shopping_id)[0]),
                         'name' => $shoppingInvoice->name,

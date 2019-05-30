@@ -25,7 +25,7 @@ class AgencyTableMigration extends Migration
             $table->bigInteger('award')->default(0);
             $table->bigInteger('income')->default(0);
             $table->string('status')->default(Constants::STATUS_PENDING);
-            $table->json('introduction')->default([Constants::AGENCY_INTRODUCTION_SALES]);
+            $table->json('introduction')->nullable();
             $table->json('info')->nullable();
             $table->timestamps();
             $table->softDeletes();

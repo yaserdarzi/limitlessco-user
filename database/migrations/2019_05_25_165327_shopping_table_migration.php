@@ -18,6 +18,7 @@ class ShoppingTableMigration extends Migration
             $table->bigIncrements('id');
             $table->string('shopping_id');
             $table->string('customer_id');
+            $table->bigInteger('supplier_id');
             $table->bigInteger('shopping_invoice_id');
             $table->string('voucher');
             $table->string('name')->nullable();
@@ -42,6 +43,7 @@ class ShoppingTableMigration extends Migration
         });
         Schema::table(Constants::SHOPPING_DB, function (Blueprint $table) {
             $table->foreign('shopping_invoice_id')->references('id')->on(Constants::SHOPPING_INVOICE_DB)->onDelete('cascade');
+            $table->foreign('supplier_id')->references('id')->on(Constants::SUPPLIER_DB)->onDelete('cascade');
         });
     }
 

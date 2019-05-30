@@ -166,6 +166,7 @@ class PaymentController extends ApiController
                     ApiException::EXCEPTION_NOT_FOUND_404,
                     'کاربر گرامی ، اتاق مورد نظر خالی نمی باشد.'
                 );
+
         }
         $roomEpisode = DB::connection(Constants::CONNECTION_HOTEL)
             ->table(Constants::APP_HOTEL_DB_ROOM_EPISODE_DB)
@@ -264,6 +265,7 @@ class PaymentController extends ApiController
         Shopping::create([
             'shopping_id' => Constants::APP_NAME_HOTEL . "-" . $request->input('room_id'),
             'customer_id' => $customer_id,
+            'supplier_id' => $supplier_id[0],
             'shopping_invoice_id' => $shoppingInvoice->id,
             'voucher' => $helper->voucher(Constants::APP_NAME_HOTEL),
             'name' => $shoppingInvoice->name,
