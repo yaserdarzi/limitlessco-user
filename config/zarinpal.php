@@ -12,5 +12,5 @@ return [
     ],
 
     // Set to true if you are in the development environment
-    'testing' => env('ZARINPAL_TESTING', 'false')
+    'testing' => env('ZARINPAL_TESTING', false)
 ];
