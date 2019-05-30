@@ -79,6 +79,9 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             Route::get('report/income', 'ReportController@income');
             Route::get('report/cancel', 'ReportController@cancel');
 
+            //Setting
+            Route::get('setting', 'SettingController@index');
+
         });
 
     });
@@ -187,7 +190,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             //Hotel Payment
             Route::post('payment/hotel', 'PaymentController@PaymentHotel');
 
-            //Hotel Payment
+            //Setting
             Route::get('setting', 'SettingController@index');
 
         });
