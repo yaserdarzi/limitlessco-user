@@ -7,6 +7,7 @@ use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
 use App\Shopping;
 use App\ShoppingInvoice;
+use App\Supplier;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use Morilog\Jalali\CalendarUtils;
@@ -117,44 +118,77 @@ class ReportController extends ApiController
         $toDate = date('Y-m-d', strtotime($toDate[0] . '-' . $toDate[1] . '-' . $toDate[2]));
         $fromDate = date('Y-m-d', strtotime($fromDate [0] . '-' . $fromDate [1] . '-' . $fromDate [2]));
         $data['countAll'] = 0;
-        $data['shoppingInvoice'] = ShoppingInvoice::whereBetween(
+        $data['shopping'] = Shopping::
+        where(['supplier_id' => $request->input('supplier_id')])
+            ->whereBetween(
+                'created_at', [$fromDate, $toDate]
+            )->get();
+        $supplier = Supplier::where(['id' => $request->input('supplier_id')])->first();
+        foreach ($data['shopping'] as $key => $value) {
+            if ($supplier->type == Constants::TYPE_PRICE)
+                $value->price_supplier = $value->price_payment - $supplier->price;
+            elseif ($supplier->type == Constants::TYPE_PERCENT) {
+                if ($supplier->percent < 100) {
+                    $floatPercent = floatval("0." . $supplier->percent);
+                    $value->price_supplier = $value->price_payment - ($value->price_payment * $floatPercent);
+                } else
+                    $value->price_supplier = 0;
+            }
+            $data['countAll'] = $data['countAll'] + $value->count_all;
+            $value->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->created_at));
+        }
+        return $this->respond($data);
+    }
+
+    public function income(Request $request)
+    {
+        if ($request->input('role') != Constants::ROLE_ADMIN)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی شما دسترسی به این قسمت ندارید.'
+            );
+        if (!$request->input('from'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی وارد کردن تاریخ شروع اجباری می باشد.'
+            );
+        if (!$request->input('to'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی وارد کردن تاریخ پایان اجباری می باشد.'
+            );
+        $arrayStartDate = explode('/', $request->input('from'));
+        $arrayEndDate = explode('/', $request->input('to'));
+        $toDate = \Morilog\Jalali\CalendarUtils::toGregorian($arrayEndDate[0], $arrayEndDate[1], $arrayEndDate[2]);
+        $fromDate = \Morilog\Jalali\CalendarUtils::toGregorian($arrayStartDate[0], $arrayStartDate[1], $arrayStartDate[2]);
+        $toDate = date('Y-m-d', strtotime($toDate[0] . '-' . $toDate[1] . '-' . $toDate[2]));
+        $fromDate = date('Y-m-d', strtotime($fromDate [0] . '-' . $fromDate [1] . '-' . $fromDate [2]));
+        $data['countAll'] = 0;
+        $data['shopping'] = Shopping::
+        where([
+            'supplier_id' => $request->input('supplier_id'),
+            'status' => Constants::SHOPPING_STATUS_FINISH
+        ])->whereBetween(
             'created_at', [$fromDate, $toDate]
         )->get();
-        foreach ($data['shoppingInvoice'] as $key => $val) {
-            foreach ($val->info->shopping as $item=> $value) {
-                $status = true;
-                switch (explode('-', $value->shopping_id)[0]) {
-                    case Constants::APP_NAME_HOTEL:
-                        $status = $this->hotelCheck($value, $request);
-                        if (!$status)
-                            unset($data['shoppingInvoice'][$key]);
-                        break;
-                }
-                if ($status) {
-                    $val->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($val->created_at));
-                    $data['countAll'] = $data['countAll'] + $val->count_all;
-                }
+        $supplier = Supplier::where(['id' => $request->input('supplier_id')])->first();
+        foreach ($data['shopping'] as $key => $value) {
+            if ($supplier->type == Constants::TYPE_PRICE)
+                $value->price_supplier = $value->price_payment - $supplier->price;
+            elseif ($supplier->type == Constants::TYPE_PERCENT) {
+                if ($supplier->percent < 100) {
+                    $floatPercent = floatval("0." . $supplier->percent);
+                    $value->price_supplier = $value->price_payment - ($value->price_payment * $floatPercent);
+                } else
+                    $value->price_supplier = 0;
             }
+            $data['countAll'] = $data['countAll'] + $value->count_all;
+            $value->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->created_at));
         }
         return $this->respond($data);
     }
 
     ///////////////////private function///////////////////////
-
-    private function hotelCheck($shopping, Request $request)
-    {
-        if (!in_array($shopping->shopping->hotel->app_id, $request->input('apps_id')))
-            return false;
-        foreach ($shopping->shopping->roomEpisode as $value)
-            if ($value->supplier_id != $request->input('supplier_id'))
-                return false;
-        $shopping->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($shopping->date));
-        $shopping->date_end_persian = null;
-        $shopping->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($shopping->created_at));
-        if ($shopping->date_end)
-            $shopping->date_end_persian = CalendarUtils::strftime('Y-m-d', strtotime($shopping->date_end));
-        return true;
-    }
 
 
 }
