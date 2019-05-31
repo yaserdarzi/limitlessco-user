@@ -42,6 +42,9 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
     //Supplier
     Route::namespace('Supplier')->prefix('/supplier/')->group(function () {
 
+        //Zarinpall Callback
+        Route::any('shoppingPaymentPortalCallback', 'Payment\ZarinpallController@portalCallback')->name('api.cp.supplier.shopping.portal.callback');
+
         //Auth
         Route::namespace('Auth')->prefix('/auth/')->group(function () {
             Route::post('otp/sms', 'OTPController@smsOTP');
@@ -82,6 +85,14 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             //Setting
             Route::get('setting', 'SettingController@index');
 
+            Route::middleware(['cp.supplier.app.name'])->group(function () {
+
+                //Shopping
+                Route::post('shoppingBag', 'ShoppingBagController@store');
+
+            });
+
+            Route::post('payment', 'PaymentController@store');
         });
 
     });

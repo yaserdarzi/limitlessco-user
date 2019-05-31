@@ -68,6 +68,8 @@ class Constants
     const SALES_TYPE_API = 'api';
     const SALES_TYPE_JUSTKISH = 'justkish';
     const SALES_TYPE_AGENCY = 'agency';
+    const SALES_TYPE_SUPPLIER = 'supplier';
+    const SALES_TYPE_USER = 'user';
     const SALES_TYPE_PERCENT_SITE = 'percent_site';
     const SALES_TYPE_SEPEHR = 'sepehr';
 
