@@ -174,14 +174,14 @@ class ZarinpallController extends ApiController
                 ShoppingBag::where(['customer_id' => $shoppingInvoice->customer_id])->delete();
                 ShoppingBagExpire::where(['customer_id' => $shoppingInvoice->customer_id])->delete();
             }
-            return $shoppingInvoice->info->base_url . '/success?token=' . $shoppingInvoice->payment_token;
+            return redirect($shoppingInvoice->info->base_url . '/success?token=' . $shoppingInvoice->payment_token);
         } else {
             if ($shoppingInvoice->status == Constants::INVOICE_STATUS_PENDING) {
                 $shoppingInvoice->status = Constants::INVOICE_STATUS_FAILED;
                 $shoppingInvoice->save();
                 ShoppingBagExpire::where(['customer_id' => $shoppingInvoice->customer_id])->update(["status" => Constants::SHOPPING_STATUS_SHOPPING]);
             }
-            return $shoppingInvoice->info->base_url . '/failed?token=' . $shoppingInvoice->payment_token;
+            return redirect($shoppingInvoice->info->base_url . '/failed?token=' . $shoppingInvoice->payment_token);
         }
     }
 
