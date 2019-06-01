@@ -126,15 +126,21 @@ class SalesController extends ApiController
                     'کاربر گرامی ، وارد کردن وضعیت (فعال یا غیرفعال) اجباری می باشد.'
                 );
         }
-        if (SupplierSales::where(['supplier_id' => $request->input('supplier_id'), 'sales_id' => $request->input('sales_id')])->exists())
+        if (SupplierSales::where(['supplier_id' => $request->input('supplier_id'), 'sales_id' => $request->input('sales_id')])->exists()) {
+            if (SupplierSales::where(['supplier_id' => $request->input('supplier_id'), 'sales_id' => $request->input('sales_id'), 'info->is_first' => true])->exists())
+                throw new ApiException(
+                    ApiException::EXCEPTION_NOT_FOUND_404,
+                    'کاربر گرامی ، امکان ویرایش فقط یک بار می باشد.'
+                );
             SupplierSales::where(['supplier_id' => $request->input('supplier_id'), 'sales_id' => $request->input('sales_id')])->update([
                 'capacity_percent' => $this->help->priceNumberDigitsToNormal($request->input('capacity_percent')),
                 'type_price' => $typePrice,
                 'price' => $this->help->priceNumberDigitsToNormal($price),
                 'percent' => $this->help->priceNumberDigitsToNormal($percent),
                 'status' => $status,
+                'info' => ['is_first' => true]
             ]);
-        else
+        } else
             SupplierSales::create([
                 'supplier_id' => $request->input('supplier_id'),
                 'sales_id' => $request->input('sales_id'),
@@ -143,6 +149,7 @@ class SalesController extends ApiController
                 'price' => $this->help->priceNumberDigitsToNormal($price),
                 'percent' => $this->help->priceNumberDigitsToNormal($percent),
                 'status' => $status,
+                'info' => ['is_first' => true]
             ]);
         return $this->respond(["status" => "success"]);
     }
