@@ -6,6 +6,9 @@ use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
 use App\Shopping;
+use App\Supplier;
+use App\SupplierWallet;
+use App\SupplierWalletInvoice;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use Morilog\Jalali\CalendarUtils;
@@ -168,6 +171,37 @@ class VoucherController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی واچر مورد نظر شما قبلا استفاده شده است.'
             );
+        $supplier = Supplier::where(['id' => $shopping->supplier_id])->first();
+        $incomeSupplier = 0;
+        if ($supplier->type == Constants::TYPE_PRICE) {
+            $incomeSupplier = $shopping->price_payment - $supplier->price;
+        } elseif ($supplier->type == Constants::TYPE_PERCENT) {
+            if ($supplier->percent < 100) {
+                $floatPercent = floatval("0." . $supplier->percent);
+                $incomeSupplier = $shopping->price_payment - ($shopping->price_payment * $floatPercent);
+            }
+        }
+        $wallet = SupplierWallet::where('supplier_id', $supplier->id)->first();
+        $walletPaymentTokenSupplierCount = SupplierWalletInvoice::count();
+        $walletPaymentTokenSupplier = "SW-" . ++$walletPaymentTokenSupplierCount;
+        SupplierWalletInvoice::create([
+            'supplier_id' => $supplier->id,
+            'wallet_id' => $wallet->id,
+            'price_before' => $supplier->income,
+            'price' => $incomeSupplier,
+            'price_after' => intval($supplier->income + $incomeSupplier),
+            'price_all' => $incomeSupplier,
+            'type_status' => Constants::INVOICE_TYPE_STATUS_INCOME,
+            'status' => Constants::INVOICE_STATUS_SUCCESS,
+            'type' => Constants::INVOICE_TYPE_INCOME_SUPPLIER,
+            'invoice_status' => Constants::INVOICE_INVOICE_STATUS_INCOME_SUPPLIER . " - " . Constants::INVOICE_INVOICE_STATUS_INCREMENT,
+            'payment_token' => $walletPaymentTokenSupplier,
+            'market' => Constants::INVOICE_MARKET_INCOME_SUPPLIER,
+            'info' => ['wallet' => $wallet, "shopping" => $shopping],
+        ]);
+        Supplier::where('id', $supplier->id)->update([
+            'income' => intval($supplier->income + $incomeSupplier)
+        ]);
         Shopping::where('id', $shopping->id)->update(['status' => Constants::SHOPPING_STATUS_FINISH]);
         return ["status" => "success"];
     }

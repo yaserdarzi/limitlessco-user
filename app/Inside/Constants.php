@@ -113,10 +113,12 @@ class Constants
     const INVOICE_MARKET_MELLAT = 'mellat';
     const INVOICE_MARKET_DIRECT = 'direct';
     const INVOICE_MARKET_WALLET = 'wallet';
+    const INVOICE_MARKET_INCOME_SUPPLIER = 'income_supplier';
     //Invoice Type
     const INVOICE_TYPE_SHOPPING = 'shopping';
     const INVOICE_TYPE_WITHDRAW = 'withdraw';
     const INVOICE_TYPE_WALLET = 'wallet';
+    const INVOICE_TYPE_INCOME_SUPPLIER = 'income_supplier';
     //Invoice Status
     const INVOICE_STATUS_PENDING = 'pending';
     const INVOICE_STATUS_SUCCESS = 'success';
@@ -125,10 +127,12 @@ class Constants
     const INVOICE_TYPE_STATUS_PRICE = 'price';
     const INVOICE_TYPE_STATUS_CREDIT = 'credit';
     const INVOICE_TYPE_STATUS_REQUEST = 'request';
+    const INVOICE_TYPE_STATUS_INCOME = 'income';
     //Invoice Invoice Status
     const INVOICE_INVOICE_STATUS_SHOPPING = 'خرید';
     const INVOICE_INVOICE_STATUS_WALLET = 'کیف پول';
     const INVOICE_INVOICE_STATUS_INCREMENT = 'افزایش';
     const INVOICE_INVOICE_STATUS_DECREMENT = 'کاهش';
     const INVOICE_INVOICE_STATUS_WITHDRAW = 'تصویه حساب';
+    const INVOICE_INVOICE_STATUS_INCOME_SUPPLIER = 'در آمد عرضه کننده';
 }
