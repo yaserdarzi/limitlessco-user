@@ -68,10 +68,10 @@ class OTPController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'Plz check your agent'
             );
-        if (!$request->input('appID'))
+        if (!$request->input('username'))
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
-                'کاربر گرامی ، لطفا appId را وارد نمایید.'
+                'کاربر گرامی ، لطفا username را وارد نمایید.'
             );
         if (!$request->input('secret'))
             throw new ApiException(
@@ -91,7 +91,7 @@ class OTPController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 "کاربر گرامی شما وب سرویس نمی باشید."
             );
-        if (!$api = Api::where(['id' => $request->input('appID'), 'status' => Constants::STATUS_ACTIVE])->first())
+        if (!$api = Api::where(['username' => $request->input('username'), 'status' => Constants::STATUS_ACTIVE])->first())
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 "کاربر گرامی حساب شما فعال نمی باشید."
