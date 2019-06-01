@@ -13,6 +13,7 @@ use App\Inside\Helpers;
 use App\Supplier;
 use App\SupplierApp;
 use App\SupplierUser;
+use App\SupplierWallet;
 use App\User;
 use App\UsersLoginToken;
 use App\UsersLoginTokenLog;
@@ -85,6 +86,10 @@ class OTPController extends ApiController
                 'type' => 'percent',
                 'percent' => 100,
                 'role' => Constants::ROLE_ADMIN
+            ]);
+            SupplierWallet::create([
+                'supplier_id' => $supplier->id,
+                'price' => 0
             ]);
             foreach (json_decode($request->input('supplier_app_id')) as $value) {
                 SupplierApp::create([
