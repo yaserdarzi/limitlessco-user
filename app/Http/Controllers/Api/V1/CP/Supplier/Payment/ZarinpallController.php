@@ -15,6 +15,7 @@ use App\ShoppingInvoice;
 use App\WalletInvoice;
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use Illuminate\Support\Facades\DB;
 use Rasulian\ZarinPal\Payment;
 
 class ZarinpallController extends ApiController
@@ -180,6 +181,7 @@ class ZarinpallController extends ApiController
                 $shoppingInvoice->status = Constants::INVOICE_STATUS_FAILED;
                 $shoppingInvoice->save();
                 ShoppingBagExpire::where(['customer_id' => $shoppingInvoice->customer_id])->update(["status" => Constants::SHOPPING_STATUS_SHOPPING]);
+                $this->expireShopping($shoppingInvoice->customer_id);
             }
             return redirect($shoppingInvoice->info->base_url . '/failed?token=' . $shoppingInvoice->payment_token);
         }
@@ -192,6 +194,52 @@ class ZarinpallController extends ApiController
     {
         $shoppingInvoice = ShoppingInvoice::count();
         return "s-" . ++$shoppingInvoice;
+    }
+
+
+    private function expireShopping($customer_id)
+    {
+        $shoppingBagExpire = ShoppingBagExpire::where([
+            'customer_id' => $customer_id
+        ])->first();
+        if ($shoppingBagExpire) {
+            ShoppingBagExpire::where([
+                'id' => $shoppingBagExpire->id
+            ])->update(['status' => Constants::SHOPPING_STATUS_DELETE]);
+            $shoppingBag = ShoppingBag::where([
+                'customer_id' => $shoppingBagExpire->customer_id
+            ])->get();
+            if (sizeof($shoppingBag))
+                foreach ($shoppingBag as $value)
+                    switch (explode('-', $value->shopping_id)[0]) {
+                        case Constants::APP_NAME_HOTEL:
+                            $this->hotelCheck($value);
+                            $this->deleteShoppingBagExpire($shoppingBagExpire->id);
+                            break;
+                    }
+        }
+    }
+
+    private function deleteShoppingBagExpire($id)
+    {
+        ShoppingBagExpire::where([
+            'id' => $id
+        ])->delete();
+    }
+
+    private function hotelCheck($shoppingBag)
+    {
+        foreach ($shoppingBag->shopping->roomEpisode as $value) {
+            DB::connection(Constants::CONNECTION_HOTEL)
+                ->table(Constants::APP_HOTEL_DB_ROOM_EPISODE_DB)
+                ->where('id', $value->id)
+                ->decrement('capacity_filled', $shoppingBag->count);
+            DB::connection(Constants::CONNECTION_HOTEL)
+                ->table(Constants::APP_HOTEL_DB_ROOM_EPISODE_DB)
+                ->where('id', $value->id)
+                ->increment('capacity_remaining', $shoppingBag->count);
+        }
+        ShoppingBag::where('id', $shoppingBag->id)->delete();
     }
 
 }
