@@ -279,10 +279,10 @@ class ReportController extends ApiController
                 ->select('id', 'title')->first();
             switch (explode('-', $value->customer_id)[0]) {
                 case Constants::SALES_TYPE_AGENCY:
-                    $value->sales = Agency::where('id', explode('-', $value->shopping_id)[1])->select('id', 'name')->first();
+                    $value->sales = Agency::where('id', explode('-', $value->customer_id)[1])->select('id', 'name')->first();
                     break;
                 case Constants::SALES_TYPE_API:
-                    $value->sales = Api::where('id', explode('-', $value->shopping_id)[1])->select('id', 'name')->first();
+                    $value->sales = Api::where('id', explode('-', $value->customer_id)[1])->select('id', 'name')->first();
                     break;
             }
             $data['countAll'] = $data['countAll'] + $value->count;
