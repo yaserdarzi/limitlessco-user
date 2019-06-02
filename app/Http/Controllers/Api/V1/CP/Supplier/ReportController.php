@@ -10,6 +10,7 @@ use App\ShoppingInvoice;
 use App\Supplier;
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use Illuminate\Support\Facades\DB;
 use Morilog\Jalali\CalendarUtils;
 use Morilog\Jalali\Jalalian;
 
@@ -270,6 +271,10 @@ class ReportController extends ApiController
             'date' => $date
         ])->where('shopping_id', 'like', "%{$shopping_id}%")->get();
         foreach ($data['shopping'] as $key => $value) {
+            $value->room = DB::connection(Constants::CONNECTION_HOTEL)
+                ->table(Constants::APP_HOTEL_DB_ROOM_DB)
+                ->where('id', explode('-', $value->shopping_id)[1])
+                ->slect('id', 'title')->first();
             $data['countAll'] = $data['countAll'] + $value->count_all;
             $value->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date));
             $value->date_end_persian = null;
