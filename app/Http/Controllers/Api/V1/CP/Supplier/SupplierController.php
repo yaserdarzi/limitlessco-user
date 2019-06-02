@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\CP\Supplier;
 
+use App\Inside\Helpers;
 use App\Supplier;
 use App\App;
 use App\Exceptions\ApiException;
@@ -17,6 +18,12 @@ use Intervention\Image\Facades\Image;
 
 class SupplierController extends ApiController
 {
+    protected $help;
+
+    public function __construct()
+    {
+        $this->help = new Helpers();
+    }
 
     /**
      * Display a listing of the resource.
