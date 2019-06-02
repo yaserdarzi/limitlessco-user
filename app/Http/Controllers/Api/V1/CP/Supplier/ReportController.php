@@ -276,7 +276,7 @@ class ReportController extends ApiController
             $value->room = DB::connection(Constants::CONNECTION_HOTEL)
                 ->table(Constants::APP_HOTEL_DB_ROOM_DB)
                 ->where('id', explode('-', $value->shopping_id)[1])
-                ->slect('id', 'title')->first();
+                ->select('id', 'title')->first();
             switch (explode('-', $value->shopping_id)[0]) {
                 case Constants::SALES_TYPE_AGENCY:
                     $value->sales = Agency::where('id', explode('-', $value->shopping_id)[1])->select('id', 'name')->first();
