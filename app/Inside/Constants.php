@@ -70,8 +70,12 @@ class Constants
     const SALES_TYPE_AGENCY = 'agency';
     const SALES_TYPE_SUPPLIER = 'supplier';
     const SALES_TYPE_USER = 'user';
-    const SALES_TYPE_PERCENT_SITE = 'percent_site';
     const SALES_TYPE_SEPEHR = 'sepehr';
+    const SALES_TYPE_PERCENT_SITE = 'percent_site';
+    const SALES_TYPE_ARABIC_PASSENGER= 'arabic_passenger';
+    const SALES_TYPE_ENGLISH_PASSENGER= 'english_passenger';
+    const SALES_TYPE_SOCIAL= 'social';
+    const SALES_TYPE_CELEBRITY= 'celebrity';
 
     //sms log type
     Const LOGIN_TYPE_SMS = "login_with_sms";

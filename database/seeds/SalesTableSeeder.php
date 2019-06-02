@@ -31,7 +31,7 @@ class SalesTableSeeder extends Seeder
         ]);
         //Percent Site
         \App\Sales::create([
-            'title' => 'سایت های تخفیف',
+            'title' => 'سایت های تخفیف گروهی',
             'logo' => "",
             'type' => \App\Inside\Constants::SALES_TYPE_PERCENT_SITE,
         ]);
@@ -40,6 +40,30 @@ class SalesTableSeeder extends Seeder
             'title' => 'سپهر',
             'logo' => "",
             'type' => \App\Inside\Constants::SALES_TYPE_SEPEHR,
+        ]);
+        //Arabic Passenger
+        \App\Sales::create([
+            'title' => ' مسافران عرب زبان',
+            'logo' => "",
+            'type' => \App\Inside\Constants::SALES_TYPE_ARABIC_PASSENGER,
+        ]);
+        //English Passenger
+        \App\Sales::create([
+            'title' => ' مسافران انگلیسی زبان',
+            'logo' => "",
+            'type' => \App\Inside\Constants::SALES_TYPE_ENGLISH_PASSENGER,
+        ]);
+        //social
+        \App\Sales::create([
+            'title' => ' شبکه های اجتماعی',
+            'logo' => "",
+            'type' => \App\Inside\Constants::SALES_TYPE_SOCIAL,
+        ]);
+        //celebrity
+        \App\Sales::create([
+            'title' => ' سلیبرتی ها ',
+            'logo' => "",
+            'type' => \App\Inside\Constants::SALES_TYPE_CELEBRITY,
         ]);
 
     }
