@@ -81,6 +81,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             Route::get('report/sales', 'ReportController@sales');
             Route::get('report/income', 'ReportController@income');
             Route::get('report/cancel', 'ReportController@cancel');
+            Route::get('report/manifest', 'ReportController@manifest');
 
             //Setting
             Route::get('setting', 'SettingController@index');
