@@ -264,11 +264,11 @@ class ReportController extends ApiController
         $date = \Morilog\Jalali\CalendarUtils::toGregorian($arrayDate [0], $arrayDate [1], $arrayDate [2]);
         $date = date('Y-m-d', strtotime($date[0] . '-' . $date[1] . '-' . $date[2]));
         $data['countAll'] = 0;
-        $data['shopping'] = Shopping::
-        where(['supplier_id' => $request->input('supplier_id')])
-            ->where(
-                'date', $date
-            )->get();
+        $shopping_id = Constants::APP_NAME_HOTEL . "-";
+        $data['shopping'] = Shopping::where([
+            'supplier_id' => $request->input('supplier_id'),
+            'date' => $date
+        ])->where('shopping_id', 'like', "%{$shopping_id}%")->get();
         foreach ($data['shopping'] as $key => $value) {
             $data['countAll'] = $data['countAll'] + $value->count_all;
             $value->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date));
