@@ -248,6 +248,38 @@ class ReportController extends ApiController
         return $this->respond($data);
     }
 
+    public function manifest(Request $request)
+    {
+        if ($request->input('role') != Constants::ROLE_ADMIN)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی شما دسترسی به این قسمت ندارید.'
+            );
+        if (!$request->input('date'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی وارد کردن تاریخ پایان اجباری می باشد.'
+            );
+        $arrayDate = explode('/', $request->input('date'));
+        $date = \Morilog\Jalali\CalendarUtils::toGregorian($arrayDate [0], $arrayDate [1], $arrayDate [2]);
+        $date = date('Y-m-d', strtotime($date[0] . '-' . $date[1] . '-' . $date[2]));
+        $data['countAll'] = 0;
+        $data['shopping'] = Shopping::
+        where(['supplier_id' => $request->input('supplier_id')])
+            ->where(
+                'date', $date
+            )->get();
+        foreach ($data['shopping'] as $key => $value) {
+            $data['countAll'] = $data['countAll'] + $value->count_all;
+            $value->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date));
+            $value->date_end_persian = null;
+            $value->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->created_at));
+            if ($value->date_end)
+                $value->date_end_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date_end));
+        }
+        return $this->respond($data);
+    }
+
     ///////////////////private function///////////////////////
 
 
