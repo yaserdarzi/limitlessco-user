@@ -17,6 +17,7 @@ class SalesTableMigration extends Migration
         Schema::create(Constants::SALES_DB, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('title');
+            $table->longText('desc')->nullable();
             $table->string('logo');
             $table->string('type');
             $table->bigInteger('count_sellers')->default(1000);
