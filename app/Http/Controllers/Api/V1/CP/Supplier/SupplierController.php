@@ -132,7 +132,7 @@ class SupplierController extends ApiController
         if (!$request->input('tell'))
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
-                'کاربر گرامی ، وارد کردن شماره عرضه کننده اجباری می باشد.'
+                'کاربر گرامی ، وارد کردن شماره تماس عرضه کننده اجباری می باشد.'
             );
         $info = Supplier::find($request->input('supplier_id'));
         $image = $info->image;
