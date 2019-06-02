@@ -137,7 +137,7 @@ class ReportController extends ApiController
                 } else
                     $value->price_supplier = 0;
             }
-            $data['countAll'] = $data['countAll'] + $value->count_all;
+            $data['countAll'] = $data['countAll'] + $value->count;
             $value->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date));
             $value->date_end_persian = null;
             $value->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->created_at));
@@ -189,7 +189,7 @@ class ReportController extends ApiController
                 } else
                     $value->price_supplier = 0;
             }
-            $data['countAll'] = $data['countAll'] + $value->count_all;
+            $data['countAll'] = $data['countAll'] + $value->count;
             $value->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date));
             $value->date_end_persian = null;
             $value->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->created_at));
@@ -241,7 +241,7 @@ class ReportController extends ApiController
                 } else
                     $value->price_supplier = 0;
             }
-            $data['countAll'] = $data['countAll'] + $value->count_all;
+            $data['countAll'] = $data['countAll'] + $value->count;
             $value->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date));
             $value->date_end_persian = null;
             $value->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->created_at));
@@ -285,7 +285,7 @@ class ReportController extends ApiController
                     $value->sales = Api::where('id', explode('-', $value->shopping_id)[1])->select('id', 'name')->first();
                     break;
             }
-            $data['countAll'] = $data['countAll'] + $value->count_all;
+            $data['countAll'] = $data['countAll'] + $value->count;
             $value->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date));
             $value->date_end_persian = null;
             $value->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->created_at));
