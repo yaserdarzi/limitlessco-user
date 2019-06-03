@@ -311,7 +311,7 @@ class ShoppingBagController extends ApiController
                 ])->first();
             if ($supplierSales)
                 if ($supplierSales->type_price == Constants::TYPE_PERCENT)
-                    $income += ($value->price - $percent) * floatval("0." . $supplierSales->percent);
+                    $income += ($supplierSales->percent / 100) * ($value->price - $percent);
                 elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
                     $income = $income + $supplierSales->percent;
             if (in_array(Constants::AGENCY_INTRODUCTION_AGENCY, $agency->introduction)) {
@@ -321,12 +321,12 @@ class ShoppingBagController extends ApiController
                 ])->first();
                 if ($supplierAgency)
                     if ($supplierAgency->type_price == Constants::TYPE_PERCENT)
-                        $incomeAgency += ($income - $percent) * floatval("0." . $supplierAgency->percent);
+                        $incomeAgency += ($supplierAgency->percent / 100) * ($income - $percent);
                     elseif ($supplierAgency->type_price == Constants::TYPE_PRICE)
                         $incomeAgency = $incomeAgency + $supplierAgency->percent;
             } elseif (in_array(Constants::AGENCY_INTRODUCTION_SALES, $agency->introduction)) {
                 if ($agency->type == Constants::TYPE_PERCENT)
-                    $incomeAgency += ($income - $percent) * floatval("0." . $supplierSales->percent);
+                    $incomeAgency += ($supplierSales->percent / 100) * ($income - $percent);
                 elseif ($supplierSales->type == Constants::TYPE_PRICE)
                     $incomeAgency = $incomeAgency + $supplierSales->percent;
             }
@@ -337,7 +337,7 @@ class ShoppingBagController extends ApiController
             if ($agencyUser)
                 if ($agencyUser->type == Constants::TYPE_PERCENT)
                     if ($agencyUser->percent != 100)
-                        $incomeYou = $incomeAgency * floatval("0." . $agencyUser->percent);
+                        $incomeYou = ($agencyUser->percent / 100) * $incomeAgency;
                     else
                         $incomeYou = $incomeAgency;
                 elseif ($agencyUser->type == Constants::TYPE_PRICE)
