@@ -63,12 +63,18 @@ class Helpers
 
     public function voucher($appName)
     {
-        $voucher = Shopping::count();
+        $appNumber = 0;
+        switch ($appName) {
+            case Constants::APP_NAME_HOTEL:
+                $appNumber = Constants::APP_NUMBER_HOTEL;
+                break;
+        }
+        $voucher = Shopping::count() + 1;
         $zero = '';
         if (strlen($voucher) < 8)
             for ($i = strlen($voucher); $i < 8; $i++)
                 $zero = $zero . '0';
-        return substr($appName, 0, 1) . "-" . $zero . $voucher;
+        return $appNumber . "-" . $zero . $voucher;
     }
 
     public function base64url_encode($plainText)
