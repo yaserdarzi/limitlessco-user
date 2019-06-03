@@ -6,14 +6,11 @@ use App\Api;
 use App\ApiWallet;
 use App\ApiWalletInvoice;
 use App\Exceptions\ApiException;
-use App\Http\Controllers\Api\V1\CP\Api\Payment\ZarinpallController;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
 use App\Inside\Helpers;
 use App\Sales;
 use App\Shopping;
-use App\ShoppingBag;
-use App\ShoppingBagExpire;
 use App\ShoppingInvoice;
 use App\SupplierSales;
 use Illuminate\Http\Request;
@@ -137,7 +134,9 @@ class PaymentController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد کردن شماره همراه مشتری اجباری می باشد.'
             );
+        $api = Api::where('id', $request->input('api_id'))->first();
         $customer_id = Constants::API_DB . "-" . $request->input('api_id') . "-" . $request->input('user_id');
+        $income = 0;
         $incomeApi = 0;
         $priceAll = 0;
         $percentAll = 0;
@@ -185,11 +184,9 @@ class PaymentController extends ApiController
                 $percentAll = $percentAll + $value->percent;
                 $percent = $value->percent;
             } elseif ($value->type_percent == Constants::TYPE_PERCENT) {
-                if ($value->percent < 100) {
-                    $floatPercent = floatval("0." . $value->percent);
-                    $percentAll = $percentAll + ($value->price * $floatPercent);
-                    $percent = ($value->price * $floatPercent);
-                } else
+                if ($value->percent < 100)
+                    $percentAll += ($value->percent / 100) * $value->price;
+                else
                     $percentAll = $percentAll + $value->price;
             }
             $supplierSales = SupplierSales::
@@ -201,9 +198,13 @@ class PaymentController extends ApiController
                 ])->first();
             if ($supplierSales)
                 if ($supplierSales->type_price == Constants::TYPE_PERCENT)
-                    $incomeApi += ($value->price - $percent) * floatval("0." . $supplierSales->percent);
+                    $income += ($supplierSales->percent / 100) * ($value->price - $percent);
                 elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
-                    $incomeApi = $incomeApi + $supplierSales->percent;
+                    $income = $income + $supplierSales->percent;
+            if ($api->type == Constants::TYPE_PERCENT)
+                $incomeApi += ($api->percent / 100) * ($income - $percent);
+            elseif ($api->type == Constants::TYPE_PRICE)
+                $incomeApi = $incomeApi + $api->percent;
         }
         $room = DB::connection(Constants::CONNECTION_HOTEL)
             ->table(Constants::APP_HOTEL_DB_ROOM_DB)
@@ -230,6 +231,7 @@ class PaymentController extends ApiController
             'count_all' => 1,
             'price_all' => $priceAll,
             'percent_all' => $percentAll,
+            'income' => $income,
             'income_all' => $incomeApi,
             'income_you' => 0,
             'price_payment' => $pricePayment,
@@ -281,6 +283,7 @@ class PaymentController extends ApiController
             'count' => 1,
             'price_all' => $priceAll * 1,
             'percent_all' => $percentAll * 1,
+            'income' => intval($income * 1),
             'income_api' => intval($incomeApi * 1),
             'income_you' => intval(0 * 1),
             'price_payment' => $pricePayment,
