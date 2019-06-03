@@ -22,6 +22,7 @@ class ShoppingInvoiceTableMigration extends Migration
             $table->bigInteger('count_all')->default(0);
             $table->bigInteger('price_all')->default(0);
             $table->bigInteger('percent_all')->default(0);
+            $table->bigInteger('income')->default(0);
             $table->bigInteger('income_all')->default(0);
             $table->bigInteger('income_you')->default(0);
             $table->bigInteger('price_payment')->default(0);

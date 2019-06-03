@@ -129,12 +129,11 @@ class ReportController extends ApiController
         $supplier = Supplier::where(['id' => $request->input('supplier_id')])->first();
         foreach ($data['shopping'] as $key => $value) {
             if ($supplier->type == Constants::TYPE_PRICE)
-                $value->price_supplier = $value->price_payment - $supplier->price;
+                $value->price_supplier = $value->price_payment - $value->income - $supplier->price;
             elseif ($supplier->type == Constants::TYPE_PERCENT) {
-                if ($supplier->percent < 100) {
-                    $floatPercent = floatval("0." . $supplier->percent);
-                    $value->price_supplier = $value->price_payment - ($value->price_payment * $floatPercent);
-                } else
+                if ($supplier->percent < 100)
+                    $value->price_supplier = ($supplier->percent / 100) * ($value->price_payment - $value->income);
+                else
                     $value->price_supplier = 0;
             }
             $data['countAll'] = $data['countAll'] + $value->count;
@@ -181,12 +180,11 @@ class ReportController extends ApiController
         $supplier = Supplier::where(['id' => $request->input('supplier_id')])->first();
         foreach ($data['shopping'] as $key => $value) {
             if ($supplier->type == Constants::TYPE_PRICE)
-                $value->price_supplier = $value->price_payment - $supplier->price;
+                $value->price_supplier = $value->price_payment - $value->income - $supplier->price;
             elseif ($supplier->type == Constants::TYPE_PERCENT) {
-                if ($supplier->percent < 100) {
-                    $floatPercent = floatval("0." . $supplier->percent);
-                    $value->price_supplier = $value->price_payment - ($value->price_payment * $floatPercent);
-                } else
+                if ($supplier->percent < 100)
+                    $value->price_supplier = ($supplier->percent / 100) * ($value->price_payment - $value->income);
+                else
                     $value->price_supplier = 0;
             }
             $data['countAll'] = $data['countAll'] + $value->count;
@@ -233,12 +231,11 @@ class ReportController extends ApiController
         $supplier = Supplier::where(['id' => $request->input('supplier_id')])->first();
         foreach ($data['shopping'] as $key => $value) {
             if ($supplier->type == Constants::TYPE_PRICE)
-                $value->price_supplier = $value->price_payment - $supplier->price;
+                $value->price_supplier = $value->price_payment - $value->income - $supplier->price;
             elseif ($supplier->type == Constants::TYPE_PERCENT) {
-                if ($supplier->percent < 100) {
-                    $floatPercent = floatval("0." . $supplier->percent);
-                    $value->price_supplier = $value->price_payment - ($value->price_payment * $floatPercent);
-                } else
+                if ($supplier->percent < 100)
+                    $value->price_supplier = ($supplier->percent / 100) * ($value->price_payment - $value->income);
+                else
                     $value->price_supplier = 0;
             }
             $data['countAll'] = $data['countAll'] + $value->count;

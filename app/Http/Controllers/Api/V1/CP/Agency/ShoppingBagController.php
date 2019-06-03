@@ -284,6 +284,7 @@ class ShoppingBagController extends ApiController
             ->get();
         $priceAll = 0;
         $percentAll = 0;
+        $income = 0;
         $incomeAgency = 0;
         $incomeYou = 0;
         $agency = Agency::where('id', $request->input('agency_id'))->first();
@@ -294,13 +295,23 @@ class ShoppingBagController extends ApiController
                 $percentAll = $percentAll + $value->percent;
                 $percent = $value->percent;
             } elseif ($value->type_percent == Constants::TYPE_PERCENT) {
-                if ($value->percent < 100) {
-                    $floatPercent = floatval("0." . $value->percent);
-                    $percentAll = $percentAll + ($value->price * $floatPercent);
-                    $percent = ($value->price * $floatPercent);
-                } else
+                if ($value->percent < 100)
+                    $percentAll += ($value->percent / 100) * $value->price;
+                else
                     $percentAll = $percentAll + $value->price;
             }
+            $supplierSales = SupplierSales::
+            join(Constants::SALES_DB, Constants::SALES_DB . '.id', '=', Constants::SUPPLIER_SALES_DB . '.sales_id')
+                ->where([
+                    'status' => Constants::STATUS_ACTIVE,
+                    'type' => Constants::SALES_TYPE_AGENCY,
+                    'supplier_id' => $value->supplier_id
+                ])->first();
+            if ($supplierSales)
+                if ($supplierSales->type_price == Constants::TYPE_PERCENT)
+                    $income += ($supplierSales->percent / 100) * ($value->price - $percent);
+                elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
+                    $income = $income + $supplierSales->percent;
             if (in_array(Constants::AGENCY_INTRODUCTION_AGENCY, $agency->introduction)) {
                 $supplierAgency = SupplierAgency::where([
                     'status' => Constants::STATUS_ACTIVE,
@@ -308,22 +319,14 @@ class ShoppingBagController extends ApiController
                 ])->first();
                 if ($supplierAgency)
                     if ($supplierAgency->type_price == Constants::TYPE_PERCENT)
-                        $incomeAgency += ($value->price - $percent) * floatval("0." . $supplierAgency->percent);
+                        $incomeAgency += ($supplierAgency->percent / 100) * ($income - $percent);
                     elseif ($supplierAgency->type_price == Constants::TYPE_PRICE)
                         $incomeAgency = $incomeAgency + $supplierAgency->percent;
             } elseif (in_array(Constants::AGENCY_INTRODUCTION_SALES, $agency->introduction)) {
-                $supplierSales = SupplierSales::
-                join(Constants::SALES_DB, Constants::SALES_DB . '.id', '=', Constants::SUPPLIER_SALES_DB . '.sales_id')
-                    ->where([
-                        'status' => Constants::STATUS_ACTIVE,
-                        'type' => Constants::SALES_TYPE_AGENCY,
-                        'supplier_id' => $value->supplier_id
-                    ])->first();
-                if ($supplierSales)
-                    if ($supplierSales->type_price == Constants::TYPE_PERCENT)
-                        $incomeAgency += ($value->price - $percent) * floatval("0." . $supplierSales->percent);
-                    elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
-                        $incomeAgency = $incomeAgency + $supplierSales->percent;
+                if ($agency->type == Constants::TYPE_PERCENT)
+                    $incomeAgency += ($supplierSales->percent / 100) * ($income - $percent);
+                elseif ($supplierSales->type == Constants::TYPE_PRICE)
+                    $incomeAgency = $incomeAgency + $supplierSales->percent;
             }
             $agencyUser = AgencyUser::where([
                 'user_id' => $request->input('user_id'),
@@ -332,7 +335,7 @@ class ShoppingBagController extends ApiController
             if ($agencyUser)
                 if ($agencyUser->type == Constants::TYPE_PERCENT)
                     if ($agencyUser->percent != 100)
-                        $incomeYou = $incomeAgency * floatval("0." . $agencyUser->percent);
+                        $incomeYou = ($agencyUser->percent / 100) * $incomeAgency;
                     else
                         $incomeYou = $incomeAgency;
                 elseif ($agencyUser->type == Constants::TYPE_PRICE)
@@ -357,6 +360,7 @@ class ShoppingBagController extends ApiController
                 'count' => $shopping->count + $request->input('count'),
                 'price_all' => $priceAll * ($shopping->count + $request->input('count')),
                 'percent_all' => $percentAll * ($shopping->count + $request->input('count')),
+                'income' => $income * ($shopping->count + $request->input('count')),
                 'income_all' => $incomeAgency * ($shopping->count + $request->input('count')),
                 'income_you' => $incomeYou * ($shopping->count + $request->input('count'))
             ]);
@@ -371,6 +375,7 @@ class ShoppingBagController extends ApiController
                 'count' => $request->input('count'),
                 'price_all' => $priceAll * $request->input('count'),
                 'percent_all' => $percentAll * $request->input('count'),
+                'income' => intval($income * $request->input('count')),
                 'income_all' => intval($incomeAgency * $request->input('count')),
                 'income_you' => intval($incomeYou * $request->input('count')),
                 'shopping' => ["roomEpisode" => $roomEpisode->toArray(), "hotel" => (array)$hotel, "room" => (array)$room]
