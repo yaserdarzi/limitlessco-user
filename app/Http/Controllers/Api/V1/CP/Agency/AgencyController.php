@@ -186,6 +186,12 @@ class AgencyController extends ApiController
                 'کاربر گرامی ، وارد کردن نام اجباری می باشد.'
             );
         $info = User::find($request->input('user_id'));
+        $email = $info->email;
+        if (!$request->input('email'))
+            $email = $request->input('email');
+        $tell = $info->tell;
+        if (!$request->input('tell'))
+            $tell = $request->input('tell');
         $image = $info->image;
         if ($request->file('image')) {
             \Storage::disk('upload')->makeDirectory('/user/');
@@ -208,8 +214,8 @@ class AgencyController extends ApiController
         User::where(['id' => $request->input('user_id')])
             ->update([
                 'name' => $request->input('name'),
-                'email' => $request->input('email'),
-                'tell' => $request->input('tell'),
+                'email' => $email,
+                'tell' => $tell,
                 'image' => $image
             ]);
         return $this->index($request);
