@@ -29,6 +29,7 @@ class SalesController extends ApiController
      */
     public function index(Request $request)
     {
+        $supplierPrice = 0;
         $supplierInfo = Supplier::where(['id' => $request->input('supplier_id')])->first();
         switch ($supplierInfo->type) {
             case Constants::TYPE_PERCENT:
@@ -41,25 +42,7 @@ class SalesController extends ApiController
         $sales = Sales::select(
             '*',
             DB::raw("CASE WHEN logo != '' THEN (concat ( '" . url('') . "/files/sales/', logo) ) ELSE '" . url('/files/sales/default.svg') . "' END as logo")
-        )->get();
-        foreach ($sales as $value) {
-            $supplier = SupplierSales::where([
-                'supplier_id' => $request->input('supplier_id'),
-                'sales_id' => $value->id
-            ])->first();
-            if (!$supplier)
-                $supplier = [
-                    'supplier_id' => $request->input('supplier_id'),
-                    'sales_id' => $value->id,
-                    'capacity_percent' => 0,
-                    'type_price' => Constants::TYPE_PERCENT,
-                    'price' => 0,
-                    'percent' => 0,
-                    'status' => Constants::STATUS_DEACTIVATE,
-                    'info' => ""
-                ];
-            $value->supplier = $supplier;
-        }
+        )->orderBy('id')->get();
         return $this->respond(['sales' => $sales, 'supplier_price' => $supplierPrice]);
     }
 
