@@ -295,11 +295,9 @@ class ShoppingBagController extends ApiController
                 $percentAll = $percentAll + $value->percent;
                 $percent = $value->percent;
             } elseif ($value->type_percent == Constants::TYPE_PERCENT) {
-                if ($value->percent < 100) {
-                    $floatPercent = floatval("0." . $value->percent);
-                    $percentAll = $percentAll + ($value->price * $floatPercent);
-                    $percent = ($value->price * $floatPercent);
-                } else
+                if ($value->percent < 100)
+                    $percentAll += ($value->percent / 100) * $value->price;
+                else
                     $percentAll = $percentAll + $value->price;
             }
             $supplierSales = SupplierSales::
