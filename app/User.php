@@ -15,7 +15,7 @@ class User extends Authenticatable
         'info' => 'object',
     ];
     protected $fillable = [
-        'phone', 'email', 'gmail', 'name',
+        'phone', 'email', 'gmail', 'name', 'tell',
         'image', 'gender', 'ref_link', 'info',
         'password', 'remember_token'
     ];

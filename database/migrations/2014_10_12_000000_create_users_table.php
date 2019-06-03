@@ -22,6 +22,7 @@ class CreateUsersTable extends Migration
             $table->string('gmail')->nullable();
             $table->rememberToken()->nullable();
             $table->string('name');
+            $table->string('tell')->nullable();
             $table->string('image');
             $table->string('gender');
             $table->string('ref_link')->nullable();

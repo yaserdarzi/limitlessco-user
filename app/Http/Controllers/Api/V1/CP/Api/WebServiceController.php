@@ -181,6 +181,8 @@ class WebServiceController extends ApiController
         User::where(['id' => $request->input('user_id')])
             ->update([
                 'name' => $request->input('name'),
+                'email' => $request->input('email'),
+                'tell' => $request->input('tell'),
                 'image' => $image
             ]);
         return $this->index($request);
