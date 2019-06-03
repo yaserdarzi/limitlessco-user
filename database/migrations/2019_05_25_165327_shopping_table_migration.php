@@ -38,6 +38,7 @@ class ShoppingTableMigration extends Migration
             $table->bigInteger('income_you')->default(0);
             $table->bigInteger('price_payment')->default(0);
             $table->string('status')->default(Constants::SHOPPING_STATUS_SUCCESS);
+            $table->string('payment_status')->default(Constants::SHOPPING_STATUS_PENDING);
             $table->json('shopping')->nullable();
             $table->timestamps();
         });

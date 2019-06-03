@@ -127,18 +127,12 @@ class SalesController extends ApiController
                 );
         }
         if (SupplierSales::where(['supplier_id' => $request->input('supplier_id'), 'sales_id' => $request->input('sales_id')])->exists()) {
-            if (SupplierSales::where(['supplier_id' => $request->input('supplier_id'), 'sales_id' => $request->input('sales_id'), 'info->is_first' => true])->exists())
-                throw new ApiException(
-                    ApiException::EXCEPTION_NOT_FOUND_404,
-                    'کاربر گرامی ، امکان ویرایش فقط یک بار می باشد.'
-                );
             SupplierSales::where(['supplier_id' => $request->input('supplier_id'), 'sales_id' => $request->input('sales_id')])->update([
                 'capacity_percent' => $this->help->priceNumberDigitsToNormal($request->input('capacity_percent')),
                 'type_price' => $typePrice,
                 'price' => $this->help->priceNumberDigitsToNormal($price),
                 'percent' => $this->help->priceNumberDigitsToNormal($percent),
-                'status' => $status,
-                'info' => ['is_first' => true]
+                'status' => $status
             ]);
         } else
             SupplierSales::create([
@@ -148,8 +142,7 @@ class SalesController extends ApiController
                 'type_price' => $typePrice,
                 'price' => $this->help->priceNumberDigitsToNormal($price),
                 'percent' => $this->help->priceNumberDigitsToNormal($percent),
-                'status' => $status,
-                'info' => ['is_first' => true]
+                'status' => $status
             ]);
         return $this->respond(["status" => "success"]);
     }
@@ -200,5 +193,71 @@ class SalesController extends ApiController
     }
 
     ///////////////////public function///////////////////////
+
+    public function powerUp(Request $request)
+    {
+        if (!$request->input('capacity_percent'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن درصد ظرفیت اجباری می باشد.'
+            );
+        $percent = 0;
+        $price = 0;
+        switch ($request->input('type_price')) {
+            case Constants::TYPE_PERCENT:
+                $typePrice = Constants::TYPE_PERCENT;
+                $percent = $request->input('price_percent');
+                break;
+            case Constants::TYPE_PRICE:
+                $typePrice = Constants::TYPE_PRICE;
+                $price = $request->input('price_percent');
+                break;
+            default:
+                throw new ApiException(
+                    ApiException::EXCEPTION_NOT_FOUND_404,
+                    'کاربر گرامی ، وارد کردن نوع مبلغ (تومان یا درصد) اجباری می باشد.'
+                );
+        }
+        if (!$request->input('price_percent'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن مبلغ اجباری می باشد.'
+            );
+        switch ($request->input('status')) {
+            case Constants::STATUS_ACTIVE:
+                $status = Constants::STATUS_ACTIVE;
+                break;
+            case Constants::STATUS_DEACTIVATE:
+                $status = Constants::STATUS_DEACTIVATE;
+                break;
+            default:
+                throw new ApiException(
+                    ApiException::EXCEPTION_NOT_FOUND_404,
+                    'کاربر گرامی ، وارد کردن وضعیت (فعال یا غیرفعال) اجباری می باشد.'
+                );
+        }
+        $sales = Sales::all();
+        foreach ($sales as $value) {
+            if (SupplierSales::where(['supplier_id' => $request->input('supplier_id'), 'sales_id' => $value->id])->exists())
+                SupplierSales::where(['supplier_id' => $request->input('supplier_id'), 'sales_id' => $value->id])->update([
+                    'capacity_percent' => $this->help->priceNumberDigitsToNormal($request->input('capacity_percent')),
+                    'type_price' => $typePrice,
+                    'price' => $this->help->priceNumberDigitsToNormal($price),
+                    'percent' => $this->help->priceNumberDigitsToNormal($percent),
+                    'status' => $status
+                ]);
+            else
+                SupplierSales::create([
+                    'supplier_id' => $request->input('supplier_id'),
+                    'sales_id' => $value->id,
+                    'capacity_percent' => $this->help->priceNumberDigitsToNormal($request->input('capacity_percent')),
+                    'type_price' => $typePrice,
+                    'price' => $this->help->priceNumberDigitsToNormal($price),
+                    'percent' => $this->help->priceNumberDigitsToNormal($percent),
+                    'status' => $status
+                ]);
+        }
+        return $this->respond(["status" => "success"]);
+    }
 
 }

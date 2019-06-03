@@ -58,6 +58,7 @@ class Constants
 
     //Supplier Price Default
     const SUPPLIER_PRICE_DEFAULT = 3000;
+    const SUPPLIER_PERCENT_DEFAULT = 1;
 
     //Agency Introduction
     const AGENCY_INTRODUCTION_SALES = 'sales';
@@ -109,6 +110,7 @@ class Constants
     const SHOPPING_STATUS_DELETE = "delete";
     const SHOPPING_STATUS_PAYMENT = "payment";
     const SHOPPING_STATUS_SUCCESS = "success";
+    const SHOPPING_STATUS_PENDING = "pending";
     const SHOPPING_STATUS_FINISH = "finish";
     const SHOPPING_STATUS_RETURN = "return";
 
