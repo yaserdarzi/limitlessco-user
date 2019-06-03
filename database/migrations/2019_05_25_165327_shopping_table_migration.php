@@ -34,6 +34,7 @@ class ShoppingTableMigration extends Migration
             $table->bigInteger('count')->default(1);
             $table->bigInteger('price_all')->default(0);
             $table->bigInteger('percent_all')->default(0);
+            $table->bigInteger('income')->default(0);
             $table->bigInteger('income_all')->default(0);
             $table->bigInteger('income_you')->default(0);
             $table->bigInteger('price_payment')->default(0);

@@ -61,6 +61,7 @@ class PaymentController extends ApiController
         $customer_id = Constants::AGENCY_DB . "-" . $request->input('agency_id') . "-" . $request->input('user_id');
         $incomeAgency = 0;
         $incomeYou = 0;
+        $income = 0;
         $priceAll = 0;
         $countAll = 0;
         $percentAll = 0;
@@ -74,6 +75,7 @@ class PaymentController extends ApiController
             $priceAll = $priceAll + $value->price_all;
             $countAll = $countAll + $value->count;
             $percentAll = $percentAll + $value->percent_all;
+            $income = $income + $value->income;
             $incomeAgency = $incomeAgency + $value->income_all;
             $incomeYou = $incomeYou + $value->income_you;
         }
@@ -93,6 +95,7 @@ class PaymentController extends ApiController
             'walletPrice' => $wallet->price,
             'walletPayment' => $walletPayment,
             'countAll' => $countAll,
+            'income' => $income,
             'incomeAgency' => $incomeAgency,
             'incomeYou' => $incomeYou,
             'customerId' => $customer_id
