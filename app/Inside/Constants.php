@@ -110,6 +110,7 @@ class Constants
     const SHOPPING_STATUS_DELETE = "delete";
     const SHOPPING_STATUS_PAYMENT = "payment";
     const SHOPPING_STATUS_SUCCESS = "success";
+    const SHOPPING_STATUS_PENDING = "pending";
     const SHOPPING_STATUS_FINISH = "finish";
     const SHOPPING_STATUS_RETURN = "return";
 
