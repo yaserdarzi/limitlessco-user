@@ -26,13 +26,13 @@ class SalesTableSeeder extends Seeder
         //Agency
         \App\Sales::create([
             'title' => 'آژانس ها',
-            'logo' => "",
+            'logo' => "agency.svg",
             'type' => \App\Inside\Constants::SALES_TYPE_AGENCY,
         ]);
         //Percent Site
         \App\Sales::create([
             'title' => 'سایت های تخفیف گروهی',
-            'logo' => "",
+            'logo' => "percent.svg",
             'type' => \App\Inside\Constants::SALES_TYPE_PERCENT_SITE,
         ]);
         //Sepehr
@@ -44,25 +44,25 @@ class SalesTableSeeder extends Seeder
         //Arabic Passenger
         \App\Sales::create([
             'title' => ' مسافران عرب زبان',
-            'logo' => "",
+            'logo' => "arabic.svg",
             'type' => \App\Inside\Constants::SALES_TYPE_ARABIC_PASSENGER,
         ]);
         //English Passenger
         \App\Sales::create([
             'title' => ' مسافران انگلیسی زبان',
-            'logo' => "",
+            'logo' => "english.svg",
             'type' => \App\Inside\Constants::SALES_TYPE_ENGLISH_PASSENGER,
         ]);
         //social
         \App\Sales::create([
             'title' => ' شبکه های اجتماعی',
-            'logo' => "",
+            'logo' => "social.svg",
             'type' => \App\Inside\Constants::SALES_TYPE_SOCIAL,
         ]);
         //celebrity
         \App\Sales::create([
             'title' => ' سلیبرتی ها ',
-            'logo' => "",
+            'logo' => "stars.svg",
             'type' => \App\Inside\Constants::SALES_TYPE_CELEBRITY,
         ]);
 
