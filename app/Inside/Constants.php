@@ -57,6 +57,7 @@ class Constants
     const API_USERS_DB = 'api_users';
     const API_WALLET_DB = 'api_wallet';
     const API_WALLET_INVOICE_DB = 'api_wallet_invoice';
+    const SERVICE_DB = 'service';
 
     //Supplier Price Default
     const SUPPLIER_PRICE_DEFAULT = 3000;
