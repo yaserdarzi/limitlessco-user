@@ -62,14 +62,13 @@ class CheckIncomeSupplier extends Command
     {
         $supplier = Supplier::where(['id' => $shopping->supplier_id])->first();
         $incomeSupplier = 0;
-        if ($supplier->type == Constants::TYPE_PRICE) {
-            $incomeSupplier = $shopping->price_payment - $supplier->price;
-        } elseif ($supplier->type == Constants::TYPE_PERCENT) {
+        if ($supplier->type == Constants::TYPE_PRICE)
+            $incomeSupplier = $shopping->price_all - $shopping->income - $supplier->price;
+        elseif ($supplier->type == Constants::TYPE_PERCENT)
             if ($supplier->percent < 100) {
-                $floatPercent = floatval("0." . $supplier->percent);
-                $incomeSupplier = $shopping->price_payment - ($shopping->price_payment * $floatPercent);
+                $incomeSupplier = ($supplier->percent / 100) * ($shopping->price_all);
+                $incomeSupplier = $shopping->price_all - $incomeSupplier - $shopping->income;
             }
-        }
         $wallet = SupplierWallet::where('supplier_id', $supplier->id)->first();
         $walletPaymentTokenSupplierCount = SupplierWalletInvoice::count();
         $walletPaymentTokenSupplier = "SW-" . ++$walletPaymentTokenSupplierCount;
