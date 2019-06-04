@@ -48,6 +48,7 @@ class Constants
     const SUPPLIER_AGENCY_CATEGORY_DB = 'supplier_agency_category';
     const SUPPLIER_AGENCY_DB = 'supplier_agency';
     const SUPPLIER_AGENCY_REQUEST_DB = 'supplier_agency_request';
+    const SUPPLIER_COMMENT_DB = 'supplier_comment';
     const SHOPPING_BAG_DB = 'shopping_bag';
     const SHOPPING_BAG_EXPIRE_DB = 'shopping_bag_expire';
     const SHOPPING_INVOICE_DB = 'shopping_invoice';
