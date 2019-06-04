@@ -99,6 +99,12 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
 
             //Payment Api
             Route::post('payment', 'PaymentController@store');
+
+
+            //Service
+            Route::post('service', 'ServiceController@store');
+
+
         });
 
     });
