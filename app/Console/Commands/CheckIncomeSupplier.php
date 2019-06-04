@@ -53,8 +53,6 @@ class CheckIncomeSupplier extends Command
                     case Constants::APP_NAME_HOTEL:
                         $this->hotel($value);
                         break;
-
-
                 }
     }
 
