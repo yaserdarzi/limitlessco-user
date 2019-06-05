@@ -200,7 +200,7 @@ class SupplierAgencyCategoryController extends ApiController
         if (!SupplierAgencyCategory::where(['id' => $id])->exists())
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
-                "کاربر گرامی شما دسترسی لازم برای حرف را ندارید."
+                "کاربر گرامی شما دسترسی لازم برای حذف را ندارید."
             );
         SupplierAgencyCategory::where(['id' => $id, 'supplier_id' => $request->input('supplier_id')])->delete();
         return $this->respond(["status" => "success"]);

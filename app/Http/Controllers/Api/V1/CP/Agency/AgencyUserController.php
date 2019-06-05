@@ -37,14 +37,16 @@ class AgencyUserController extends ApiController
         join(Constants::USERS_DB, Constants::USERS_DB . '.id', '=', Constants::AGENCY_USERS_DB . '.user_id')
             ->where(['agency_id' => $request->input('agency_id')])
             ->where('user_id', '!=', $request->input('user_id'))
-            ->get()->map(function ($value) {
-                if ($value->image) {
+            ->select(
+                Constants::AGENCY_USERS_DB . '.id',
+                'user_id',
+                'role',
+                'name'
+            )->get()->map(function ($value) {
+                if ($value->image)
                     $value->image_thumb = url('/files/user/thumb/' . $value->image);
-                    $value->image = url('/files/user/' . $value->image);
-                } else {
+                else
                     $value->image_thumb = url('/files/user/defaultAvatar.svg');
-                    $value->image = url('/files/user/defaultAvatar.svg');
-                }
 
                 return $value;
             });
@@ -265,7 +267,7 @@ class AgencyUserController extends ApiController
         if (!AgencyUser::where(['id' => $id, ['role', '!=', Constants::ROLE_ADMIN]])->exists())
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
-                "کاربر گرامی شما دسترسی لازم برای حرف را ندارید."
+                "کاربر گرامی شما دسترسی لازم برای حذف را ندارید."
             );
         AgencyUser::where(['id' => $id, 'agency_id' => $request->input('agency_id')])->delete();
         return $this->respond(["status" => "success"]);
