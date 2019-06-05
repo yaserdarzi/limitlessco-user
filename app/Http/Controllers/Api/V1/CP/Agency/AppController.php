@@ -124,7 +124,7 @@ class AppController extends ApiController
         $supplierAgencyID = [];
         if (in_array(Constants::AGENCY_INTRODUCTION_SALES, $agency->introduction))
             $supplierSalesID = $this->getSupplierSales($request);
-        if (in_array(Constants::AGENCY_INTRODUCTION_AGENCY, $agency->introduction))
+        if (in_array(Constants::AGENCY_INTRODUCTION_SUPPLIER, $agency->introduction))
             $supplierAgencyID = $this->getSupplierAgency($request);
         return $this->respond(["supplier_sales" => $supplierSalesID, "supplier_agency" => $supplierAgencyID]);
     }

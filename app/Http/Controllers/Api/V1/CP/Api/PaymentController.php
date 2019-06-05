@@ -202,9 +202,9 @@ class PaymentController extends ApiController
                 elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
                     $income = $income + $supplierSales->percent;
             if ($api->type == Constants::TYPE_PERCENT)
-                $incomeApi += ($api->percent / 100) * ($income - $percent);
+                $incomeApi += ($api->percent / 100) * ($value->price - $percent);
             elseif ($api->type == Constants::TYPE_PRICE)
-                $incomeApi = $incomeApi + $api->percent;
+                $incomeApi = $incomeApi + $api->price;
         }
         $room = DB::connection(Constants::CONNECTION_HOTEL)
             ->table(Constants::APP_HOTEL_DB_ROOM_DB)

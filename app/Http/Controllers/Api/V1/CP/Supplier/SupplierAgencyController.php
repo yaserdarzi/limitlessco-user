@@ -125,7 +125,7 @@ class SupplierAgencyController extends ApiController
                     'کاربر گرامی ، آژانس مورد نظر قبلا در سیستم شما ثبت شده است.'
                 );
             $agencyUpdate = Agency::find($agency->agency_id);
-            $agencyUpdate->introduction = array_merge($agencyUpdate->introduction, [Constants::AGENCY_INTRODUCTION_AGENCY]);
+            $agencyUpdate->introduction = array_merge($agencyUpdate->introduction, [Constants::AGENCY_INTRODUCTION_SUPPLIER]);
             $agencyUpdate->save();
             $agency_id = $agency->agency_id;
         } else {
@@ -159,7 +159,7 @@ class SupplierAgencyController extends ApiController
                 'tell' => '',
                 'type' => 'percent',
                 'status' => Constants::STATUS_ACTIVE,
-                'introduction' => [Constants::AGENCY_INTRODUCTION_AGENCY]
+                'introduction' => [Constants::AGENCY_INTRODUCTION_SUPPLIER]
             ]);
             AgencyUser::create([
                 'user_id' => $user->id,
