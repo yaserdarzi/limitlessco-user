@@ -184,10 +184,13 @@ class PaymentController extends ApiController
                 $percentAll = $percentAll + $value->percent;
                 $percent = $value->percent;
             } elseif ($value->type_percent == Constants::TYPE_PERCENT) {
-                if ($value->percent < 100)
+                if ($value->percent < 100) {
                     $percentAll += ($value->percent / 100) * $value->price;
-                else
+                    $percent = ($value->percent / 100) * $value->price;
+                } else {
                     $percentAll = $percentAll + $value->price;
+                    $percent = $value->price;
+                }
             }
             $supplierSales = SupplierSales::
             join(Constants::SALES_DB, Constants::SALES_DB . '.id', '=', Constants::SUPPLIER_SALES_DB . '.sales_id')
@@ -200,7 +203,7 @@ class PaymentController extends ApiController
                 if ($supplierSales->type_price == Constants::TYPE_PERCENT)
                     $income += ($supplierSales->percent / 100) * ($value->price - $percent);
                 elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
-                    $income = $income + $supplierSales->percent;
+                    $income = $income + $supplierSales->price;
             if ($api->type == Constants::TYPE_PERCENT)
                 $incomeApi += ($api->percent / 100) * ($value->price - $percent);
             elseif ($api->type == Constants::TYPE_PRICE)
