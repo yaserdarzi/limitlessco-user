@@ -306,7 +306,7 @@ class SupplierAgencyController extends ApiController
         if (!SupplierAgency::where(['id' => $id, 'status' => Constants::STATUS_ACTIVE])->exists())
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
-                "کاربر گرامی شما دسترسی لازم برای حرف را ندارید."
+                "کاربر گرامی شما دسترسی لازم برای حذف را ندارید."
             );
         SupplierAgency::where([
             'id' => $id,

@@ -265,7 +265,7 @@ class AgencyUserController extends ApiController
         if (!AgencyUser::where(['id' => $id, ['role', '!=', Constants::ROLE_ADMIN]])->exists())
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
-                "کاربر گرامی شما دسترسی لازم برای حرف را ندارید."
+                "کاربر گرامی شما دسترسی لازم برای حذف را ندارید."
             );
         AgencyUser::where(['id' => $id, 'agency_id' => $request->input('agency_id')])->delete();
         return $this->respond(["status" => "success"]);
