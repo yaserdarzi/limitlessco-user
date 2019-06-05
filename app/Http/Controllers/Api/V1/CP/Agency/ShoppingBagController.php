@@ -99,7 +99,7 @@ class ShoppingBagController extends ApiController
                 ->where(['status' => Constants::STATUS_ACTIVE, 'sales_id' => $sales->id])
                 ->pluck('supplier_id')->toArray()));
         }
-        if (in_array(Constants::AGENCY_INTRODUCTION_AGENCY, $agency->introduction))
+        if (in_array(Constants::AGENCY_INTRODUCTION_SUPPLIER, $agency->introduction))
             $supplier_id = array_unique(array_merge($supplier_id, SupplierAgency::
             where('capacity_percent', '!=', 0)
                 ->where(['status' => Constants::STATUS_ACTIVE, 'agency_id' => $request->input('agency_id')])
@@ -312,21 +312,21 @@ class ShoppingBagController extends ApiController
                     $income += ($supplierSales->percent / 100) * ($value->price - $percent);
                 elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
                     $income = $income + $supplierSales->percent;
-            if (in_array(Constants::AGENCY_INTRODUCTION_AGENCY, $agency->introduction)) {
+            if (in_array(Constants::AGENCY_INTRODUCTION_SUPPLIER, $agency->introduction)) {
                 $supplierAgency = SupplierAgency::where([
                     'status' => Constants::STATUS_ACTIVE,
                     'supplier_id' => $value->supplier_id
                 ])->first();
                 if ($supplierAgency)
                     if ($supplierAgency->type_price == Constants::TYPE_PERCENT)
-                        $incomeAgency += ($supplierAgency->percent / 100) * ($income - $percent);
+                        $incomeAgency += ($supplierAgency->percent / 100) * ($value->price - $percent);
                     elseif ($supplierAgency->type_price == Constants::TYPE_PRICE)
                         $incomeAgency = $incomeAgency + $supplierAgency->percent;
             } elseif (in_array(Constants::AGENCY_INTRODUCTION_SALES, $agency->introduction)) {
                 if ($agency->type == Constants::TYPE_PERCENT)
-                    $incomeAgency += ($supplierSales->percent / 100) * ($income - $percent);
+                    $incomeAgency += ($agency->percent / 100) * ($value->price - $percent);
                 elseif ($supplierSales->type == Constants::TYPE_PRICE)
-                    $incomeAgency = $incomeAgency + $supplierSales->percent;
+                    $incomeAgency = $incomeAgency + $agency->price;
             }
             $agencyUser = AgencyUser::where([
                 'user_id' => $request->input('user_id'),
