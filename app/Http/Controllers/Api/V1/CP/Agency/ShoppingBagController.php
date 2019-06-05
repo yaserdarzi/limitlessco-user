@@ -295,10 +295,13 @@ class ShoppingBagController extends ApiController
                 $percentAll = $percentAll + $value->percent;
                 $percent = $value->percent;
             } elseif ($value->type_percent == Constants::TYPE_PERCENT) {
-                if ($value->percent < 100)
+                if ($value->percent < 100) {
                     $percentAll += ($value->percent / 100) * $value->price;
-                else
+                    $percent = ($value->percent / 100) * $value->price;
+                } else {
                     $percentAll = $percentAll + $value->price;
+                    $percent = $value->price;
+                }
             }
             $supplierSales = SupplierSales::
             join(Constants::SALES_DB, Constants::SALES_DB . '.id', '=', Constants::SUPPLIER_SALES_DB . '.sales_id')
@@ -311,7 +314,7 @@ class ShoppingBagController extends ApiController
                 if ($supplierSales->type_price == Constants::TYPE_PERCENT)
                     $income += ($supplierSales->percent / 100) * ($value->price - $percent);
                 elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
-                    $income = $income + $supplierSales->percent;
+                    $income = $income + $supplierSales->price;
             if (in_array(Constants::AGENCY_INTRODUCTION_SUPPLIER, $agency->introduction)) {
                 $supplierAgency = SupplierAgency::where([
                     'status' => Constants::STATUS_ACTIVE,
@@ -321,7 +324,7 @@ class ShoppingBagController extends ApiController
                     if ($supplierAgency->type_price == Constants::TYPE_PERCENT)
                         $incomeAgency += ($supplierAgency->percent / 100) * ($value->price - $percent);
                     elseif ($supplierAgency->type_price == Constants::TYPE_PRICE)
-                        $incomeAgency = $incomeAgency + $supplierAgency->percent;
+                        $incomeAgency = $incomeAgency + $supplierAgency->price;
             } elseif (in_array(Constants::AGENCY_INTRODUCTION_SALES, $agency->introduction)) {
                 if ($agency->type == Constants::TYPE_PERCENT)
                     $incomeAgency += ($agency->percent / 100) * ($value->price - $percent);
