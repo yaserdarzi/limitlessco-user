@@ -113,7 +113,7 @@ class ReportController extends ApiController
                     ->where('user_id', explode('-', $value->customer_id)[2])->first();
                 if ($agencyUser)
                     $value->agencyUserName = $agencyUser->name;
-                $data['countAll'] = $data['countAll'] + $value->count_all;
+                $data['countAll'] = $data['countAll'] + $value->count;
                 $data['incomeAllAgency'] = $data['incomeAllAgency'] + $value->income_all;
                 $value->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->created_at));
             }
