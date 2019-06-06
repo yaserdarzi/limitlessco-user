@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\CP\Agency;
 
 use App\Agency;
+use App\AgencyUser;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
@@ -108,6 +109,10 @@ class ReportController extends ApiController
             $data['shoppingInvoice'] = Shopping::where('customer_id', 'like', "%{$customer_id}%")
                 ->get();
             foreach ($data['shoppingInvoice'] as $value) {
+                $agencyUser = AgencyUser::join(Constants::USERS_DB, Constants::AGENCY_USERS_DB . '.user_id', '=', Constants::USERS_DB . '.id')
+                    ->where('user_id', explode('-', $value->customer_id)[2])->first();
+                if ($agencyUser)
+                    $value->agencyUserName = $agencyUser->name;
                 $data['countAll'] = $data['countAll'] + $value->count_all;
                 $data['incomeAllAgency'] = $data['incomeAllAgency'] + $value->income_all;
                 $value->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->created_at));
