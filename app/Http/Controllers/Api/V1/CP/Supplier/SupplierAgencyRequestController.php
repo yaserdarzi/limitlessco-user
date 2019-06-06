@@ -8,6 +8,7 @@ use App\Inside\Constants;
 use App\SupplierAgencyRequest;
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use Morilog\Jalali\CalendarUtils;
 
 class SupplierAgencyRequestController extends ApiController
 {
@@ -26,7 +27,10 @@ class SupplierAgencyRequestController extends ApiController
             );
         $supplierAgencyRequest = SupplierAgencyRequest::where([
             'supplier_id' => $request->input('supplier_id')
-        ])->get();
+        ])->get()->map(function ($value) {
+            $value->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->created_at));
+            return $value;
+        });
         return $this->respond($supplierAgencyRequest);
     }
 
