@@ -337,7 +337,7 @@ class ShoppingBagController extends ApiController
             ])->first();
             if ($agencyUser)
                 if ($agencyUser->type == Constants::TYPE_PERCENT)
-                    if ($agencyUser->percent != 100) {
+                    if ($agencyUser->percent < 100) {
                         if ($agencyUser->percent != 0)
                             $incomeYou = ($agencyUser->percent / 100) * $incomeAgency;
                     } else
