@@ -301,7 +301,7 @@ class ShoppingBagController extends ApiController
                     $percent = ($value->percent / 100) * $value->price;
                 }
             }
-            if ($request->input('is_capacity')) {
+            if ($request->input('is_capacity') == true) {
                 $addPrice += $value->add_price;
                 $priceAll += $addPrice;
             }
@@ -360,7 +360,7 @@ class ShoppingBagController extends ApiController
             ->first();
         $shopping_id = $request->input('app_title') . "-" . $request->input('room_id');
         $title_more = $room->title;
-        if ($request->input('is_capacity')) {
+        if ($request->input('is_capacity') == true) {
             $shopping_id = $shopping_id . '-' . $request->input('is_capacity');
             $title_more = $room->title . Constants::ADDED_BED;
         }
