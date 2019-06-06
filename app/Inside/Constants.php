@@ -8,6 +8,7 @@ class Constants
     //App Name
     const APP_NAME_HOTEL = "hotel";
     const APP_NUMBER_HOTEL = 1;
+    const ADDED_BED="با تخت اضافه";
 
     //Database Connection
     const CONNECTION_HOTEL = "pgsql_hotel";

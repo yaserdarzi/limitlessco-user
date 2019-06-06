@@ -287,6 +287,7 @@ class ShoppingBagController extends ApiController
         $income = 0;
         $incomeAgency = 0;
         $incomeYou = 0;
+        $addPrice = 0;
         $agency = Agency::where('id', $request->input('agency_id'))->first();
         foreach ($roomEpisode as $key => $value) {
             $priceAll = $priceAll + $value->price;
@@ -299,6 +300,10 @@ class ShoppingBagController extends ApiController
                     $percentAll += ($value->percent / 100) * $value->price;
                     $percent = ($value->percent / 100) * $value->price;
                 }
+            }
+            if ($request->input('is_capacity')) {
+                $addPrice += $value->add_price;
+                $priceAll += $addPrice;
             }
             $supplierSales = SupplierSales::
             join(Constants::SALES_DB, Constants::SALES_DB . '.id', '=', Constants::SUPPLIER_SALES_DB . '.sales_id')
@@ -353,12 +358,18 @@ class ShoppingBagController extends ApiController
             ->table(Constants::APP_HOTEL_DB_HOTEL_DB)
             ->where('id', $room->hotel_id)
             ->first();
-        if ($shopping = ShoppingBag::where(['date' => $startDay->format('Y-m-d'), 'date_end' => $endDay->format('Y-m-d'), 'shopping_id' => $request->input('app_title') . "-" . $request->input('room_id'), 'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id')])->first())
+        $shopping_id = $request->input('app_title') . "-" . $request->input('room_id');
+        $title_more = $room->title;
+        if ($request->input('is_capacity')) {
+            $shopping_id = $shopping_id . '-' . $request->input('is_capacity');
+            $title_more = $room->title . Constants::ADDED_BED;
+        }
+        if ($shopping = ShoppingBag::where(['date' => $startDay->format('Y-m-d'), 'date_end' => $endDay->format('Y-m-d'), 'shopping_id' => $shopping_id, 'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id')])->first())
             ShoppingBag::
             where([
                 'date' => $startDay->format('Y-m-d'),
                 'date_end' => $endDay->format('Y-m-d'),
-                'shopping_id' => $request->input('app_title') . "-" . $request->input('room_id'),
+                'shopping_id' => $shopping_id,
                 'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id')
             ])->update([
                 'count' => $shopping->count + $request->input('count'),
@@ -370,10 +381,10 @@ class ShoppingBagController extends ApiController
             ]);
         else
             ShoppingBag::create([
-                'shopping_id' => $request->input('app_title') . "-" . $request->input('room_id'),
+                'shopping_id' => $shopping_id,
                 'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id'),
                 'title' => $hotel->name,
-                'title_more' => $room->title,
+                'title_more' => $title_more,
                 'date' => $startDay->format('Y-m-d'),
                 'date_end' => $endDay->format('Y-m-d'),
                 'count' => $request->input('count'),
