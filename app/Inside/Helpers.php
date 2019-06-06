@@ -17,6 +17,7 @@ class Helpers
     {
         if (!$country)
             $country = "IR";
+        $phone = $this->normalizePhoneNumber($phone);
         $phoneUtil = \libphonenumber\PhoneNumberUtil::getInstance();
         $phoneNumber = $phoneUtil->parse($phone, $country);
         $phone = $phoneUtil->format($phoneNumber, \libphonenumber\PhoneNumberFormat::E164);

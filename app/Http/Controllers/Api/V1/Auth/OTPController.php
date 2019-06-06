@@ -75,7 +75,7 @@ class OTPController extends ApiController
                 'Plz check your code'
             );
         $phone = $this->help->phoneChecker($request->input('mobile'), $request->input('country'));
-        if (!$this->CheckUsersLoginToken($phone, $request->input('code')))
+        if (!$this->CheckUsersLoginToken($phone, $this->help->normalizePhoneNumber($request->input('code'))))
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'code isn`t true'
@@ -244,7 +244,7 @@ class OTPController extends ApiController
                 'your are`t activated'
             );
         $this->generateToken($user, $request->header('agent'));
-        UsersLoginToken::where(['login' => $phone, 'token' => $request->input('code')])->delete();
+        UsersLoginToken::where(['login' => $phone, 'token' => $this->help->normalizePhoneNumber($request->input('code'))])->delete();
         return $user;
     }
 
