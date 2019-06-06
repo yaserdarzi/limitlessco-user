@@ -105,7 +105,7 @@ class ReportController extends ApiController
         $data['countAll'] = 0;
         if ($request->input('role') == Constants::ROLE_ADMIN) {
             $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-";
-            $data['shoppingInvoice'] = ShoppingInvoice::where('customer_id', 'like', "%{$customer_id}%")
+            $data['shoppingInvoice'] = Shopping::where('customer_id', 'like', "%{$customer_id}%")
                 ->get();
             foreach ($data['shoppingInvoice'] as $value) {
                 $data['countAll'] = $data['countAll'] + $value->count_all;
