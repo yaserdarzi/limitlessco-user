@@ -185,8 +185,10 @@ class PaymentController extends ApiController
                 $percent = $value->percent;
             } elseif ($value->type_percent == Constants::TYPE_PERCENT) {
                 if ($value->percent < 100) {
-                    $percentAll += ($value->percent / 100) * $value->price;
-                    $percent = ($value->percent / 100) * $value->price;
+                    if ($value->percent != 0) {
+                        $percentAll += ($value->percent / 100) * $value->price;
+                        $percent = ($value->percent / 100) * $value->price;
+                    }
                 } else {
                     $percentAll = $percentAll + $value->price;
                     $percent = $value->price;
@@ -200,9 +202,10 @@ class PaymentController extends ApiController
                     'supplier_id' => $value->supplier_id
                 ])->first();
             if ($supplierSales)
-                if ($supplierSales->type_price == Constants::TYPE_PERCENT)
-                    $income += ($supplierSales->percent / 100) * ($value->price - $percent);
-                elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
+                if ($supplierSales->type_price == Constants::TYPE_PERCENT) {
+                    if ($supplierSales->percent != 0)
+                        $income += ($supplierSales->percent / 100) * ($value->price - $percent);
+                } elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
                     $income = $income + $supplierSales->price;
             if ($api->type == Constants::TYPE_PERCENT)
                 $incomeApi += ($api->percent / 100) * ($value->price - $percent);
