@@ -51,7 +51,7 @@ class OTPController extends ApiController
                 'لطفا کد را وارد نمایید.'
             );
         $phone = $this->help->phoneChecker($request->input('mobile'), $request->input('country'));
-        if (!$this->CheckUsersLoginToken($phone, $request->input('code')))
+        if (!$this->CheckUsersLoginToken($phone, $this->help->normalizePhoneNumber($request->input('code'))))
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 "کد صحیح نمی باشد."
@@ -242,7 +242,7 @@ class OTPController extends ApiController
             );
         $user->wallet = Wallet::where(['user_id' => $user->id])->first();
         $this->generateToken($user, $request->header('agent'));
-        UsersLoginToken::where(['login' => $phone, 'token' => $request->input('code')])->delete();
+        UsersLoginToken::where(['login' => $phone, 'token' => $this->help->normalizePhoneNumber($request->input('code'))])->delete();
         return $user;
     }
 
