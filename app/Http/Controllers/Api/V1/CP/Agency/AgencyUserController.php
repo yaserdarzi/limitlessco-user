@@ -144,7 +144,7 @@ class AgencyUserController extends ApiController
         $agencyUser = AgencyUser::
         join(Constants::USERS_DB, Constants::USERS_DB . '.id', '=', Constants::AGENCY_USERS_DB . '.user_id')
             ->where(['agency_id' => $request->input('agency_id')])
-            ->where('user_id', $id)
+            ->where(Constants::AGENCY_USERS_DB . '.id', $id)
             ->first();
         if ($agencyUser)
             if ($agencyUser->image) {
