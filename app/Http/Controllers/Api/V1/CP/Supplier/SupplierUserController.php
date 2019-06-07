@@ -36,8 +36,10 @@ class SupplierUserController extends ApiController
             );
         $supplierUser = SupplierUser::
         join(Constants::USERS_DB, Constants::USERS_DB . '.id', '=', Constants::SUPPLIER_USERS_DB . '.user_id')
-            ->where(['supplier_id' => $request->input('supplier_id')])
-            ->where('user_id', '!=', $request->input('user_id'))
+            ->where([
+                'role' => Constants::ROLE_COUNTER_MAN,
+                'supplier_id' => $request->input('supplier_id')
+            ])->where('user_id', '!=', $request->input('user_id'))
             ->select(
                 Constants::SUPPLIER_USERS_DB . '.id',
                 'user_id',
@@ -139,8 +141,10 @@ class SupplierUserController extends ApiController
             );
         $supplierUser = SupplierUser::
         join(Constants::USERS_DB, Constants::USERS_DB . '.id', '=', Constants::SUPPLIER_USERS_DB . '.user_id')
-            ->where(['supplier_id' => $request->input('supplier_id')])
-            ->where(Constants::SUPPLIER_USERS_DB . '.id', $id)
+            ->where([
+                'role' => Constants::ROLE_COUNTER_MAN,
+                'supplier_id' => $request->input('supplier_id')
+            ])->where(Constants::SUPPLIER_USERS_DB . '.id', $id)
             ->first();
         if ($supplierUser)
             if ($supplierUser->image) {
