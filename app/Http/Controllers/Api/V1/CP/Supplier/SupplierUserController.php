@@ -41,7 +41,8 @@ class SupplierUserController extends ApiController
                 Constants::SUPPLIER_USERS_DB . '.id',
                 'user_id',
                 'role',
-                'name'
+                'name',
+                'phone'
             )->get()->map(function ($value) {
                 if ($value->image)
                     $value->image_thumb = url('/files/user/thumb/' . $value->image);
