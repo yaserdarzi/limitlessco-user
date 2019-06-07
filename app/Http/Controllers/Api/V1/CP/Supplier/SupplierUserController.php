@@ -11,6 +11,7 @@ use App\User;
 use App\Wallet;
 use Hashids\Hashids;
 use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image;
 
 class SupplierUserController extends ApiController
 {
@@ -172,78 +173,27 @@ class SupplierUserController extends ApiController
      */
     public function update(Request $request, $id)
     {
-//        if ($request->input('role') != Constants::ROLE_ADMIN)
-//            throw new ApiException(
-//                ApiException::EXCEPTION_NOT_FOUND_404,
-//                'کاربر گرامی شما دسترسی به این قسمت ندارید.'
-//            );
-//        if (!$request->input('name'))
-//            throw new ApiException(
-//                ApiException::EXCEPTION_NOT_FOUND_404,
-//                'کاربر گرامی ، وارد کردن نام و نام خانوادگی اجباری می باشد.'
-//            );
-//        if (!$request->input('phone'))
-//            throw new ApiException(
-//                ApiException::EXCEPTION_NOT_FOUND_404,
-//                'کاربر گرامی ، وارد کردن شماره همراه اجباری می باشد.'
-//            );
-//        if (!$request->input('percent'))
-//            throw new ApiException(
-//                ApiException::EXCEPTION_NOT_FOUND_404,
-//                'کاربر گرامی ، وارد کردن درصد کمیسیون اجباری می باشد.'
-//            );
-//        $phone = $this->help->phoneChecker($request->input('phone'), 'IR');
-//        $SupplierUser = SupplierUser::
-//        join(Constants::USERS_DB, Constants::USERS_DB . '.id', '=', Constants::Supplier_USERS_DB . '.user_id')
-//            ->where([
-//                'Supplier_id' => $request->input('Supplier_id'),
-//                'user_id'=> $id,
-//                'phone'=>$phone
-//            ])->first();
-//
-//        dd($SupplierUser );
-//
-//
-//        if (SupplierUser::where(['user_id' => $user->id])->exists())
-//            throw new ApiException(
-//                ApiException::EXCEPTION_NOT_FOUND_404,
-//                "کاربر گرامی شماره مورد نظر تکراری می باشد."
-//            );
-//        SupplierUser::create([
-//            'user_id' => $user->id,
-//            'Supplier_id' => $request->input('Supplier_id'),
-//            'type' => 'percent',
-//            'percent' => $request->input('percent'),
-//            'role' => Constants::ROLE_COUNTER_MAN
-//        ]);
-//        return $this->respond(["status" => "success"]);
-//
-//
-//        $SupplierAgent = SupplierAgent::where(['id' => $request->input('Supplier_agent_id')])->first();
-//        if ($SupplierAgent->type != "admin")
-//            throw new ApiException(
-//                ApiException::EXCEPTION_BAD_REQUEST_400,
-//                'your not admin'
-//            );
-//        if (SupplierAgent::where("email", $request->email)->where('id', '!=', $request->input('Supplier_agent_id'))->exists())
-//            throw new ApiException(
-//                ApiException::EXCEPTION_BAD_REQUEST_400,
-//                'your email is exists'
-//            );
-//        if (!SupplierAgent::where("id", $request->input('agent_id'))->exists())
-//            throw new ApiException(
-//                ApiException::EXCEPTION_BAD_REQUEST_400,
-//                'plz check your agent_id'
-//            );
-//        SupplierAgent::where(['id' => $request->input('agent_id')])
-//            ->update([
-//                'name' => $request->name,
-//                'email' => $request->email,
-//                'phone' => $request->phone,
-//                'tell' => $request->tell,
-//                'percent' => $request->input('percent')
-//            ]);
-//        return $this->respond(["status" => "success"]);
+        if ($request->input('role') != Constants::ROLE_ADMIN)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی شما دسترسی به این قسمت ندارید.'
+            );
+        if (!$request->input('name'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن نام و نام خانوادگی اجباری می باشد.'
+            );
+        $supplierUser = SupplierUser::where(['id' => $id, 'supplier_id' => $request->input('supplier_id')])->first();
+        if (!$supplierUser)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی شما دسترسی به این قسمت ندارید.'
+            );
+        User::where(['id' => $supplierUser->user_id])
+            ->update([
+                'name' => $request->input('name'),
+            ]);
+        return $this->respond(["status" => "success"]);
     }
 
     /**
