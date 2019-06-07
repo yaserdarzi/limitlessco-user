@@ -103,6 +103,9 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             //Service
             Route::post('service', 'ServiceController@store');
 
+            //Supplier User
+            Route::post('user/update/{user_id}', 'SupplierUserController@update');
+            Route::resource('user', 'SupplierUserController');
 
         });
 
