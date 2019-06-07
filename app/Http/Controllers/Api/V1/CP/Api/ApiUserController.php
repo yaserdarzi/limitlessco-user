@@ -135,7 +135,7 @@ class ApiUserController extends ApiController
         $apiUser = ApiUser::
         join(Constants::USERS_DB, Constants::USERS_DB . '.id', '=', Constants::API_USERS_DB . '.user_id')
             ->where(['api_id' => $request->input('api_id')])
-            ->where('user_id', $id)
+            ->where(Constants::API_USERS_DB . '.id', $id)
             ->first();
         if ($apiUser)
             if ($apiUser->image) {

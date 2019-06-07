@@ -139,7 +139,7 @@ class SupplierUserController extends ApiController
         $supplierUser = SupplierUser::
         join(Constants::USERS_DB, Constants::USERS_DB . '.id', '=', Constants::SUPPLIER_USERS_DB . '.user_id')
             ->where(['supplier_id' => $request->input('supplier_id')])
-            ->where('user_id', $id)
+            ->where(Constants::SUPPLIER_USERS_DB . '.id', $id)
             ->first();
         if ($supplierUser)
             if ($supplierUser->image) {
