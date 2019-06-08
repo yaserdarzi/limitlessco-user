@@ -98,7 +98,7 @@ class SupplierAgencyController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد کردن گروه آژانس اجباری می باشد.'
             );
-        if (!$supplierAgencyCategory = SupplierAgencyCategory::where('id', $request->input('supplier_agency_category_id'))->first())
+        if (!$supplierAgencyCategory = SupplierAgencyCategory::where(['id' => $request->input('supplier_agency_category_id'), 'supplier_id' => $request->input('supplier_id')])->first())
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد کردن گروه آژانس اجباری می باشد.'

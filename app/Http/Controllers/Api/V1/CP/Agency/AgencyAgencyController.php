@@ -97,7 +97,7 @@ class AgencyAgencyController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد کردن گروه آژانس اجباری می باشد.'
             );
-        if (!$agencyAgencyCategory = AgencyAgencyCategory::where('id', $request->input('agency_agency_category_id'))->first())
+        if (!$agencyAgencyCategory = AgencyAgencyCategory::where(['id' => $request->input('agency_agency_category_id'), 'agency_id' => $request->input('agency_id')])->first())
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد کردن گروه آژانس اجباری می باشد.'
