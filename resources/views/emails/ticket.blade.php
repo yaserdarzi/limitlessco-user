@@ -620,12 +620,7 @@
                                                             <td class="mcnImageContent" valign="top"
                                                                 style="padding-right: 0px; padding-left: 0px; padding-top: 0; padding-bottom: 0; text-align:center;">
 
-
-                                                                <img align="center" alt=""
-                                                                     src="https://gallery.mailchimp.com/ddb3cff84ca2c23d82b910133/images/9084d743-c0dc-4738-9485-bcb8c1ce122d.jpg"
-                                                                     width="225"
-                                                                     style="max-width:450px; padding-bottom: 0; display: inline !important; vertical-align: bottom;"
-                                                                     class="mcnRetinaImage">
+                                                                <div id="qrcode1"></div>
 
 
                                                             </td>
@@ -659,7 +654,7 @@
                                                             <td valign="top" class="mcnTextContent"
                                                                 style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-                                                                <div style="text-align: center;">H.100002135</div>
+                                                                <div style="text-align: center;">{{$data['shopping']['voucher']}}</div>
 
                                                             </td>
                                                         </tr>
@@ -790,8 +785,9 @@
                                                                 style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
                                                                 <div style="text-align: center;"><font color="#888888">عنوان</font><br>
-                                                                    <strong style="color: #333333;">هتل سه ستاره سان
-                                                                        رایز</strong></div>
+                                                                    <strong style="color: #333333;">{{$data['shopping']['title']}}</strong>
+                                                                    <strong style="color: #333333;">{{$data['shopping']['title_more']}}</strong>
+                                                                </div>
 
                                                             </td>
                                                         </tr>
@@ -834,7 +830,7 @@
 
                                                                 <div style="text-align: center;"><span
                                                                             style="color:#888888">نام و نام خانوادگی</span><br>
-                                                                    <span style="color:#333333"><strong>آراس آرمانی</strong></span>
+                                                                    <span style="color:#333333"><strong>{{$data['name']}}</strong></span>
                                                                 </div>
 
                                                             </td>
@@ -878,7 +874,7 @@
 
                                                                 <div style="text-align: center;"><font color="#888888">تاریخ
                                                                         سررسید</font><br>
-                                                                    <strong style="color: #333333;">1398/12/02</strong>
+                                                                    <strong style="color: #333333;">{{$data['shopping']['date_persian']}}</strong>
                                                                 </div>
 
                                                             </td>
@@ -920,12 +916,18 @@
                                                             <td valign="top" class="mcnTextContent"
                                                                 style="padding-top:0; padding-right:18px; padding-bottom:9px; padding-left:18px;">
 
-                                                                <div style="text-align: center;"><font color="#888888">سانس</font>
-                                                                </div>
+                                                                @if($data['shopping']['start_hours']!=null)
+                                                                    <div style="text-align: center;"><font
+                                                                                color="#888888">سانس</font>
+                                                                    </div>
 
-                                                                <div dir="rtl" style="text-align: center;"><strong
-                                                                            style="color: #333333;">12 الی 16</strong>
-                                                                </div>
+                                                                    <div dir="rtl" style="text-align: center;"><strong
+                                                                                style="color: #333333;">{{$data['shopping']['start_hours']}}
+                                                                            الی
+                                                                            {{$data['shopping']['end_hours']}}</strong>
+                                                                    </div>
+                                                                @endif
+
 
                                                             </td>
                                                         </tr>
@@ -970,7 +972,7 @@
                                                                 </div>
 
                                                                 <div dir="rtl" style="text-align: center;"><strong
-                                                                            style="color: #333333;">2 نفر</strong></div>
+                                                                            style="color: #333333;">{{$data['shopping']['count']}}</strong></div>
 
                                                             </td>
                                                         </tr>
@@ -1015,7 +1017,7 @@
                                                                         صدور&nbsp;</font></div>
 
                                                                 <div dir="rtl" style="text-align: center;"><strong
-                                                                            style="color: #333333;">1397/10/10</strong>
+                                                                            style="color: #333333;">{{$data['shopping']['created_at_persian']}}</strong>
                                                                 </div>
 
                                                             </td>
@@ -1059,7 +1061,7 @@
 
                                                                 <div dir="rtl" style="text-align: center;"><font
                                                                             color="#888888">مبلغ</font><br>
-                                                                    <strong style="color: #333333;">350.000
+                                                                    <strong style="color: #333333;">{{number_format(intval($data['shopping']['price_all']-$data['shopping']['percent_all']))}}
                                                                         تومان</strong></div>
 
                                                             </td>
@@ -1298,5 +1300,18 @@
         </tr>
     </table>
 </center>
+<script src="{{asset('js/jquery.min.js')}}"></script>
+<script src="{{asset('js/qrcode.js')}}"></script>
+<script type="text/javascript">
+    var qrcode = new QRCode("qrcode", {
+        width: 225,
+        height: 225,
+    });
+    function makeCode() {
+        qrcode.makeCode('{{$data["shopping"]["voucher"]}}');
+    }
+    makeCode();
+
+</script>
 </body>
 </html>

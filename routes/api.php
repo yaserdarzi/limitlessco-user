@@ -156,6 +156,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             //Ticket
             Route::get('getTicket', 'TicketController@show');
             Route::get('ticket', 'TicketController@index');
+            Route::post('ticket/send/mail', 'TicketController@ticketSendMail');
 
             //Agency User
             Route::post('user/update/{user_id}', 'AgencyUserController@update');

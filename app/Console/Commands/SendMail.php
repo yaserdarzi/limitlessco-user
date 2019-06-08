@@ -2,9 +2,14 @@
 
 namespace App\Console\Commands;
 
+use App\Inside\Constants;
+use App\Shopping;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
+use Morilog\Jalali\CalendarUtils;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class SendMail extends Command
 {
@@ -39,24 +44,45 @@ class SendMail extends Command
      */
     public function handle()
     {
-        $config = [
-            'driver' => 'smtp',
-            'host' => 'smtp.yandex.com',
-            'port' => '465',
-            'encryption' => 'ssl',
-            'username' => 'sales@limitlessco.ir',
-            'password' => 'yaserdarzi'
-        ];
-        Config::set('mail', $config);
-        $data = [
-            "email" => "yaser.darzi@gmail.com",
-            "name" => "yaser.darzi",
-        ];
-        Mail::send('emails.ticket', ['email' => "yaser.darzi@gmail.com",], function ($m) use ($data) {
-            $m->from('sales@limitlessco.ir', 'limitless');
-            $m->to($data['email'], $data['name'])
-                ->subject('کد فعالسازی حساب کاربری برای' . date('Y-m-d H:i:s'));
-        });
+        $connection = new AMQPStreamConnection(config("rabbitmq.server"), config("rabbitmq.port"), config("rabbitmq.user"), config("rabbitmq.password"), '/');
+        $channel = $connection->channel();
+        list(, $consumerCount,) = $channel->queue_declare(Constants::QUEUE_MAIL_TICKET, false, false, false, false);
+        if ($consumerCount == 0)
+            exit();
+        echo " [*] Waiting for messages. To exit press CTRL+C\n";
+        $callback = function ($msg) {
+            echo ' [x] Received ', $msg->body, "\n";
+            $data = json_decode($msg->body);
+            $data->shopping = Shopping::where([
+                'id' => $data->shopping_id,
+            ])->first();
+            $config = [
+                'driver' => 'smtp',
+                'host' => 'smtp.yandex.com',
+                'port' => '465',
+                'encryption' => 'ssl',
+                'username' => Constants::MAIL_USER . $data->base_url,
+                'password' => Constants::MAIL_PASSWORD
+            ];
+            Config::set('mail', $config);
+            $data->emailSend = Constants::MAIL_USER . $data->base_url;
+            $data->name = $data->shopping->name;
+            $data->shopping->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($data->shopping->date));
+            $data->shopping->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($data->shopping->created_at));
+            $data = (array)$data;
+            Mail::send('emails.ticket', ['data' => $data], function ($m) use ($data) {
+                $m->from($data['emailSend']);
+                $m->to($data['email'], $data['name'])
+                    ->subject('بلیط ' . $data['shopping']['title'] . ' ' . $data['shopping']['title_more'] . ' ' . $data['name']);
+            });
+//            $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+            exit();
+        };
+        $channel->basic_consume(Constants::QUEUE_MAIL_TICKET, '', false, false, false, false, $callback);
+        $channel->wait();
+        $channel->close();
+        $connection->close();
+
 
     }
 }

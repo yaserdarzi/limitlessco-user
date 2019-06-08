@@ -9,6 +9,8 @@ use App\Shopping;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use Morilog\Jalali\CalendarUtils;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class TicketController extends ApiController
 {
@@ -121,4 +123,45 @@ class TicketController extends ApiController
     ///////////////////public function///////////////////////
 
 
+    public function ticketSendMail(Request $request)
+    {
+        if (!$request->input('base_url'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن base_url اجباری می باشد.'
+            );
+        if (!$request->input('email'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن پست الکترونیک اجباری می باشد.'
+            );
+        if (!$request->input('shopping_id'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن shopping_id اجباری می باشد.'
+            );
+        $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-";
+        $shopping = Shopping::where([
+            'id' => $request->input('shopping_id'),
+        ])->where('customer_id', 'like', "%{$customer_id}%")->first();
+        if (!$shopping)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی شما دسترسی به این قسمت ندارید.'
+            );
+        $connection = new AMQPStreamConnection(config("rabbitmq.server"), config("rabbitmq.port"), config("rabbitmq.user"), config("rabbitmq.password"), '/');
+        $channel = $connection->channel();
+        $channel->queue_declare(Constants::QUEUE_MAIL_TICKET, false, false, false, false);
+        $msg = new AMQPMessage(json_encode([
+            'base_url' => $request->input('base_url'),
+            'email' => $request->input('email'),
+            'shopping_id' => $request->input('shopping_id')
+        ]),
+            array('delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT)
+        );
+        $channel->basic_publish($msg, '', Constants::QUEUE_MAIL_TICKET);
+        $channel->close();
+        $connection->close();
+        return $this->respond(["status" => "success"]);
+    }
 }
