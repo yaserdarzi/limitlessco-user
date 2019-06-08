@@ -148,4 +148,10 @@ class Constants
     const INVOICE_INVOICE_STATUS_DECREMENT = 'کاهش';
     const INVOICE_INVOICE_STATUS_WITHDRAW = 'تصویه حساب';
     const INVOICE_INVOICE_STATUS_INCOME_SUPPLIER = 'در آمد عرضه کننده';
+
+    //Queue
+    const MAIL_USER = 'sales@' ;
+    const MAIL_PASSWORD = 'yaserdarzi';
+    const QUEUE_MAIL_TICKET = 'mail_ticket';
+
 }
