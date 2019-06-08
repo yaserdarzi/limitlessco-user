@@ -43,6 +43,7 @@ class SendMail extends Command
             'driver' => 'smtp',
             'host' => 'smtp.yandex.com',
             'port' => '465',
+            'encryption' => 'ssl',
             'username' => 'sales@limitlessco.ir',
             'password' => 'yaserdarzi'
         ];
