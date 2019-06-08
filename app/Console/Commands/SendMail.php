@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Agency;
 use App\Inside\Constants;
 use App\Shopping;
 use Illuminate\Console\Command;
@@ -53,9 +54,8 @@ class SendMail extends Command
         $callback = function ($msg) {
             echo ' [x] Received ', $msg->body, "\n";
             $data = json_decode($msg->body);
-            $data->shopping = Shopping::where([
-                'id' => $data->shopping_id,
-            ])->first();
+            $data->shopping = Shopping::where(['id' => $data->shopping_id])->first();
+            $data->agency = Agency::where(['id' => explode('-', $data->shopping->customer_id)[1]])->first();
             $config = [
                 'driver' => 'smtp',
                 'host' => 'smtp.yandex.com',
@@ -71,11 +71,11 @@ class SendMail extends Command
             $data->shopping->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($data->shopping->created_at));
             $data = (array)$data;
             Mail::send('emails.ticket', ['data' => $data], function ($m) use ($data) {
-                $m->from($data['emailSend']);
+                $m->from($data['emailSend'], $data['agency']['name']);
                 $m->to($data['email'], $data['name'])
                     ->subject('بلیط ' . $data['shopping']['title'] . ' ' . $data['shopping']['title_more'] . ' ' . $data['name']);
             });
-//            $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
+            $msg->delivery_info['channel']->basic_ack($msg->delivery_info['delivery_tag']);
             exit();
         };
         $channel->basic_consume(Constants::QUEUE_MAIL_TICKET, '', false, false, false, false, $callback);

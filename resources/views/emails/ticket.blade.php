@@ -563,8 +563,8 @@
                                                             <td valign="top" class="mcnTextContent"
                                                                 style="padding: 0px 18px 9px;color: #4CAAD8;">
 
-                                                                <div style="text-align: center;"><strong>Arasico
-                                                                        Agency</strong></div>
+                                                                <div style="text-align: center;">
+                                                                    <strong>{{$data['agency']['name']}}</strong></div>
 
                                                             </td>
                                                         </tr>
@@ -620,8 +620,11 @@
                                                             <td class="mcnImageContent" valign="top"
                                                                 style="padding-right: 0px; padding-left: 0px; padding-top: 0; padding-bottom: 0; text-align:center;">
 
-                                                                <div id="qrcode1"></div>
-
+                                                                <img align="center" alt=""
+                                                                     src="https://chart.googleapis.com/chart?chs=225x225&cht=qr&chl={{$data['shopping']['voucher']}}&choe=UTF-8"
+                                                                     width="225"
+                                                                     style="max-width:450px; padding-bottom: 0; display: inline !important; vertical-align: bottom;"
+                                                                     class="mcnRetinaImage">
 
                                                             </td>
                                                         </tr>
@@ -972,7 +975,8 @@
                                                                 </div>
 
                                                                 <div dir="rtl" style="text-align: center;"><strong
-                                                                            style="color: #333333;">{{$data['shopping']['count']}}</strong></div>
+                                                                            style="color: #333333;">{{$data['shopping']['count']}}</strong>
+                                                                </div>
 
                                                             </td>
                                                         </tr>
@@ -1300,18 +1304,5 @@
         </tr>
     </table>
 </center>
-<script src="{{asset('js/jquery.min.js')}}"></script>
-<script src="{{asset('js/qrcode.js')}}"></script>
-<script type="text/javascript">
-    var qrcode = new QRCode("qrcode", {
-        width: 225,
-        height: 225,
-    });
-    function makeCode() {
-        qrcode.makeCode('{{$data["shopping"]["voucher"]}}');
-    }
-    makeCode();
-
-</script>
 </body>
 </html>
