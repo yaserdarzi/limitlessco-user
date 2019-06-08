@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\CP\Agency;
 
 use App\Agency;
+use App\AgencyAgency;
 use App\App;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
@@ -122,16 +123,19 @@ class AppController extends ApiController
         $agency = Agency::where('id', $request->input('agency_id'))->first();
         $supplierSalesID = [];
         $supplierAgencyID = [];
+        $agencyAgencyID = [];
         if (in_array(Constants::AGENCY_INTRODUCTION_SALES, $agency->introduction))
-            $supplierSalesID = $this->getSupplierSales($request);
+            $supplierSalesID = $this->getSupplierSales();
         if (in_array(Constants::AGENCY_INTRODUCTION_SUPPLIER, $agency->introduction))
             $supplierAgencyID = $this->getSupplierAgency($request);
-        return $this->respond(["supplier_sales" => $supplierSalesID, "supplier_agency" => $supplierAgencyID]);
+        if (in_array(Constants::AGENCY_INTRODUCTION_AGENCY, $agency->introduction))
+            $agencyAgencyID = $this->getAgencyAgency($request);
+        return $this->respond(["supplier_sales" => $supplierSalesID, "supplier_agency" => $supplierAgencyID, "agency_agency" => $agencyAgencyID]);
     }
 
     ///////////////////private function///////////////////////
 
-    private function getSupplierSales(Request $request)
+    private function getSupplierSales()
     {
         $sales = Sales::where(
             'type', Constants::SALES_TYPE_AGENCY
@@ -149,6 +153,39 @@ class AppController extends ApiController
         where('capacity_percent', '!=', 0)
             ->where(['status' => Constants::STATUS_ACTIVE, 'agency_id' => $request->input('agency_id')])
             ->pluck('supplier_id');
+        return $supplierAgency;
+    }
+
+    private function getAgencyAgency(Request $request)
+    {
+        $agency_id = AgencyAgency::
+        where('capacity_percent', '!=', 0)
+            ->where(['status' => Constants::STATUS_ACTIVE, 'agency_id' => $request->input('agency_id')])
+            ->pluck('agency_parent_id');
+        $agencyId = $agency_id->toArray();
+        if (sizeof($agency_id))
+            while ($agency_id) {
+                $agency_id = AgencyAgency::
+                where('capacity_percent', '!=', 0)
+                    ->whereIn('agency_id', $agency_id)
+                    ->where(['status' => Constants::STATUS_ACTIVE])
+                    ->pluck('agency_parent_id');
+                if (sizeof($agency_id))
+                    $agencyId = array_merge($agencyId, $agency_id->toArray());
+                else
+                    break;
+            }
+        $agencyId = array_unique($agencyId);
+        $agency = Agency::whereIn('id', $agencyId)
+            ->whereJsonContains('introduction', [Constants::AGENCY_INTRODUCTION_SALES])->pluck('id');
+        $supplierSalesID = [];
+        if (sizeof($agency))
+            $supplierSalesID = $this->getSupplierSales();
+        $supplierAgencyID = SupplierAgency::where('capacity_percent', '!=', 0)
+            ->whereIn('agency_id', $agencyId)
+            ->where(['status' => Constants::STATUS_ACTIVE])
+            ->pluck('supplier_id');
+        $supplierAgency = array_unique(array_merge($supplierSalesID->toArray(), $supplierAgencyID->toArray()));
         return $supplierAgency;
     }
 }
