@@ -81,13 +81,13 @@ class Helpers
     public function base64url_encode($plainText)
     {
         $base64 = base64_encode($plainText);
-        $base64url = strtr($base64, '+/=', '-_,');
+        $base64url = strtr($base64, '+/=', 'LIM');
         return $base64url;
     }
 
     public function base64url_decode($plainText)
     {
-        $base64url = strtr($plainText, '-_,', '+/=');
+        $base64url = strtr($plainText, '-_,', 'LIM');
         $base64 = base64_decode($base64url);
         return $base64;
     }
