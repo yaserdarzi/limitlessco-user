@@ -196,13 +196,11 @@ $data = (array)$data;
             fetch("http://api.limitlessco.ir" + '/api/v1/save/ticket/' + "{{$shopping_id}}", {
                 method: 'POST',
                 body: data
+            }).then(() => {
+                window.close()
             });
-        }).then(function () {
-            window.close();
-        }).catch(function (error) {
-            console.log('There has been a problem with your fetch operation: ',
-                error.message);
         });
+
     });
 </script>
 </body>
