@@ -199,9 +199,12 @@ $data = (array)$data;
                 method: 'POST',
                 body: data
             });
-        })
-
-        window.close();
+        }).then(function () {
+            window.close();
+        }).catch(function (error) {
+            console.log('There has been a problem with your fetch operation: ',
+                error.message);
+        });
     });
 </script>
 </body>
