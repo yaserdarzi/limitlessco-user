@@ -15,7 +15,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
 Route::get('/ticket/{shopping_id}', function ($shopping_id) {
-    return view('ticket/showTicketPDF', ['shopping_id' => $shopping_id]);
+    return view('ticket/downloadTicketPDF', ['shopping_id' => $shopping_id]);
+});
+
+Route::get('/save/ticket/{shopping_id}', function ($shopping_id) {
+    return view('ticket/saveTicketPDF', ['shopping_id' => $shopping_id]);
 });

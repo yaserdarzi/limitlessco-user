@@ -18,6 +18,9 @@ Route::namespace('Api\V1')->prefix('/v1/')->group(function () {
     //Get Supplier Active For Sales
     Route::get('app/get/supplier/active/sales', 'AppController@appGetSupplierActiveSales');
 
+    //Generate Ticket
+    Route::post('/save/ticket/{shopping_id}','TicketController@store');
+
 });
 Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
 
