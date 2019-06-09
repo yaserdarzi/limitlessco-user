@@ -6,6 +6,10 @@ use App\Agency;
 use App\AgencyApp;
 use App\AgencyUser;
 use App\AgencyWallet;
+use App\Api;
+use App\ApiApp;
+use App\ApiUser;
+use App\ApiWallet;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
@@ -125,6 +129,33 @@ class OTPController extends ApiController
                 ]);
             }
         }
+        if ($request->input('api_app_id')) {
+            $api = Api::create([
+                'username' => '',
+                'name' => '',
+                'image' => '',
+                'tell' => '',
+                'type' => 'percent',
+                'status' => Constants::STATUS_ACTIVE,
+            ]);
+            ApiUser::create([
+                'user_id' => $request->input('user_id'),
+                'api_id' => $api->id,
+                'type' => 'percent',
+                'percent' => 100,
+                'role' => Constants::ROLE_ADMIN
+            ]);
+            ApiWallet::create([
+                'api_id' => $api->id,
+                'price' => 0
+            ]);
+            foreach (json_decode($request->input('api_app_id')) as $value) {
+                ApiApp::create([
+                    'api_id' => $api->id,
+                    'app_id' => $value,
+                ]);
+            }
+        }
         return $this->respond(["status" => "success"]);
     }
 
@@ -236,6 +267,11 @@ class OTPController extends ApiController
                 "کاربر گرامی شما قبلا ثبت نام کردید."
             );
         if (AgencyUser::where(['user_id' => $user->id])->exists())
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                "کاربر گرامی شما قبلا ثبت نام کردید."
+            );
+        if (ApiUser::where(['user_id' => $user->id])->exists())
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 "کاربر گرامی شما قبلا ثبت نام کردید."

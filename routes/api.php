@@ -34,6 +34,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
         //App
         Route::get('app/supplier', 'AppController@appSupplier');
         Route::get('app/agency', 'AppController@appAgency');
+        Route::get('app/api', 'AppController@appApi');
 
         //Store Register
         Route::middleware('cp.register.auth')->group(function () {
