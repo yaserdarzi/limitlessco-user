@@ -14,3 +14,8 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::get('/ticket/{shopping_id}', function ($shopping_id) {
+    return view('ticket/showTicketPDF', ['shopping_id' => $shopping_id]);
+});

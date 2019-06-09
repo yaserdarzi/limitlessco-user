@@ -1214,7 +1214,8 @@
                                                         <tr>
                                                             <td align="center" valign="middle" class="mcnButtonContent"
                                                                 style="font-family: 'IRANSans'; font-size: 18px; padding: 18px;">
-                                                                <a class="mcnButton " title="دانلود واچر "
+                                                                <a class="mcnButton " href="{{$data['link']}}"
+                                                                   title="دانلود واچر "
                                                                    target="_self"
                                                                    style="font-weight: bold;letter-spacing: -0.5px;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;">دانلود
                                                                     واچر </a>

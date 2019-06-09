@@ -4,29 +4,29 @@ namespace App\Console\Commands;
 
 use App\Agency;
 use App\Inside\Constants;
+use App\Inside\Helpers;
 use App\Shopping;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Mail;
 use Morilog\Jalali\CalendarUtils;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
-use PhpAmqpLib\Message\AMQPMessage;
 
-class SendMail extends Command
+class SendMailTicket extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'send:mail';
+    protected $signature = 'send:mailTicket';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Send Email Queue';
+    protected $description = 'Send Mail Ticket Queue';
 
     /**
      * Create a new command instance.
@@ -54,6 +54,7 @@ class SendMail extends Command
         $callback = function ($msg) {
             echo ' [x] Received ', $msg->body, "\n";
             $data = json_decode($msg->body);
+            $help = new Helpers();
             $data->shopping = Shopping::where(['id' => $data->shopping_id])->first();
             $data->agency = Agency::where(['id' => explode('-', $data->shopping->customer_id)[1]])->first();
             $config = [
@@ -69,9 +70,15 @@ class SendMail extends Command
             $data->name = $data->shopping->name;
             $data->shopping->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($data->shopping->date));
             $data->shopping->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($data->shopping->created_at));
+            $data->link = 'http://api.limitlessco.ir/ticket/' . $help->base64url_encode($data->shopping->id);
             $data = (array)$data;
             Mail::send('emails.ticket', ['data' => $data], function ($m) use ($data) {
                 $m->from($data['emailSend'], $data['agency']['name']);
+                $m->attach(public_path('files/ticket.pdf'),
+                    array(
+                        'mime' => 'application/pdf'
+                    )
+                );
                 $m->to($data['email'], $data['name'])
                     ->subject('بلیط ' . $data['shopping']['title'] . ' ' . $data['shopping']['title_more'] . ' ' . $data['name']);
             });
