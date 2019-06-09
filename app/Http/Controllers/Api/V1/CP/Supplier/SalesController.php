@@ -42,7 +42,8 @@ class SalesController extends ApiController
         $sales = Sales::select(
             '*',
             DB::raw("CASE WHEN logo != '' THEN (concat ( '" . url('') . "/files/sales/', logo) ) ELSE '" . url('/files/sales/default.svg') . "' END as logo")
-        )->orderBy('id')->get();
+        )->where([['type', '!=', Constants::SALES_TYPE_AGENCY]])
+            ->orderBy('id')->get();
         foreach ($sales as $value) {
             $supplier = SupplierSales::where([
                 'supplier_id' => $request->input('supplier_id'),
