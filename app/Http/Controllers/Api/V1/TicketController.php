@@ -42,7 +42,7 @@ class TicketController extends ApiController
                 'plz check your pdf'
             );
         \Storage::disk('upload')->makeDirectory('/ticket/');
-        $pdf = $shopping_id . '.ticket' . $request->file('pdf')->getClientOriginalExtension();
+        $pdf = $shopping_id . '.ticket.pdf';
         $exists = \Storage::disk('upload')->has('/ticket/' . $pdf);
         if ($exists == null)
             \Storage::disk('upload')->put('/ticket/' . $pdf, \File::get($request->file('pdf')->getRealPath()));
