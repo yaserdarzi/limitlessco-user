@@ -163,7 +163,6 @@ class TicketController extends ApiController
         $channel->basic_publish($msg, '', Constants::QUEUE_MAIL_TICKET);
         $channel->close();
         $connection->close();
-        $help = new Helpers();
-        return $this->respond(["url" => "http://api.limitlessco.ir/save/ticket/" . $help->base64url_encode($request->input('shopping_id'))]);
+        return $this->respond(["status" => "success"]);
     }
 }
