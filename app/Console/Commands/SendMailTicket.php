@@ -70,7 +70,7 @@ class SendMailTicket extends Command
             $data->name = $data->shopping->name;
             $data->shopping->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($data->shopping->date));
             $data->shopping->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($data->shopping->created_at));
-            $data->shopping_id = $help->base64url_encode($data->shopping->id);
+            $data->shopping_id = $data->shopping->id;
             $data->link = 'http://api.limitlessco.ir/ticket/' . $data->shopping_id;
             $data = (array)$data;
             Mail::send('emails.ticket', ['data' => $data], function ($m) use ($data) {
