@@ -1,6 +1,4 @@
 <?php
-$help = new \App\Inside\Helpers();
-$shopping_id = $help->base64url_decode($shopping_id);
 $data['shopping'] = \App\Shopping::where(['id' => intval($shopping_id)])->first();
 $data['agency'] = \App\Agency::where(['id' => explode('-', $data['shopping']->customer_id)[1]])->first();
 $data['shopping']->date_persian = \Morilog\Jalali\CalendarUtils::strftime('Y-m-d', strtotime($data['shopping']->date));
