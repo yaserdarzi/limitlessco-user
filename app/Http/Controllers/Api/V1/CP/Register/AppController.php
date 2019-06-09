@@ -100,4 +100,9 @@ class AppController extends ApiController
         $app = App::where(['is_agency' => true])->get();
         return $this->respond($app);
     }
+    public function appApi(Request $request)
+    {
+        $app = App::where(['is_api' => true])->get();
+        return $this->respond($app);
+    }
 }
