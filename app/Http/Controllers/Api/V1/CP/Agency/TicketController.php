@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\CP\Agency;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
+use App\Inside\Helpers;
 use App\Shopping;
 use Illuminate\Http\Request;
 use App\Http\Requests;
@@ -162,6 +163,7 @@ class TicketController extends ApiController
         $channel->basic_publish($msg, '', Constants::QUEUE_MAIL_TICKET);
         $channel->close();
         $connection->close();
-        return $this->respond(["status" => "success"]);
+        $help = new Helpers();
+        return $this->respond(["url" => "http://api.limitlessco.ir/save/ticket/" . $help->base64url_encode($request->input('shopping_id'))]);
     }
 }

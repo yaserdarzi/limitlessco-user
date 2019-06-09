@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('checkExpire:shoppingBag')->everyMinute();
-        $schedule->command('send:mail')->everyMinute();
+        $schedule->command('send:mailTicket')->everyMinute();
         $schedule->command('checkIncome:supplier')->daily();
     }
 

@@ -179,7 +179,6 @@ return [
         Rasulian\ZarinPal\ZarinPalServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
 
-
     ],
 
     /*
@@ -233,7 +232,6 @@ return [
 
         //Customize
         'Image' => Intervention\Image\Facades\Image::class,
-
 
     ],
 
