@@ -17,6 +17,7 @@ use App\UsersLoginTokenLog;
 use App\Wallet;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redis;
 
 class OTPController extends ApiController
@@ -72,23 +73,28 @@ class OTPController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، لطفا secret را وارد نمایید.'
             );
-        $phone = $this->help->base64url_decode($request->input('secret'));
-        $phone = $this->help->phoneChecker($phone);
-        $user = User::where(['phone' => $phone])->first();
+        $api = Api::where('username', $request->input('username'))->first();
+        if (!Hash::check($request->input('secret'), $api->password))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، لطفا secret را چک نمایید.'
+            );
+        if ($api->status != Constants::STATUS_ACTIVE)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                "کاربر گرامی حساب شما فعال نمی باشید."
+            );
+        $apiUser = ApiUser::where(['api_id' => $api->id, 'role' => Constants::ROLE_ADMIN])->first();
+        if (!$apiUser)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، لطفا username,secret را چک نمایید.'
+            );
+        $user = User::where(['id' => $apiUser->user_id])->first();
         if (!$user)
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 "کاربر گرامی شما وب سرویس نمی باشید."
-            );
-        if (!$apiUser = ApiUser::where(['user_id' => $user->id])->first())
-            throw new ApiException(
-                ApiException::EXCEPTION_NOT_FOUND_404,
-                "کاربر گرامی شما وب سرویس نمی باشید."
-            );
-        if (!$api = Api::where(['username' => $request->input('username'), 'status' => Constants::STATUS_ACTIVE])->first())
-            throw new ApiException(
-                ApiException::EXCEPTION_NOT_FOUND_404,
-                "کاربر گرامی حساب شما فعال نمی باشید."
             );
         $user->wallet = ApiWallet::where(['id' => $api->api_id])->first();
         $appId = ApiApp::where(['api_id' => $apiUser->api_id])->pluck('app_id');
