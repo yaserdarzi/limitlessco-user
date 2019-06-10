@@ -2,7 +2,7 @@
 
 return [
     'params' => [
-        'merchant-id' => 'dd71f226-0199-11e7-9283-000c295eb8fc',
+        'merchant-id' => 'c77e091a-8b3e-11e9-b6f4-000c29344814',
 
         // Leave it empty if you're passing the callback url when doing the request
         'callback-url' => '',
