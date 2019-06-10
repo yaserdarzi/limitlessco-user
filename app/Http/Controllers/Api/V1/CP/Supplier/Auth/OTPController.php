@@ -90,7 +90,7 @@ class OTPController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 $result["return"]["message"]
             );
-        return ["phone" => $phone, "status" => "success"];
+        return $this->respond(["phone" => $phone, "status" => "success"]);
     }
 
     private function callKavenegarApi($req, $kavenegar_api_key)
