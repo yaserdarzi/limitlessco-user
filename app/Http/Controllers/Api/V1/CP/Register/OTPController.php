@@ -82,7 +82,7 @@ class OTPController extends ApiController
                 'tell' => '',
                 'status' => Constants::STATUS_ACTIVE,
                 'type' => 'percent',
-                'price' => Constants::SUPPLIER_PERCENT_DEFAULT
+                'percent' => Constants::SUPPLIER_PERCENT_DEFAULT
             ]);
             SupplierUser::create([
                 'user_id' => $request->input('user_id'),
