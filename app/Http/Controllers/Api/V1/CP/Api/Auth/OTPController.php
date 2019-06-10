@@ -73,28 +73,28 @@ class OTPController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، لطفا secret را وارد نمایید.'
             );
-        $api = Api::where('username', $request->input('username'))->first();
+        $user = User::where(['username' => $request->input('username'), 'username_password' => $request->input('secret')])->first();
+        if (!$user)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، لطفا username,secret را چک نمایید.'
+            );
+        $apiUser = ApiUser::where(['user_id' => $user->id, 'role' => Constants::ROLE_ADMIN])->first();
+        if (!$apiUser)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                "کاربر گرامی شما وب سرویس نمی باشید."
+            );
+        $api = Api::where('id', $apiUser->api_id)->first();
         if (!Hash::check($request->input('secret'), $api->password))
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
-                'کاربر گرامی ، لطفا secret را چک نمایید.'
+                "کاربر گرامی شما وب سرویس نمی باشید."
             );
         if ($api->status != Constants::STATUS_ACTIVE)
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 "کاربر گرامی حساب شما فعال نمی باشید."
-            );
-        $apiUser = ApiUser::where(['api_id' => $api->id, 'role' => Constants::ROLE_ADMIN])->first();
-        if (!$apiUser)
-            throw new ApiException(
-                ApiException::EXCEPTION_NOT_FOUND_404,
-                'کاربر گرامی ، لطفا username,secret را چک نمایید.'
-            );
-        $user = User::where(['id' => $apiUser->user_id])->first();
-        if (!$user)
-            throw new ApiException(
-                ApiException::EXCEPTION_NOT_FOUND_404,
-                "کاربر گرامی شما وب سرویس نمی باشید."
             );
         $user->wallet = ApiWallet::where(['id' => $api->api_id])->first();
         $appId = ApiApp::where(['api_id' => $apiUser->api_id])->pluck('app_id');

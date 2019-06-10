@@ -15,12 +15,12 @@ class User extends Authenticatable
         'info' => 'object',
     ];
     protected $fillable = [
-        'phone', 'email', 'gmail', 'name', 'tell',
+        'phone', 'email', 'gmail', 'username', 'name', 'tell',
         'image', 'gender', 'ref_link', 'info',
-        'password', 'remember_token'
+        'password', 'password_username', 'remember_token'
     ];
     protected $dates = ['deleted_at'];
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'password_username', 'remember_token',
     ];
 }

@@ -131,7 +131,6 @@ class OTPController extends ApiController
         }
         if ($request->input('api_app_id')) {
             $api = Api::create([
-                'username' => '',
                 'name' => '',
                 'image' => '',
                 'tell' => '',

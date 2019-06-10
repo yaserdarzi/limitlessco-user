@@ -32,6 +32,7 @@ class Constants
     const APP_DB = 'app';
     const USERS_APPS_DB = 'user_apps';
     const USERS_REFER_DB = 'users_refer';
+    const CRM_DB = 'crm';
     const WALLET_DB = 'wallet';
     const WALLET_INVOICE_DB = 'wallet_invoice';
     const SUPPLIER_DB = 'supplier';

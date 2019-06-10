@@ -237,4 +237,55 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
         });
 
     });
+
+    //Crm
+    Route::namespace('Crm')->prefix('/crm/')->group(function () {
+
+        //Auth
+        Route::namespace('Auth')->prefix('/auth/')->group(function () {
+            Route::post('otp/sms', 'OTPController@smsOTP');
+            Route::post('otp/verify', 'OTPController@verifyOTP');
+        });
+
+        Route::middleware(['cp.api.app.check', 'cp.api.auth'])->group(function () {
+
+            //Get Supplier Active For Sales
+            Route::get('app/get/supplier', 'AppController@getSupplier');
+
+            //Api Init
+            Route::get('init', 'WebServiceController@index');
+            Route::post('update', 'WebServiceController@update');
+            Route::post('user/update', 'WebServiceController@userUpdate');
+
+            //App Checker
+            Route::get('app/checker', 'AppController@appChecker');
+
+            //Report
+            Route::get('report/sales', 'ReportController@sales');
+            Route::get('report/chart', 'ReportController@chart');
+
+            //Ticket
+            Route::get('getTicket', 'TicketController@show');
+            Route::get('ticket', 'TicketController@index');
+            Route::post('ticket/paymentToken', 'TicketController@ticketPaymentToken');
+
+            //Api User
+            Route::post('user/update/{user_id}', 'ApiUserController@update');
+            Route::resource('user', 'ApiUserController');
+
+            //Wallet
+            Route::get('wallet', 'WalletController@index');
+            Route::post('wallet', 'WalletController@store');
+
+            //Hotel Payment
+            Route::post('payment/hotel', 'PaymentController@PaymentHotel');
+
+            //Setting
+            Route::get('setting', 'SettingController@index');
+
+        });
+
+    });
+
+
 });
