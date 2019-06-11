@@ -1,22 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\CP\Api;
+namespace App\Http\Controllers\Api\V1\CP\Crm;
 
-use App\ApiWallet;
-use App\App;
+use App\Crm;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
-use App\Api;
-use App\ApiApp;
-use App\ApiUser;
 use App\Inside\Helpers;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Requests;
-use Intervention\Image\Facades\Image;
 
-class WebServiceController extends ApiController
+class CrmController extends ApiController
 {
     protected $help;
 
@@ -33,17 +28,16 @@ class WebServiceController extends ApiController
     public function index(Request $request)
     {
         $user = User::where(['id' => $request->input('user_id')])->first();
-        if (!$apiUser = ApiUser::where(['user_id' => $user->id])->first())
+        if (!$crm = Crm::where(['user_id' => $user->id])->first())
             throw new ApiException(
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
-                "کاربر گرامی شما وب سرویس نمی باشید."
+                "کاربر گرامی شما مدیر نمی باشید."
             );
-        if (!$api = Api::where(['id' => $apiUser->api_id, 'status' => Constants::STATUS_ACTIVE])->first())
+        if ($crm->status != Constants::STATUS_ACTIVE)
             throw new ApiException(
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
                 "کاربر گرامی حساب شما فعال نمی باشید."
             );
-        $user->wallet = ApiWallet::where(['id' => $apiUser->api_id])->first();
         if ($user->image) {
             $user->image_thumb = url('/files/user/thumb/' . $user->image);
             $user->image = url('/files/user/' . $user->image);
@@ -51,19 +45,8 @@ class WebServiceController extends ApiController
             $user->image_thumb = url('/files/user/defaultAvatar.svg');
             $user->image = url('/files/user/defaultAvatar.svg');
         }
-        $appId = ApiApp::where(['api_id' => $apiUser->api_id])->pluck('app_id');
-        $user->api = Api::where('id', $apiUser->api_id)->first();
-        if ($user->api->image) {
-            $user->api->image_thumb = url('/files/api/thumb/' . $user->api->image);
-            $user->api->image = url('/files/api/' . $user->api->image);
-        } else {
-            $user->api->image_thumb = url('/files/api/defaultAvatar.svg');
-            $user->api->image = url('/files/api/defaultAvatar.svg');
-        }
-        $user->role = ApiUser::where(['user_id' => $user->id])->first()->role;
-        $user->apps = App::whereIn('id', $appId)->get();
+        $user->role = $crm->role;
         $user->token = $request->header('Authorization');
-        $user->appToken = $request->header('appToken');
         return $this->respond($user);
     }
 
@@ -119,22 +102,7 @@ class WebServiceController extends ApiController
      */
     public function update(Request $request)
     {
-        if ($request->input('role') != Constants::ROLE_ADMIN)
-            throw new ApiException(
-                ApiException::EXCEPTION_NOT_FOUND_404,
-                'کاربر گرامی شما دسترسی به این قسمت ندارید.'
-            );
-        if (!$request->input('name'))
-            throw new ApiException(
-                ApiException::EXCEPTION_NOT_FOUND_404,
-                'کاربر گرامی ، وارد کردن نام اجباری می باشد.'
-            );
-        Api::where(['id' => $request->input('api_id')])
-            ->update([
-                'name' => $request->input('name')
-            ]);
-        return $this->index($request);
-
+        //
     }
 
     /**
@@ -168,9 +136,15 @@ class WebServiceController extends ApiController
                 );
             $email = $request->input('email');
         }
-        $tell = $info->tell;
-        if (!$request->input('tell'))
-            $tell = $request->input('tell');
+        $phone = $info->phone;
+        if ($request->input('phone')) {
+            $phone = $this->help->phoneChecker($request->input('phone'));
+            if (User::where(['phone' => $phone, ['id', '!=', $request->input('user_id')]])->exists())
+                throw new ApiException(
+                    ApiException::EXCEPTION_NOT_FOUND_404,
+                    'کاربر گرامی ، تلفن همراه تکراری می باشد.'
+                );
+        }
         $image = $info->image;
         if ($request->file('image')) {
             \Storage::disk('upload')->makeDirectory('/user/');
@@ -190,13 +164,17 @@ class WebServiceController extends ApiController
             $thumb = public_path('/files/user/thumb/' . $image);
             $image_resize->save($thumb);
         }
-        User::where(['id' => $request->input('user_id')])
-            ->update([
-                'name' => $request->input('name'),
-                'email' => $email,
-                'tell' => $tell,
-                'image' => $image
-            ]);
+        $user = User::find($request->input('user_id'));
+        $user->name = $request->input('name');
+        $user->image = $image;
+        $user->email = $email;
+        $user->phone = $phone;
+        $user->info = array_merge((array)$user->info, [
+            "limitless" => [
+                "whats_app" => $request->input('whats_app'),
+                "telegram" => $request->input('telegram')
+            ]]);
+        $user->save();
         return $this->index($request);
     }
 }
