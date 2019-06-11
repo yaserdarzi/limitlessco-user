@@ -253,34 +253,11 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
 
             //Api Init
             Route::get('init', 'CrmController@index');
-            Route::post('update', 'CrmController@update');
             Route::post('user/update', 'CrmController@userUpdate');
 
-            //App Checker
-            Route::get('app/checker', 'AppController@appChecker');
+            //Register Agency with Api
+            Route::post('register', 'RegisterController@store');
 
-            //Report
-            Route::get('report/sales', 'ReportController@sales');
-            Route::get('report/chart', 'ReportController@chart');
-
-            //Ticket
-            Route::get('getTicket', 'TicketController@show');
-            Route::get('ticket', 'TicketController@index');
-            Route::post('ticket/paymentToken', 'TicketController@ticketPaymentToken');
-
-            //Api User
-            Route::post('user/update/{user_id}', 'ApiUserController@update');
-            Route::resource('user', 'ApiUserController');
-
-            //Wallet
-            Route::get('wallet', 'WalletController@index');
-            Route::post('wallet', 'WalletController@store');
-
-            //Hotel Payment
-            Route::post('payment/hotel', 'PaymentController@PaymentHotel');
-
-            //Setting
-            Route::get('setting', 'SettingController@index');
 
         });
 
