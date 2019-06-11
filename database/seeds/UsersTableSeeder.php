@@ -134,6 +134,16 @@ class UsersTableSeeder extends Seeder
                 'phone' => 989128800300,
                 'name' => "احمدی",
                 'username' => "jabama",
+            ],[
+                'nameApi' => "الی گشت",
+                'phone' => null,
+                'name' => "samaneh moghim",
+                'username' => "elleghasht",
+            ],[
+                'nameApi' => "اسنپ تریپ",
+                'phone' => null,
+                'name' => "",
+                'username' => "snapptrip",
             ],
         ];
         foreach ($data as $value) {

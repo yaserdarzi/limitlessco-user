@@ -55,6 +55,56 @@ class OTPController extends ApiController
         return $this->respond($this->verify($phone, $request));
     }
 
+    public function login(Request $request)
+    {
+        if (!$request->header('agent'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'Plz check your agent'
+            );
+        if (!$request->input('username'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، لطفا username را وارد نمایید.'
+            );
+        if (!$request->input('password'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، لطفا password را وارد نمایید.'
+            );
+        $user = User::where(['username' => $request->input('username'), 'password_username' => $request->input('password')])->first();
+        if (!$user)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، لطفا username,password را چک نمایید.'
+            );
+        $agencyUser = AgencyUser::where(['user_id' => $user->id])->first();
+        if (!$agencyUser)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                "کاربر گرامی آژانس نمی باشید."
+            );
+        $agency = Agency::where('id', $agencyUser->agency_id)->first();
+        if (!$agency)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                "کاربر گرامی آژانس نمی باشید."
+            );
+        if ($agency->status != Constants::STATUS_ACTIVE)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                "کاربر گرامی حساب شما فعال نمی باشید."
+            );
+        $user->wallet = AgencyWallet::where(['id' => $agencyUser->agency_id])->first();
+        $appId = AgencyApp::where(['agency_id' => $agencyUser->agency_id])->pluck('app_id');
+        $user->agency = Agency::where('id', $agencyUser->agency_id)->first();
+        $user->role = AgencyUser::where(['user_id' => $user->id])->first()->role;
+        $user->apps = App::whereIn('id', $appId)->get();
+        $this->generateToken($user, $request->header('agent'), $user->role);
+        $this->generateAppToken($user, $request->header('agent'), $appId, $agencyUser->agency_id);
+        return $this->respond($user);
+    }
+
 
     ////////////////////private function///////////////////////
 

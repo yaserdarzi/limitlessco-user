@@ -127,6 +127,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
         Route::namespace('Auth')->prefix('/auth/')->group(function () {
             Route::post('otp/sms', 'OTPController@smsOTP');
             Route::post('otp/verify', 'OTPController@verifyOTP');
+            Route::post('login', 'OTPController@login');
         });
         Route::middleware(['cp.agency.app.check', 'cp.agency.auth'])->group(function () {
 

@@ -34,7 +34,7 @@ class SalesTableSeeder extends Seeder
         //Agency
         \App\Sales::create([
             'title' => 'آژانس ها',
-            'desc' => "desc",
+            'desc' => "",
             'logo' => "agency.svg",
             'type' => \App\Inside\Constants::SALES_TYPE_AGENCY,
         ]);
