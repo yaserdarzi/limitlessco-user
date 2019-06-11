@@ -68,6 +68,9 @@ class Constants
     const SUPPLIER_PRICE_DEFAULT = 3000;
     const SUPPLIER_PERCENT_DEFAULT = 2;
 
+    //Agency Price Default
+    const AGENCY_PERCENT_DEFAULT = 6;
+
     //Agency Introduction
     const AGENCY_INTRODUCTION_SALES = 'sales';
     const AGENCY_INTRODUCTION_SUPPLIER = 'supplier';
