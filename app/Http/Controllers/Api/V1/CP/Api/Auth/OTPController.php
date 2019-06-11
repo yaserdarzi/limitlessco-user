@@ -86,7 +86,7 @@ class OTPController extends ApiController
                 "کاربر گرامی شما وب سرویس نمی باشید."
             );
         $api = Api::where('id', $apiUser->api_id)->first();
-        if (!Hash::check($request->input('secret'), $api->password))
+        if (!$api)
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 "کاربر گرامی شما وب سرویس نمی باشید."
