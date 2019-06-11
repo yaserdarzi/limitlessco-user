@@ -108,6 +108,7 @@ class OTPController extends ApiController
                 'image' => '',
                 'tell' => '',
                 'type' => 'percent',
+                'percent' => Constants::AGENCY_PERCENT_DEFAULT,
                 'status' => Constants::STATUS_ACTIVE,
                 'introduction' => [Constants::AGENCY_INTRODUCTION_SALES]
             ]);
@@ -135,6 +136,7 @@ class OTPController extends ApiController
                 'image' => '',
                 'tell' => '',
                 'type' => 'percent',
+                'percent' => Constants::AGENCY_PERCENT_DEFAULT,
                 'status' => Constants::STATUS_ACTIVE,
             ]);
             ApiUser::create([
