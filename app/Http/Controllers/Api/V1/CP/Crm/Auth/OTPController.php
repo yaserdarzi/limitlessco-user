@@ -1,20 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Cp\Api\Auth;
+namespace App\Http\Controllers\Api\V1\Cp\Crm\Auth;
 
-use App\ApiWallet;
-use App\App;
+use App\Crm;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
 use App\Inside\Helpers;
-use App\Api;
-use App\ApiApp;
-use App\ApiUser;
 use App\User;
 use App\UsersLoginToken;
 use App\UsersLoginTokenLog;
-use App\Wallet;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -68,41 +63,30 @@ class OTPController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، لطفا username را وارد نمایید.'
             );
-        if (!$request->input('secret'))
+        if (!$request->input('password'))
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
-                'کاربر گرامی ، لطفا secret را وارد نمایید.'
+                'کاربر گرامی ، لطفا password را وارد نمایید.'
             );
-        $user = User::where(['username' => $request->input('username'), 'password_username' => $request->input('secret')])->first();
+        $user = User::where(['username' => $request->input('username'), 'password_username' => $request->input('password')])->first();
         if (!$user)
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
-                'کاربر گرامی ، لطفا username,secret را چک نمایید.'
+                'کاربر گرامی ، لطفا username,password را چک نمایید.'
             );
-        $apiUser = ApiUser::where(['user_id' => $user->id])->first();
-        if (!$apiUser)
+        $crm = Crm::where(['user_id' => $user->id])->first();
+        if (!$crm)
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
-                "کاربر گرامی شما وب سرویس نمی باشید."
+                "کاربر گرامی شما مدیر سیستم نمی باشید."
             );
-        $api = Api::where('id', $apiUser->api_id)->first();
-        if (!Hash::check($request->input('secret'), $api->password))
-            throw new ApiException(
-                ApiException::EXCEPTION_NOT_FOUND_404,
-                "کاربر گرامی شما وب سرویس نمی باشید."
-            );
-        if ($api->status != Constants::STATUS_ACTIVE)
+        if ($crm->status != Constants::STATUS_ACTIVE)
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 "کاربر گرامی حساب شما فعال نمی باشید."
             );
-        $user->wallet = ApiWallet::where(['id' => $api->api_id])->first();
-        $appId = ApiApp::where(['api_id' => $apiUser->api_id])->pluck('app_id');
-        $user->api = Api::where('id', $apiUser->api_id)->first();
-        $user->role = ApiUser::where(['user_id' => $user->id])->first()->role;
-        $user->apps = App::whereIn('id', $appId)->get();
+        $user->role = $crm->role;
         $this->generateToken($user, $request->header('agent'), $user->role);
-        $this->generateAppToken($user, $request->header('agent'), $appId, $apiUser->api_id);
         return $this->respond($user);
     }
 
@@ -189,25 +173,15 @@ class OTPController extends ApiController
         if (!$user)
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
-                "کاربر گرامی شما وب سرویس نمی باشید."
+                "کاربر گرامی شما مدیر سیستم نمی باشید."
             );
-        if (!$apiUser = ApiUser::where(['user_id' => $user->id])->first())
+        if (!$crm = Crm::where(['user_id' => $user->id, 'status' => Constants::STATUS_ACTIVE])->first())
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
-                "کاربر گرامی شما وب سرویس نمی باشید."
+                "کاربر گرامی شما مدیر سیستم نمی باشید."
             );
-        if (!$api = Api::where(['id' => $apiUser->api_id, 'status' => Constants::STATUS_ACTIVE])->first())
-            throw new ApiException(
-                ApiException::EXCEPTION_NOT_FOUND_404,
-                "کاربر گرامی حساب شما فعال نمی باشید."
-            );
-        $user->wallet = ApiWallet::where(['id' => $api->api_id])->first();
-        $appId = ApiApp::where(['api_id' => $apiUser->api_id])->pluck('app_id');
-        $user->Api = Api::where('id', $apiUser->api_id)->first();
-        $user->role = ApiUser::where(['user_id' => $user->id])->first()->role;
-        $user->apps = App::whereIn('id', $appId)->get();
+        $user->role = $crm->role;
         $this->generateToken($user, $request->header('agent'), $user->role);
-        $this->generateAppToken($user, $request->header('agent'), $appId, $apiUser->api_id);
         UsersLoginToken::where(['login' => $phone, 'token' => $this->help->normalizePhoneNumber($request->input('code'))])->delete();
         return $user;
     }
@@ -224,16 +198,4 @@ class OTPController extends ApiController
         return true;
     }
 
-    private function generateAppToken($user, $agent, $appId, $apiId)
-    {
-        $object = array(
-            "user_id" => $user->id,
-            "apps_id" => $appId,
-            "api_id" => $apiId,
-            "agent" => $agent,
-        );
-        $token = JWT::encode($object, config("jwt.secret"));
-        $user->appToken = $token;
-        return true;
-    }
 }

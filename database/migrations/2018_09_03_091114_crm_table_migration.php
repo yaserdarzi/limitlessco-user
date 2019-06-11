@@ -18,6 +18,7 @@ class CrmTableMigration extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
             $table->string('role')->default(Constants::ROLE_COUNTER_MAN);
+            $table->string('status')->default(Constants::STATUS_ACTIVE);
             $table->json('info')->nullable();
             $table->timestamps();
         });
