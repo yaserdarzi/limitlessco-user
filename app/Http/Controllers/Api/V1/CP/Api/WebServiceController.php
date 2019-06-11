@@ -36,7 +36,7 @@ class WebServiceController extends ApiController
         if (!$apiUser = ApiUser::where(['user_id' => $user->id])->first())
             throw new ApiException(
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
-                "کاربر گرامی شما عرضه کننده نمی باشید."
+                "کاربر گرامی شما وب سرویس نمی باشید."
             );
         if (!$api = Api::where(['id' => $apiUser->api_id, 'status' => Constants::STATUS_ACTIVE])->first())
             throw new ApiException(
@@ -127,7 +127,7 @@ class WebServiceController extends ApiController
         if (!$request->input('name'))
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
-                'کاربر گرامی ، وارد کردن نام آژانس اجباری می باشد.'
+                'کاربر گرامی ، وارد کردن نام اجباری می باشد.'
             );
         Api::where(['id' => $request->input('api_id')])
             ->update([
