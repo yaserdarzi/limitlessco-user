@@ -16,9 +16,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-//Route::get('/test/{phone}', function ($phone) {
-//    $help = new \App\Inside\Helpers();
-//    dd($help->base64url_encode($phone));
+//Route::get('/test/{password}', function ($password) {
+//    dd(\Illuminate\Support\Facades\Hash::make('202020'));
 //});
 
 Route::get('/ticket/{shopping_id}', function ($shopping_id) {

@@ -18,18 +18,20 @@ class CreateUsersTable extends Migration
             $table->bigIncrements('id');
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->string('gmail')->nullable();
+            $table->string('username')->nullable();
+            $table->string('password_username')->nullable();
             $table->rememberToken()->nullable();
             $table->string('name');
             $table->string('tell')->nullable();
-            $table->string('image');
-            $table->string('gender');
+            $table->string('image')->nullable();
+            $table->string('gender')->nullable();
             $table->string('ref_link')->nullable();
             $table->json('info')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unique(['phone', 'email', 'gmail']);
+            $table->unique(['phone', 'email', 'gmail', 'username']);
         });
     }
 
