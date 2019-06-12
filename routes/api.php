@@ -249,7 +249,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             Route::post('login', 'OTPController@login');
         });
 
-        Route::middleware(['cp.crm.auth'])->group(function () {
+//        Route::middleware(['cp.crm.auth'])->group(function () {
 
             //Api Init
             Route::get('init', 'CrmController@index');
@@ -259,7 +259,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             Route::post('register', 'RegisterController@store');
 
 
-        });
+//        });
 
     });
 
