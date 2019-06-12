@@ -134,7 +134,8 @@ class SalesController extends ApiController
                 'type_price' => $typePrice,
                 'price' => $this->help->priceNumberDigitsToNormal($price),
                 'percent' => $this->help->priceNumberDigitsToNormal($percent),
-                'status' => $status
+                'status' => $status,
+                'info' => ['is_first' => true]
             ]);
         } else
             SupplierSales::create([
@@ -144,7 +145,8 @@ class SalesController extends ApiController
                 'type_price' => $typePrice,
                 'price' => $this->help->priceNumberDigitsToNormal($price),
                 'percent' => $this->help->priceNumberDigitsToNormal($percent),
-                'status' => $status
+                'status' => $status,
+                'info' => ['is_first' => true]
             ]);
         return $this->respond(["status" => "success"]);
     }
@@ -240,15 +242,21 @@ class SalesController extends ApiController
         }
         $sales = Sales::all();
         foreach ($sales as $value) {
-            if (SupplierSales::where(['supplier_id' => $request->input('supplier_id'), 'sales_id' => $value->id])->exists())
+            if (SupplierSales::where(['supplier_id' => $request->input('supplier_id'), 'sales_id' => $value->id])->exists()) {
+                if (SupplierSales::where(['supplier_id' => $request->input('supplier_id'), 'sales_id' => $value->id, 'info->is_first' => true])->exists())
+                    throw new ApiException(
+                        ApiException::EXCEPTION_NOT_FOUND_404,
+                        'کاربر گرامی ، امکان ویرایش فقط یک بار می باشد.'
+                    );
                 SupplierSales::where(['supplier_id' => $request->input('supplier_id'), 'sales_id' => $value->id])->update([
                     'capacity_percent' => $this->help->priceNumberDigitsToNormal($request->input('capacity_percent')),
                     'type_price' => $typePrice,
                     'price' => $this->help->priceNumberDigitsToNormal($price),
                     'percent' => $this->help->priceNumberDigitsToNormal($percent),
-                    'status' => $status
+                    'status' => $status,
+                    'info' => ['is_first' => true]
                 ]);
-            else
+            } else
                 SupplierSales::create([
                     'supplier_id' => $request->input('supplier_id'),
                     'sales_id' => $value->id,
@@ -256,7 +264,8 @@ class SalesController extends ApiController
                     'type_price' => $typePrice,
                     'price' => $this->help->priceNumberDigitsToNormal($price),
                     'percent' => $this->help->priceNumberDigitsToNormal($percent),
-                    'status' => $status
+                    'status' => $status,
+                    'info' => ['is_first' => true]
                 ]);
         }
         return $this->respond(["status" => "success"]);
