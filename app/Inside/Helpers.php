@@ -4,6 +4,7 @@
 namespace App\Inside;
 
 use App\Shopping;
+use App\UsersLoginLog;
 
 class Helpers
 {
@@ -90,5 +91,14 @@ class Helpers
         $base64url = strtr($plainText, '-_,', 'LIM');
         $base64 = base64_decode($base64url);
         return $base64;
+    }
+
+    public function storeUsersLoginLog($user_id, $type, $status)
+    {
+        UsersLoginLog::create([
+            'user_id' => $user_id,
+            'type' => $type,
+            'status' => $status
+        ]);
     }
 }

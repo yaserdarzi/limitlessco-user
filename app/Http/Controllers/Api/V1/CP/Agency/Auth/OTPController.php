@@ -102,6 +102,7 @@ class OTPController extends ApiController
         $user->apps = App::whereIn('id', $appId)->get();
         $this->generateToken($user, $request->header('agent'), $user->role);
         $this->generateAppToken($user, $request->header('agent'), $appId, $agencyUser->agency_id);
+        $this->help->storeUsersLoginLog($user->id, Constants::AGENCY_DB . '-' . $agency->id, Constants::LOGIN_TYPE_USER_PASS);
         return $this->respond($user);
     }
 
@@ -208,6 +209,7 @@ class OTPController extends ApiController
         $user->apps = App::whereIn('id', $appId)->get();
         $this->generateToken($user, $request->header('agent'), $user->role);
         $this->generateAppToken($user, $request->header('agent'), $appId, $agencyUser->agency_id);
+        $this->help->storeUsersLoginLog($user->id, Constants::AGENCY_DB . '-' . $agency->id, Constants::LOGIN_TYPE_SMS);
         UsersLoginToken::where(['login' => $phone, 'token' => $this->help->normalizePhoneNumber($request->input('code'))])->delete();
         return $user;
     }

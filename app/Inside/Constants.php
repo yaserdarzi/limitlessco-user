@@ -29,6 +29,7 @@ class Constants
     const PASSWORD_RESETS_DB = 'password_resets';
     const USERS_LOGIN_TOKEN_DB = 'users_login_token';
     const USERS_LOGIN_TOKEN_LOG_DB = 'users_login_token_log';
+    const USERS_LOGIN_LOG_DB = 'users_login_log';
     const APP_DB = 'app';
     const USERS_APPS_DB = 'user_apps';
     const USERS_REFER_DB = 'users_refer';
@@ -95,6 +96,7 @@ class Constants
     Const LOGIN_TYPE_CALL = "login_with_call";
     Const LOGIN_TYPE_EMAIL = "login_with_email";
     Const LOGIN_TYPE_GMAIL = "login_with_gmail";
+    Const LOGIN_TYPE_USER_PASS = "login_with_user_pass";
 
     //Market
     Const MARKET_ZARINPAL = "zarinpal";
@@ -155,7 +157,7 @@ class Constants
     const INVOICE_INVOICE_STATUS_INCOME_SUPPLIER = 'در آمد عرضه کننده';
 
     //Queue
-    const MAIL_USER = 'sales@' ;
+    const MAIL_USER = 'sales@';
     const MAIL_PASSWORD = 'yaserdarzi';
     const QUEUE_MAIL_TICKET = 'mail_ticket';
 
