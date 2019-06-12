@@ -73,7 +73,7 @@ class OTPController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، لطفا secret را وارد نمایید.'
             );
-        $user = User::where(['username' => $request->input('username'), 'password_username' => $request->input('secret')])->first();
+        $user = User::where(['username' => strtolower($request->input('username')), 'password_username' => $request->input('secret')])->first();
         if (!$user)
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
