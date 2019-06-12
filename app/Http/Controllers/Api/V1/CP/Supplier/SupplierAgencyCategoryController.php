@@ -71,6 +71,16 @@ class SupplierAgencyCategoryController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد  کمیسیون اجباری می باشد.'
             );
+        if ($request->input('commission') >= 6)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد  کمیسیون بیشتر از 6٪ امکان پذیر نمی باشد.'
+            );
+        if ($request->input('commission') < 3)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد  کمیسیون کمتر از 3٪ امکان پذیر نمی باشد.'
+            );
         switch ($request->input('type_percent')) {
             case Constants::TYPE_PRICE:
                 $typePercent = Constants::TYPE_PRICE;
@@ -151,6 +161,16 @@ class SupplierAgencyCategoryController extends ApiController
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد  کمیسیون اجباری می باشد.'
+            );
+        if ($request->input('commission') >= 6)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد  کمیسیون بیشتر از 6٪ امکان پذیر نمی باشد.'
+            );
+        if ($request->input('commission') < 3)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد  کمیسیون کمتر از 3٪ امکان پذیر نمی باشد.'
             );
         switch ($request->input('type_percent')) {
             case Constants::TYPE_PRICE:
