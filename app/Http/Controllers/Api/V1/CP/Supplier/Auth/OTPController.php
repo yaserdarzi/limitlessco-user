@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\V1\Cp\Supplier\Auth;
 
-use App\Agency;
 use App\App;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
@@ -11,6 +10,7 @@ use App\Inside\Helpers;
 use App\Supplier;
 use App\SupplierApp;
 use App\SupplierUser;
+use App\SupplierWallet;
 use App\User;
 use App\UsersLoginToken;
 use App\UsersLoginTokenLog;
@@ -55,6 +55,55 @@ class OTPController extends ApiController
         return $this->respond($this->verify($phone, $request));
     }
 
+    public function login(Request $request)
+    {
+        if (!$request->header('agent'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'Plz check your agent'
+            );
+        if (!$request->input('username'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، لطفا username را وارد نمایید.'
+            );
+        if (!$request->input('password'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، لطفا password را وارد نمایید.'
+            );
+        $user = User::where(['username' => $request->input('username'), 'password_username' => $request->input('password')])->first();
+        if (!$user)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، لطفا username,password را چک نمایید.'
+            );
+        $supplierUser = SupplierUser::where(['user_id' => $user->id])->first();
+        if (!$supplierUser)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                "کاربر گرامی عرضه کننده نمی باشید."
+            );
+        $supplier = Supplier::where('id', $supplierUser->supplier_id)->first();
+        if (!$supplier)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                "کاربر گرامی عرضه کننده نمی باشید."
+            );
+        if ($supplier->status != Constants::STATUS_ACTIVE)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                "کاربر گرامی حساب شما فعال نمی باشید."
+            );
+        $user->wallet = SupplierWallet::where(['id' => $supplierUser->supplier_id])->first();
+        $appId = SupplierApp::where(['supplier_id' => $supplierUser->supplier_id])->pluck('app_id');
+        $user->supplier = Supplier::where('id', $supplierUser->supplier_id)->first();
+        $user->role = SupplierUser::where(['user_id' => $user->id])->first()->role;
+        $user->apps = App::whereIn('id', $appId)->get();
+        $this->generateToken($user, $request->header('agent'), $user->role);
+        $this->generateAppToken($user, $request->header('agent'), $appId, $supplierUser->supplier_id);
+        return $this->respond($user);
+    }
 
     ////////////////////private function///////////////////////
 
