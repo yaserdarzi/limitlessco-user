@@ -62,6 +62,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             Route::get('init', 'SupplierController@index');
             Route::post('update', 'SupplierController@update');
             Route::post('user/update', 'SupplierController@userUpdate');
+            Route::post('user/change/password', 'SupplierController@userChangePassword');
 
             //App Checker
             Route::get('app/checker', 'AppController@appChecker');
@@ -130,6 +131,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             Route::post('otp/verify', 'OTPController@verifyOTP');
             Route::post('login', 'OTPController@login');
         });
+
         Route::middleware(['cp.agency.app.check', 'cp.agency.auth'])->group(function () {
 
             //Get Supplier Active For Sales
@@ -210,6 +212,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             Route::get('init', 'WebServiceController@index');
             Route::post('update', 'WebServiceController@update');
             Route::post('user/update', 'WebServiceController@userUpdate');
+            Route::post('user/change/password', 'WebServiceController@userChangePassword');
 
             //App Checker
             Route::get('app/checker', 'AppController@appChecker');
@@ -253,12 +256,13 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
 
 //        Route::middleware(['cp.crm.auth'])->group(function () {
 
-            //Api Init
-            Route::get('init', 'CrmController@index');
-            Route::post('user/update', 'CrmController@userUpdate');
+        //Api Init
+        Route::get('init', 'CrmController@index');
+        Route::post('user/update', 'CrmController@userUpdate');
+        Route::post('user/change/password', 'CrmController@userChangePassword');
 
-            //Register Agency with Api
-            Route::post('register', 'RegisterController@store');
+        //Register Agency with Api
+        Route::post('register', 'RegisterController@store');
 
 
 //        });
