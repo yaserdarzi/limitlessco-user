@@ -177,7 +177,6 @@ class AgencyController extends ApiController
 
     ///////////////////public function///////////////////////
 
-
     public function userUpdate(Request $request)
     {
         if (!$request->input('name'))
@@ -220,4 +219,40 @@ class AgencyController extends ApiController
             ]);
         return $this->index($request);
     }
+
+
+    public function userChangePassword(Request $request)
+    {
+        if (!$request->input('old_password'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن کلمه عبور قدیم اجباری می باشد.'
+            );
+        if (!$request->input('password'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن کلمه عبور اجباری می باشد.'
+            );
+        if (!$request->input('re_password'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن کلمه عبور مجدد اجباری می باشد.'
+            );
+        $info = User::find($request->input('user_id'));
+        if ($info->password_username != $request->input('old_password'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، کلمه عبور قدیم شما اشتباه می باشد.'
+            );
+        if ($request->input('password') != $request->input('re_password'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، کلمه عبور برابر نمی باشد.'
+            );
+        User::where(['id' => $request->input('user_id')])
+            ->update(['password_username' => $request->input('password')]);
+        return $this->index($request);
+    }
+
+
 }

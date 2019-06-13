@@ -139,6 +139,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
             Route::get('init', 'AgencyController@index');
             Route::post('update', 'AgencyController@update');
             Route::post('user/update', 'AgencyController@userUpdate');
+            Route::post('user/change/password', 'AgencyController@userChangePassword');
 
             //App Checker
             Route::get('app/checker', 'AppController@appChecker');
