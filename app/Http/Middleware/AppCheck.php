@@ -26,15 +26,14 @@ class AppCheck
         }, $request->all());
         if (!$request->header('app'))
             throw new ApiException(
-                ApiException::EXCEPTION_BAD_REQUEST_400,
+                ApiException::EXCEPTION_UNAUTHORIZED_401,
                 'Plz check your app header'
             );
         if (!$request->header('type_app'))
             throw new ApiException(
-                ApiException::EXCEPTION_BAD_REQUEST_400,
+                ApiException::EXCEPTION_UNAUTHORIZED_401,
                 'Plz check your type_app header'
             );
-
         $token = JWT::decode($request->header('Authorization'), config("jwt.secret"), array('HS256'));
         $input['agent'] = $token->agent;
         $input['agency_id'] = $token->agency_id;
