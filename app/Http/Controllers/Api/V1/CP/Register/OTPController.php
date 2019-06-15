@@ -238,7 +238,7 @@ class OTPController extends ApiController
             return false;
     }
 
-    private function verify($phone, $request)
+    private function verify($phone, Request $request)
     {
         $user = User::where(['phone' => $phone])->first();
         if (!$user) {
@@ -279,7 +279,7 @@ class OTPController extends ApiController
             );
         $user->wallet = Wallet::where(['user_id' => $user->id])->first();
         $this->generateToken($user, $request->header('agent'));
-        $this->help->storeUsersLoginLog($user->id, 'register', Constants::LOGIN_TYPE_SMS);
+        $this->help->storeUsersLoginLog($user->id, 'register', Constants::LOGIN_TYPE_SMS, $request->getClientIp());
         UsersLoginToken::where(['login' => $phone, 'token' => $this->help->normalizePhoneNumber($request->input('code'))])->delete();
         return $user;
     }
