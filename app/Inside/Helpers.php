@@ -93,10 +93,11 @@ class Helpers
         return $base64;
     }
 
-    public function storeUsersLoginLog($user_id, $type, $status)
+    public function storeUsersLoginLog($user_id, $type, $status, $ip_address)
     {
         UsersLoginLog::create([
             'user_id' => $user_id,
+            'ip_address' => $ip_address,
             'type' => $type,
             'status' => $status
         ]);

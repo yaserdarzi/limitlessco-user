@@ -102,7 +102,7 @@ class OTPController extends ApiController
         $user->apps = App::whereIn('id', $appId)->get();
         $this->generateToken($user, $request->header('agent'), $user->role);
         $this->generateAppToken($user, $request->header('agent'), $appId, $supplierUser->supplier_id);
-        $this->help->storeUsersLoginLog($user->id, Constants::SUPPLIER_DB . "-" . $supplier->id, Constants::LOGIN_TYPE_USER_PASS);
+        $this->help->storeUsersLoginLog($user->id, Constants::SUPPLIER_DB . "-" . $supplier->id, Constants::LOGIN_TYPE_USER_PASS, $request->getClientIp());
         return $this->respond($user);
     }
 
@@ -183,7 +183,7 @@ class OTPController extends ApiController
             return false;
     }
 
-    private function verify($phone, $request)
+    private function verify($phone, Request $request)
     {
         $user = User::where(['phone' => $phone])->first();
         if (!$user)
@@ -208,7 +208,7 @@ class OTPController extends ApiController
         $user->apps = App::whereIn('id', $appId)->get();
         $this->generateToken($user, $request->header('agent'), $user->role);
         $this->generateAppToken($user, $request->header('agent'), $appId, $supplierUser->supplier_id);
-        $this->help->storeUsersLoginLog($user->id, Constants::SUPPLIER_DB . "-" . $supplier->id, Constants::LOGIN_TYPE_SMS);
+        $this->help->storeUsersLoginLog($user->id, Constants::SUPPLIER_DB . "-" . $supplier->id, Constants::LOGIN_TYPE_SMS, $request->getClientIp());
         UsersLoginToken::where(['login' => $phone, 'token' => $this->help->normalizePhoneNumber($request->input('code'))])->delete();
         return $user;
     }

@@ -17,6 +17,7 @@ class UsersLoginLogTableMigration extends Migration
         Schema::create(Constants::USERS_LOGIN_LOG_DB, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
+            $table->string('ip_address');
             $table->string('type');
             $table->string('status');
             $table->timestamps();
