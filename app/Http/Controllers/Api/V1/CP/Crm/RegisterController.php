@@ -77,7 +77,7 @@ class RegisterController extends ApiController
                 'کاربر گرامی ، وارد کردن کلمه عبور اجباری می باشد.'
             );
         if ($request->input('username'))
-            if (User::where(['username' => strtolower(str_replace(' ','',$request->input('username')))])->exists())
+            if (User::where(['username' => strtolower(str_replace(' ', '', $request->input('username')))])->exists())
                 throw new ApiException(
                     ApiException::EXCEPTION_NOT_FOUND_404,
                     'کاربر گرامی ، نام کاربری تکراری می باشد.'
@@ -102,7 +102,7 @@ class RegisterController extends ApiController
         $user = User::create([
             'phone' => $phone,
             'name' => $request->input('name'),
-            'username' => str_replace(' ','',$request->input('username')),
+            'username' => strtolower(str_replace(' ', '', $request->input('username'))),
             'password_username' => $request->input('password'),
             "ref_link" => $refLink,
         ]);
