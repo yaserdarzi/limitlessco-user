@@ -74,13 +74,13 @@ class CheckoutController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد کردن عرضه کننده اجباری می باشد.'
             );
-        if ($supplier->income < $request->input('price'))
+        $price = intval($this->help->priceNumberDigitsToNormal($request->input('price')));
+        if ($supplier->income < $price)
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، مبلع مورد نظر کمتر از موجودی عرضه کننده می باشد.'
             );
         $wallet = SupplierWallet::where('supplier_id', $supplier->id)->first();
-        $price = intval($this->help->priceNumberDigitsToNormal($request->input('price')));
         $walletPaymentTokenSupplierCount = SupplierWalletInvoice::count();
         $walletPaymentTokenSupplier = "SW-" . ++$walletPaymentTokenSupplierCount;
         SupplierWalletInvoice::create([
