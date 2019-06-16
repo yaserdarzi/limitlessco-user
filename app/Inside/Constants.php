@@ -139,6 +139,7 @@ class Constants
     const INVOICE_TYPE_WITHDRAW = 'withdraw';
     const INVOICE_TYPE_WALLET = 'wallet';
     const INVOICE_TYPE_INCOME_SUPPLIER = 'income_supplier';
+    const INVOICE_TYPE_INCOME_DECREMENT_SUPPLIER = 'income_decrement_supplier';
     //Invoice Status
     const INVOICE_STATUS_PENDING = 'pending';
     const INVOICE_STATUS_SUCCESS = 'success';
@@ -148,6 +149,7 @@ class Constants
     const INVOICE_TYPE_STATUS_CREDIT = 'credit';
     const INVOICE_TYPE_STATUS_REQUEST = 'request';
     const INVOICE_TYPE_STATUS_INCOME = 'income';
+    const INVOICE_TYPE_STATUS_INCOME_DECREMENT = 'income_decrement';
     //Invoice Invoice Status
     const INVOICE_INVOICE_STATUS_SHOPPING = 'خرید';
     const INVOICE_INVOICE_STATUS_WALLET = 'کیف پول';
@@ -155,6 +157,7 @@ class Constants
     const INVOICE_INVOICE_STATUS_DECREMENT = 'کاهش';
     const INVOICE_INVOICE_STATUS_WITHDRAW = 'تصویه حساب';
     const INVOICE_INVOICE_STATUS_INCOME_SUPPLIER = 'در آمد عرضه کننده';
+    const INVOICE_INVOICE_STATUS_INCOME_DECREMENT_SUPPLIER = 'پرداخت در آمد عرضه کننده';
 
     //Queue
     const MAIL_USER = 'sales@';
