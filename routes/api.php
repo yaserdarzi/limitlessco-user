@@ -264,6 +264,9 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
         //Register Agency with Api
         Route::post('register', 'RegisterController@store');
 
+        //Checkout Supplier Income
+        Route::post('checkout', 'CheckoutController@store');
+
 
 //        });
 
