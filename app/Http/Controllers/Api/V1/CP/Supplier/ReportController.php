@@ -128,14 +128,15 @@ class ReportController extends ApiController
             )->get();
         $supplier = Supplier::where(['id' => $request->input('supplier_id')])->first();
         foreach ($data['shopping'] as $key => $value) {
+            $incomeSupplier = 0;
             if ($supplier->type == Constants::TYPE_PRICE)
-                $value->price_supplier = $value->price_payment - $value->income - $supplier->price;
-            elseif ($supplier->type == Constants::TYPE_PERCENT) {
-                if ($supplier->percent < 100)
-                    $value->price_supplier = ($supplier->percent / 100) * ($value->price_payment - $value->income);
-                else
-                    $value->price_supplier = 0;
-            }
+                $incomeSupplier = $value->price_all - $value->income - $supplier->price;
+            elseif ($supplier->type == Constants::TYPE_PERCENT)
+                if ($supplier->percent < 100) {
+                    $incomeSupplier = ($supplier->percent / 100) * ($value->price_all);
+                    $incomeSupplier = $value->price_all - $incomeSupplier - $value->income;
+                }
+            $value->price_supplier = $incomeSupplier ;
             $data['countAll'] = $data['countAll'] + $value->count;
             $value->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($value->date));
             $value->date_end_persian = null;
