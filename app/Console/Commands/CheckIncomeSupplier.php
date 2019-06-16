@@ -43,7 +43,7 @@ class CheckIncomeSupplier extends Command
     public function handle()
     {
         $shopping = Shopping::where([
-            ['date', '<', date('Y-m-d', strtotime('-2 days', strtotime('now')))],
+            ['date', '<', date('Y-m-d', strtotime('+2 days', strtotime('now')))],
             'status' => Constants::SHOPPING_STATUS_SUCCESS,
             'payment_status' => Constants::SHOPPING_STATUS_PENDING
         ])->get();
