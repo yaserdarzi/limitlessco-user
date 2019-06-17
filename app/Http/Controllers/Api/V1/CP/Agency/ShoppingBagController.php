@@ -196,21 +196,6 @@ class ShoppingBagController extends ApiController
 
     ///////////////////private function///////////////////////
 
-    private function hotelCheck($shoppingBag)
-    {
-        foreach ($shoppingBag->shopping->roomEpisode as $value) {
-            DB::connection(Constants::CONNECTION_HOTEL)
-                ->table(Constants::APP_HOTEL_DB_ROOM_EPISODE_DB)
-                ->where('id', $value->id)
-                ->decrement('capacity_filled', $shoppingBag->count);
-            DB::connection(Constants::CONNECTION_HOTEL)
-                ->table(Constants::APP_HOTEL_DB_ROOM_EPISODE_DB)
-                ->where('id', $value->id)
-                ->increment('capacity_remaining', $shoppingBag->count);
-        }
-        ShoppingBag::where('id', $shoppingBag->id)->delete();
-    }
-
     private function expireShopping($customer_id)
     {
         if (ShoppingBagExpire::where(['customer_id' => $customer_id])->exists())
@@ -407,5 +392,20 @@ class ShoppingBagController extends ApiController
         }
         $this->expireShopping(Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id'));
         return ["status" => "success"];
+    }
+
+    private function hotelCheck($shoppingBag)
+    {
+        foreach ($shoppingBag->shopping->roomEpisode as $value) {
+            DB::connection(Constants::CONNECTION_HOTEL)
+                ->table(Constants::APP_HOTEL_DB_ROOM_EPISODE_DB)
+                ->where('id', $value->id)
+                ->decrement('capacity_filled', $shoppingBag->count);
+            DB::connection(Constants::CONNECTION_HOTEL)
+                ->table(Constants::APP_HOTEL_DB_ROOM_EPISODE_DB)
+                ->where('id', $value->id)
+                ->increment('capacity_remaining', $shoppingBag->count);
+        }
+        ShoppingBag::where('id', $shoppingBag->id)->delete();
     }
 }
