@@ -88,11 +88,6 @@ class ShoppingBagController extends ApiController
      */
     public function store(Request $request)
     {
-        if (!$request->input('count'))
-            throw new ApiException(
-                ApiException::EXCEPTION_NOT_FOUND_404,
-                'کاربر گرامی ، وارد کردن تعداد اجباری می باشد.'
-            );
         //get supplier
         $agency = Agency::where('id', $request->input('agency_id'))->first();
         $supplier_id = [];
