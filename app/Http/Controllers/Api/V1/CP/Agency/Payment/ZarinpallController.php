@@ -215,10 +215,19 @@ class ZarinpallController extends ApiController
                     'info' => ['wallet' => $wallet, 'zarinpal' => $verify],
                 ]);
                 foreach ($shoppingInvoice->info->shopping as $value) {
+                    $supplier_id = 0;
+                    switch (explode('-', $value->shopping_id)[0]) {
+                        case Constants::APP_NAME_HOTEL:
+                            $supplier_id = $value->shopping->roomEpisode[0]->supplier_id;
+                            break;
+                        case Constants::APP_NAME_ENTERTAINMENT:
+                            $supplier_id = $value->shopping->productEpisode->supplier_id;
+                            break;
+                    }
                     Shopping::create([
                         'shopping_id' => $value->shopping_id,
                         'customer_id' => $value->customer_id,
-                        'supplier_id' => $value->shopping->roomEpisode[0]->supplier_id,
+                        'supplier_id' => $supplier_id,
                         'shopping_invoice_id' => $shoppingInvoice->id,
                         'voucher' => $helper->voucher(explode('-', $value->shopping_id)[0]),
                         'name' => $shoppingInvoice->name,
@@ -304,10 +313,19 @@ class ZarinpallController extends ApiController
             'price' => intval($wallet->price - $data['pricePayment'])
         ]);
         foreach ($shoppingInvoice->info->shopping as $value) {
+            $supplier_id = 0;
+            switch (explode('-', $value->shopping_id)[0]) {
+                case Constants::APP_NAME_HOTEL:
+                    $supplier_id = $value->shopping->roomEpisode[0]->supplier_id;
+                    break;
+                case Constants::APP_NAME_ENTERTAINMENT:
+                    $supplier_id = $value->shopping->productEpisode->supplier_id;
+                    break;
+            }
             Shopping::create([
                 'shopping_id' => $value->shopping_id,
                 'customer_id' => $value->customer_id,
-                'supplier_id' => $value->shopping->roomEpisode[0]->supplier_id,
+                'supplier_id' => $supplier_id,
                 'shopping_invoice_id' => $shoppingInvoice->id,
                 'voucher' => $helper->voucher(explode('-', $value->shopping_id)[0]),
                 'name' => $shoppingInvoice->name,
@@ -422,10 +440,19 @@ class ZarinpallController extends ApiController
                     'price' => 0
                 ]);
                 foreach ($shoppingInvoice->info->shopping as $value) {
+                    $supplier_id = 0;
+                    switch (explode('-', $value->shopping_id)[0]) {
+                        case Constants::APP_NAME_HOTEL:
+                            $supplier_id = $value->shopping->roomEpisode[0]->supplier_id;
+                            break;
+                        case Constants::APP_NAME_ENTERTAINMENT:
+                            $supplier_id = $value->shopping->productEpisode->supplier_id;
+                            break;
+                    }
                     Shopping::create([
                         'shopping_id' => $value->shopping_id,
                         'customer_id' => $value->customer_id,
-                        'supplier_id' => $value->shopping->roomEpisode[0]->supplier_id,
+                        'supplier_id' => $supplier_id,
                         'shopping_invoice_id' => $shoppingInvoice->id,
                         'voucher' => $helper->voucher(explode('-', $value->shopping_id)[0]),
                         'name' => $shoppingInvoice->name,
