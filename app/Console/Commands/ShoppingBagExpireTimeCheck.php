@@ -59,6 +59,10 @@ class ShoppingBagExpireTimeCheck extends Command
                             $this->hotelCheck($value);
                             $this->deleteShoppingBagExpire($shoppingBagExpire->id);
                             break;
+                        case Constants::APP_NAME_ENTERTAINMENT:
+                            $this->entertainmentCheck($value);
+                            $this->deleteShoppingBagExpire($shoppingBagExpire->id);
+                            break;
                     }
         }
     }
@@ -73,6 +77,9 @@ class ShoppingBagExpireTimeCheck extends Command
         ])->delete();
     }
 
+    //
+    //Hotel
+    //
     private function hotelCheck($shoppingBag)
     {
         echo "hotel \n";
@@ -89,5 +96,23 @@ class ShoppingBagExpireTimeCheck extends Command
         }
         ShoppingBag::where('id', $shoppingBag->id)->delete();
         echo "room= $shoppingBag->id \n";
+    }
+
+    //
+    //Entertainment
+    //
+    private function entertainmentCheck($shoppingBag)
+    {
+        echo "entertainment \n";
+        DB::connection(Constants::CONNECTION_ENTERTAINMENT)
+            ->table(Constants::APP_ENTERTAINMENT_DB_PRODUCT_EPISODE_DB)
+            ->where('id', $shoppingBag->shopping->productEpisode->id)
+            ->decrement('capacity_filled', $shoppingBag->count);
+        DB::connection(Constants::CONNECTION_ENTERTAINMENT)
+            ->table(Constants::APP_ENTERTAINMENT_DB_PRODUCT_EPISODE_DB)
+            ->where('id', $shoppingBag->shopping->productEpisode->id)
+            ->increment('capacity_remaining', $shoppingBag->count);
+        ShoppingBag::where('id', $shoppingBag->id)->delete();
+        echo "episode= $shoppingBag->id \n";
     }
 }

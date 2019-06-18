@@ -7,6 +7,7 @@ use App\AgencyUser;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
+use App\Inside\Helpers;
 use App\Sales;
 use App\ShoppingBag;
 use App\ShoppingBagExpire;
@@ -19,6 +20,12 @@ use Morilog\Jalali\CalendarUtils;
 
 class ShoppingBagController extends ApiController
 {
+    protected $help;
+
+    public function __construct()
+    {
+        $this->help = new Helpers();
+    }
 
     /**
      * Display a listing of the resource.
@@ -108,6 +115,9 @@ class ShoppingBagController extends ApiController
             case Constants::APP_NAME_HOTEL:
                 return $this->respond($this->addToShoppingBagHotel($supplier_id, $request));
                 break;
+            case Constants::APP_NAME_ENTERTAINMENT:
+                return $this->respond($this->addToShoppingBagEntertainment($supplier_id, $request));
+                break;
         }
     }
 
@@ -169,6 +179,9 @@ class ShoppingBagController extends ApiController
                     case Constants::APP_NAME_HOTEL:
                         $this->hotelCheck($value);
                         break;
+                    case Constants::APP_NAME_ENTERTAINMENT:
+                        $this->entertainmentCheck($value);
+                        break;
                 }
         ShoppingBag::where(['id' => $id, 'customer_id' => $customer_id])->delete();
         return $this->respond(['status' => 'success']);
@@ -187,6 +200,9 @@ class ShoppingBagController extends ApiController
                 switch (explode('-', $value->shopping_id)[0]) {
                     case Constants::APP_NAME_HOTEL:
                         $this->hotelCheck($value);
+                        break;
+                    case Constants::APP_NAME_ENTERTAINMENT:
+                        $this->entertainmentCheck($value);
                         break;
                 }
         ShoppingBag::where(['customer_id' => $customer_id])->delete();
@@ -213,7 +229,9 @@ class ShoppingBagController extends ApiController
                 'status' => Constants::SHOPPING_STATUS_SHOPPING
             ]);
     }
-
+    //
+    //Hotel
+    //
     private function addToShoppingBagHotel($supplier_id, Request $request)
     {
         if (!$request->input('room_id'))
@@ -300,7 +318,7 @@ class ShoppingBagController extends ApiController
             if ($supplierSales)
                 if ($supplierSales->type_price == Constants::TYPE_PERCENT) {
                     if ($supplierSales->percent != 0)
-                        $income += ($supplierSales->percent / 100) * ($value->price - $percent);
+                        $income += ($supplierSales->percent / 100) * $value->price;
                 } elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
                     $income = $income + $supplierSales->price;
             if (in_array(Constants::AGENCY_INTRODUCTION_SUPPLIER, $agency->introduction)) {
@@ -311,13 +329,13 @@ class ShoppingBagController extends ApiController
                 if ($supplierAgency)
                     if ($supplierAgency->type_price == Constants::TYPE_PERCENT) {
                         if ($supplierAgency->percent != 0)
-                            $incomeAgency += ($supplierAgency->percent / 100) * ($value->price - $percent);
+                            $incomeAgency += ($supplierAgency->percent / 100) * $value->price;
                     } elseif ($supplierAgency->type_price == Constants::TYPE_PRICE)
                         $incomeAgency = $incomeAgency + $supplierAgency->price;
             } elseif (in_array(Constants::AGENCY_INTRODUCTION_SALES, $agency->introduction)) {
                 if ($agency->type == Constants::TYPE_PERCENT) {
                     if ($agency->percent != 0)
-                        $incomeAgency += ($agency->percent / 100) * ($value->price - $percent);
+                        $incomeAgency += ($agency->percent / 100) * $value->price;
                 } elseif ($supplierSales->type == Constants::TYPE_PRICE)
                     $incomeAgency = $incomeAgency + $agency->price;
             }
@@ -406,6 +424,163 @@ class ShoppingBagController extends ApiController
                 ->where('id', $value->id)
                 ->increment('capacity_remaining', $shoppingBag->count);
         }
+        ShoppingBag::where('id', $shoppingBag->id)->delete();
+    }
+
+    //
+    //Entertainment
+    //
+    private function addToShoppingBagEntertainment($supplier_id, Request $request)
+    {
+        if (!$request->input('episode_id'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن شماره سانس اجباری می باشد.'
+            );
+        $count = intval($this->help->normalizePhoneNumber($request->input('count')));
+        $count_child = intval($this->help->normalizePhoneNumber($request->input('count_child')));
+        $count_baby = intval($this->help->normalizePhoneNumber($request->input('count_baby')));
+        $productEpisode = DB::connection(Constants::CONNECTION_ENTERTAINMENT)
+            ->table(Constants::APP_ENTERTAINMENT_DB_PRODUCT_EPISODE_DB)
+            ->whereIn('supplier_id', $supplier_id)
+            ->where([
+                'status' => Constants::STATUS_ACTIVE,
+                'id' => $request->input('episode_id'),
+            ])->where('capacity_remaining', '>=', intval($count + $count_child))
+            ->first();
+        if (!$productEpisode)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، سانس مورد نظر خالی نمی باشد.'
+            );
+        $percentAll = 0;
+        $income = 0;
+        $incomeAgency = 0;
+        $incomeYou = 0;
+        $agency = Agency::where('id', $request->input('agency_id'))->first();
+        $priceAll = intval(
+            intval($productEpisode->price_adult * $count) +
+            intval($productEpisode->price_child * $count_child) +
+            intval($productEpisode->price_baby * $count_baby)
+        );
+        if ($productEpisode->type_percent == Constants::TYPE_PRICE) {
+            $percentAll = $productEpisode->percent;
+        } elseif ($productEpisode->type_percent == Constants::TYPE_PERCENT) {
+            if ($productEpisode->percent != 0) {
+                $percentAll = intval(($productEpisode->percent / 100) * $priceAll);
+            }
+        }
+        $supplierSales = SupplierSales::
+        join(Constants::SALES_DB, Constants::SALES_DB . '.id', '=', Constants::SUPPLIER_SALES_DB . '.sales_id')
+            ->where([
+                'status' => Constants::STATUS_ACTIVE,
+                'type' => Constants::SALES_TYPE_AGENCY,
+                'supplier_id' => $productEpisode->supplier_id
+            ])->first();
+        if ($supplierSales)
+            if ($supplierSales->type_price == Constants::TYPE_PERCENT) {
+                if ($supplierSales->percent != 0)
+                    $income = intval(($supplierSales->percent / 100) * $priceAll);
+            } elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
+                $income = $supplierSales->price;
+        if (in_array(Constants::AGENCY_INTRODUCTION_SUPPLIER, $agency->introduction)) {
+            $supplierAgency = SupplierAgency::where([
+                'status' => Constants::STATUS_ACTIVE,
+                'supplier_id' => $productEpisode->supplier_id
+            ])->first();
+            if ($supplierAgency)
+                if ($supplierAgency->type_price == Constants::TYPE_PERCENT) {
+                    if ($supplierAgency->percent != 0)
+                        $incomeAgency += intval(($supplierAgency->percent / 100) * $priceAll);
+                } elseif ($supplierAgency->type_price == Constants::TYPE_PRICE)
+                    $incomeAgency = $supplierAgency->price;
+        } elseif (in_array(Constants::AGENCY_INTRODUCTION_SALES, $agency->introduction)) {
+            if ($agency->type == Constants::TYPE_PERCENT) {
+                if ($agency->percent != 0)
+                    $incomeAgency = intval(($agency->percent / 100) * $priceAll);
+            } elseif ($supplierSales->type == Constants::TYPE_PRICE)
+                $incomeAgency = $agency->price;
+        }
+        $agencyUser = AgencyUser::where([
+            'user_id' => $request->input('user_id'),
+            'agency_id' => $request->input('agency_id')
+        ])->first();
+        if ($agencyUser)
+            if ($agencyUser->type == Constants::TYPE_PERCENT)
+                if ($agencyUser->percent < 100) {
+                    if ($agencyUser->percent != 0)
+                        $incomeYou = ($agencyUser->percent / 100) * $incomeAgency;
+                } else
+                    $incomeYou = $incomeAgency;
+            elseif ($agencyUser->type == Constants::TYPE_PRICE)
+                $incomeYou = $incomeYou + $agencyUser->price;
+
+        $product = DB::connection(Constants::CONNECTION_ENTERTAINMENT)
+            ->table(Constants::APP_ENTERTAINMENT_DB_PRODUCT_DB)
+            ->where('id', $productEpisode->product_id)
+            ->first();
+        $shopping_id = $request->input('app_title') . "-" . $request->input('episode_id');
+        if ($shopping = ShoppingBag::where(['shopping_id' => $shopping_id, 'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id')])->first())
+            ShoppingBag::
+            where([
+                'shopping_id' => $shopping_id,
+                'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id')
+            ])->update([
+                'count' => $shopping->count + ($count + $count_child),
+                'price_all' => $priceAll + $shopping->price_all,
+                'percent_all' => $percentAll + $shopping->percent_all,
+                'income' => $income + $shopping->income,
+                'income_all' => $incomeAgency + $shopping->income_all,
+                'income_you' => $incomeYou + $shopping->income_you
+            ]);
+        else
+            ShoppingBag::create([
+                'shopping_id' => $shopping_id,
+                'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id'),
+                'title' => $product->title,
+                'title_more' => $productEpisode->title,
+                'date' => $productEpisode->date,
+                'date_end' => $productEpisode->date,
+                'start_hours' => $productEpisode->start_hours,
+                'end_hours' => $productEpisode->end_hours,
+                'count' => ($count + $count_child),
+                'price_all' => $priceAll,
+                'percent_all' => $percentAll,
+                'income' => intval($income),
+                'income_all' => intval($incomeAgency),
+                'income_you' => intval($incomeYou),
+                'shopping' => [
+                    "productEpisode" => (array)$productEpisode,
+                    "product" => (array)$product,
+                    "price_count" => [
+                        "adult" => ["price" => $productEpisode->price_adult, "count" => $count],
+                        "child" => ["price" => $productEpisode->price_child, "count" => $count_child],
+                        "baby" => ["price" => $productEpisode->price_baby, "count" => $count_baby]
+                    ]
+                ]
+            ]);
+        DB::connection(Constants::CONNECTION_ENTERTAINMENT)
+            ->table(Constants::APP_ENTERTAINMENT_DB_PRODUCT_EPISODE_DB)
+            ->where('id', $productEpisode->id)
+            ->increment('capacity_filled', ($count + $count_child));
+        DB::connection(Constants::CONNECTION_ENTERTAINMENT)
+            ->table(Constants::APP_ENTERTAINMENT_DB_PRODUCT_EPISODE_DB)
+            ->where('id', $productEpisode->id)
+            ->decrement('capacity_remaining', ($count + $count_child));
+        $this->expireShopping(Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id'));
+        return ["status" => "success"];
+    }
+
+    private function entertainmentCheck($shoppingBag)
+    {
+        DB::connection(Constants::CONNECTION_ENTERTAINMENT)
+            ->table(Constants::APP_ENTERTAINMENT_DB_PRODUCT_EPISODE_DB)
+            ->where('id', $shoppingBag->shopping->productEpisode->id)
+            ->decrement('capacity_filled', $shoppingBag->count);
+        DB::connection(Constants::CONNECTION_ENTERTAINMENT)
+            ->table(Constants::APP_ENTERTAINMENT_DB_PRODUCT_EPISODE_DB)
+            ->where('id', $shoppingBag->shopping->productEpisode->id)
+            ->increment('capacity_remaining', $shoppingBag->count);
         ShoppingBag::where('id', $shoppingBag->id)->delete();
     }
 }

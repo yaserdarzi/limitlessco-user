@@ -93,6 +93,21 @@ return [
             'sslmode' => 'prefer',
         ],
 
+        'pgsql_entertainment' => [
+            'driver' => 'pgsql',
+            'url' => env('DATABASE_URL_ENTERTAINMENT'),
+            'host' => env('DB_HOST_ENTERTAINMENT', '127.0.0.1'),
+            'port' => env('DB_PORT_ENTERTAINMENT', '5432'),
+            'database' => env('DB_DATABASE_ENTERTAINMENT', 'forge'),
+            'username' => env('DB_USERNAME_ENTERTAINMENT', 'forge'),
+            'password' => env('DB_PASSWORD_ENTERTAINMENT', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'schema' => 'public',
+            'sslmode' => 'prefer',
+        ],
+
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DATABASE_URL'),
