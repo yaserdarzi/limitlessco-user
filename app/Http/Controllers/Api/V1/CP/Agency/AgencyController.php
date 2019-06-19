@@ -186,8 +186,14 @@ class AgencyController extends ApiController
             );
         $info = User::find($request->input('user_id'));
         $email = $info->email;
-        if (!$request->input('email'))
+        if ($request->input('email')) {
+            if (User::where(['email' => $request->input('email'), ['id', '!=', $request->input('user_id')]])->exists())
+                throw new ApiException(
+                    ApiException::EXCEPTION_NOT_FOUND_404,
+                    'کاربر گرامی ، پست الکترونیک تکراری می باشد.'
+                );
             $email = $request->input('email');
+        }
         $tell = $info->tell;
         if (!$request->input('tell'))
             $tell = $request->input('tell');
