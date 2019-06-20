@@ -195,7 +195,7 @@ class AgencyController extends ApiController
             $email = $request->input('email');
         }
         $tell = $info->tell;
-        if (!$request->input('tell'))
+        if ($request->input('tell'))
             $tell = $request->input('tell');
         $image = $info->image;
         if ($request->file('image')) {
