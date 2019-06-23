@@ -103,7 +103,7 @@ class RegisterController extends ApiController
             'phone' => $phone,
             'name' => $request->input('name'),
             'username' => strtolower(str_replace(' ', '', $request->input('username'))),
-            'password_username' => $request->input('password'),
+            'password_username' => $this->help->normalizePhoneNumber($request->input('password')),
             "ref_link" => $refLink,
         ]);
         Wallet::create([
@@ -148,7 +148,7 @@ class RegisterController extends ApiController
             'agency_id' => $agency->id,
             'app_id' => 2,
         ]);
-        return $this->respond(["username" => $user->username, "password" => $request->input('password')]);
+        return $this->respond(["username" => $user->username, "password" => $this->help->normalizePhoneNumber($request->input('password'))]);
     }
 
     /**
