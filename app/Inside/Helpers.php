@@ -70,6 +70,9 @@ class Helpers
             case Constants::APP_NAME_HOTEL:
                 $appNumber = Constants::APP_NUMBER_HOTEL;
                 break;
+            case Constants::APP_NAME_ENTERTAINMENT:
+                $appNumber = Constants::APP_NUMBER_ENTERTAINMENT;
+                break;
         }
         $voucher = Shopping::count() + 1;
         $zero = '';

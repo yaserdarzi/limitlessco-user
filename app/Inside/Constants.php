@@ -9,19 +9,23 @@ class Constants
     const APP_NAME_HOTEL = "hotel";
     const APP_NUMBER_HOTEL = 1;
     const ADDED_BED = " با تخت اضافه ";
+    const APP_NAME_ENTERTAINMENT = "entertainment";
+    const APP_NUMBER_ENTERTAINMENT = 2;
 
     //Database Connection
     const CONNECTION_HOTEL = "pgsql_hotel";
+    const CONNECTION_ENTERTAINMENT = "pgsql_entertainment";
+
+    //Database Entertainment
+    const APP_ENTERTAINMENT_DB_PRODUCT_DB = 'product';
+    const APP_ENTERTAINMENT_DB_PRODUCT_SUPPLIER_DB = 'product_supplier';
+    const APP_ENTERTAINMENT_DB_PRODUCT_GALLERY_DB = 'product_gallery';
+    const APP_ENTERTAINMENT_DB_PRODUCT_VIDEO_DB = 'product_video';
+    const APP_ENTERTAINMENT_DB_PRODUCT_EPISODE_DB = 'product_episode';
 
     //Database Hotel
     const APP_HOTEL_DB_HOTEL_DB = 'hotel';
-    const APP_HOTEL_DB_HOTEL_SUPPLIER_DB = 'hotel_supplier';
-    const APP_HOTEL_DB_HOTEL_GALLERY_DB = 'hotel_gallery';
-    const APP_HOTEL_DB_HOTEL_TOOLS_DB = 'hotel_tools';
-    const APP_HOTEL_DB_HOTEL_DISTANCE_DB = 'hotel_distance';
     const APP_HOTEL_DB_ROOM_DB = 'room';
-    const APP_HOTEL_DB_ROOM_GALLERY_DB = 'room_gallery';
-    const APP_HOTEL_DB_ROOM_TOOLS_DB = 'room_tools';
     const APP_HOTEL_DB_ROOM_EPISODE_DB = 'room_episode';
 
     //Database
