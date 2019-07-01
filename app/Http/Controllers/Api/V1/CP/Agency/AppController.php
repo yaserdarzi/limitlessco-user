@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\CP\Agency;
 use App\Agency;
 use App\AgencyAgency;
 use App\App;
+use App\Commission;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\AgencyApp;
@@ -130,10 +131,23 @@ class AppController extends ApiController
             $supplierAgencyID = $this->getSupplierAgency($request);
         if (in_array(Constants::AGENCY_INTRODUCTION_AGENCY, $agency->introduction))
             $agencyAgencyID = $this->getAgencyAgency($request);
-        return $this->respond(["supplier_sales" => $supplierSalesID, "supplier_agency" => $supplierAgencyID, "agency_agency" => $agencyAgencyID]);
+        $commissions = $this->getCommissions($request);
+        return $this->respond(["commissions" => $commissions, "supplier_sales" => $supplierSalesID, "supplier_agency" => $supplierAgencyID, "agency_agency" => $agencyAgencyID]);
     }
 
     ///////////////////private function///////////////////////
+
+    private function getCommissions(Request $request)
+    {
+        $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id');
+        $shopping_id = $request->header('appName') . '-';
+        $commissions = Commission::
+        where([
+            'customer_id' => $customer_id,
+            ['shopping_id', 'like', "%{$shopping_id}%"],
+        ])->get();
+        return $commissions;
+    }
 
     private function getSupplierSales()
     {
