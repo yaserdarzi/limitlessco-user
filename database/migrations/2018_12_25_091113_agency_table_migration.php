@@ -19,11 +19,6 @@ class AgencyTableMigration extends Migration
             $table->string('name');
             $table->string('image');
             $table->string('tell')->nullable();
-            $table->string('type');
-            $table->bigInteger('percent')->default(0);
-            $table->bigInteger('price')->default(0);
-            $table->bigInteger('award')->default(0);
-            $table->bigInteger('income')->default(0);
             $table->string('status')->default(Constants::STATUS_PENDING);
             $table->json('introduction')->nullable();
             $table->json('info')->nullable();
