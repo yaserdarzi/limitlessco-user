@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\CP\Agency;
 
 use App\Agency;
 use App\AgencyUser;
+use App\Commission;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
@@ -250,8 +251,9 @@ class ShoppingBagController extends ApiController
         $end_date = \Morilog\Jalali\CalendarUtils::toGregorian($endExplode[0], $endExplode[1], $endExplode[2]);
         $startDay = date_create(date('Y-m-d', strtotime($start_date[0] . '-' . $start_date[1] . '-' . $start_date[2])));
         $endDay = date_create(date('Y-m-d', strtotime($end_date[0] . '-' . $end_date[1] . '-' . $end_date[2])));
+        $endDayDate = date('Y-m-d', strtotime($end_date[0] . '-' . $end_date[1] . '-' . $end_date[2]));
         $diff = date_diff($startDay, $endDay);
-        for ($i = 0; $i <= $diff->days; $i++) {
+        for ($i = 0; $i < $diff->days; $i++) {
             $date = strtotime(date('Y-m-d', strtotime($startDay->format('Y-m-d') . " +" . $i . " days")));
             $roomToday = DB::connection(Constants::CONNECTION_HOTEL)
                 ->table(Constants::APP_HOTEL_DB_ROOM_EPISODE_DB)
@@ -273,7 +275,7 @@ class ShoppingBagController extends ApiController
         $roomEpisode = DB::connection(Constants::CONNECTION_HOTEL)
             ->table(Constants::APP_HOTEL_DB_ROOM_EPISODE_DB)
             ->whereIn('supplier_id', $supplier_id)
-            ->whereBetween('date', [$startDay, $endDay])
+            ->whereBetween('date', [$startDay, date('Y-m-d', strtotime('-1 day', strtotime($endDayDate)))])
             ->where([
                 'status' => Constants::STATUS_ACTIVE,
                 'room_id' => $request->input('room_id'),
@@ -286,22 +288,46 @@ class ShoppingBagController extends ApiController
         $incomeAgency = 0;
         $incomeYou = 0;
         $addPrice = 0;
-        $agency = Agency::where('id', $request->input('agency_id'))->first();
+        $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id');
         foreach ($roomEpisode as $key => $value) {
-            $priceAll = $priceAll + $value->price;
+            $shopping_id_commission = $request->input('app_title') . "-" . $value->hotel_id . "-" . $value->room_id;
+            $commission = Commission::where(['customer_id' => $customer_id, 'shopping_id' => $shopping_id_commission])->first();
+            if (!$commission)
+                throw new ApiException(
+                    ApiException::EXCEPTION_NOT_FOUND_404,
+                    'کاربر گرامی ، درصد کمیسیون شما مشخص نشده است لطفا با پیشتیبانی تماس حاصل فرمایید.'
+                );
+            $value->commission = $commission;
             $percent = 0;
-            if ($value->type_percent == Constants::TYPE_PRICE) {
-                $percentAll = $percentAll + $value->percent;
-                $percent = $value->percent;
-            } elseif ($value->type_percent == Constants::TYPE_PERCENT) {
-                if ($value->percent != 0) {
-                    $percentAll += ($value->percent / 100) * $value->price;
-                    $percent = ($value->percent / 100) * $value->price;
+            if ($commission->is_price_power_up) {
+                $price = $value->price_power_up;
+                $priceAll = $priceAll + $value->price_power_up;
+                if ($value->type_percent == Constants::TYPE_PRICE) {
+                    $percentAll = $percentAll + $value->percent;
+                    $percent = $value->percent;
+                } elseif ($value->type_percent == Constants::TYPE_PERCENT) {
+                    if ($value->percent != 0) {
+                        $percentAll += ($value->percent / 100) * $value->price_power_up;
+                        $percent = ($value->percent / 100) * $value->price_power_up;
+                    }
+                }
+            } else {
+                $price = $value->price;
+                $priceAll = $priceAll + $value->price;
+                if ($value->type_percent == Constants::TYPE_PRICE) {
+                    $percentAll = $percentAll + $value->percent;
+                    $percent = $value->percent;
+                } elseif ($value->type_percent == Constants::TYPE_PERCENT) {
+                    if ($value->percent != 0) {
+                        $percentAll += ($value->percent / 100) * $value->price;
+                        $percent = ($value->percent / 100) * $value->price;
+                    }
                 }
             }
             if ($request->input('is_capacity') == "true") {
                 $addPrice += $value->add_price;
                 $priceAll += $addPrice;
+                $price += $addPrice;
             }
             $supplierSales = SupplierSales::
             join(Constants::SALES_DB, Constants::SALES_DB . '.id', '=', Constants::SUPPLIER_SALES_DB . '.sales_id')
@@ -313,27 +339,14 @@ class ShoppingBagController extends ApiController
             if ($supplierSales)
                 if ($supplierSales->type_price == Constants::TYPE_PERCENT) {
                     if ($supplierSales->percent != 0)
-                        $income += ($supplierSales->percent / 100) * $value->price;
+                        $income += intval(($supplierSales->percent / 100) * $value->price_power_up);
                 } elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
                     $income = $income + $supplierSales->price;
-            if (in_array(Constants::AGENCY_INTRODUCTION_SUPPLIER, $agency->introduction)) {
-                $supplierAgency = SupplierAgency::where([
-                    'status' => Constants::STATUS_ACTIVE,
-                    'supplier_id' => $value->supplier_id
-                ])->first();
-                if ($supplierAgency)
-                    if ($supplierAgency->type_price == Constants::TYPE_PERCENT) {
-                        if ($supplierAgency->percent != 0)
-                            $incomeAgency += ($supplierAgency->percent / 100) * $value->price;
-                    } elseif ($supplierAgency->type_price == Constants::TYPE_PRICE)
-                        $incomeAgency = $incomeAgency + $supplierAgency->price;
-            } elseif (in_array(Constants::AGENCY_INTRODUCTION_SALES, $agency->introduction)) {
-                if ($agency->type == Constants::TYPE_PERCENT) {
-                    if ($agency->percent != 0)
-                        $incomeAgency += ($agency->percent / 100) * $value->price;
-                } elseif ($supplierSales->type == Constants::TYPE_PRICE)
-                    $incomeAgency = $incomeAgency + $agency->price;
-            }
+            if ($commission->type == Constants::TYPE_PERCENT) {
+                if ($commission->percent < 100)
+                    $incomeAgency += intval(($commission->percent / 100) * $price);
+            } elseif ($commission->type == Constants::TYPE_PRICE)
+                $incomeAgency = $incomeAgency + $commission->price;
             $agencyUser = AgencyUser::where([
                 'user_id' => $request->input('user_id'),
                 'agency_id' => $request->input('agency_id')
