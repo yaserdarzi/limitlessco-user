@@ -105,6 +105,11 @@ class AppController extends ApiController
         $app = App::whereIn(
             'id', $request->input('apps_id')
         )->where('app', $request->header('appName'))->first();
+        if (!$app)
+            throw new ApiException(
+                ApiException::EXCEPTION_UNAUTHORIZED_401,
+                'کاربر گرامی شما دسترسی به این قسمت را ندارید.'
+            );
         $supplierApp = SupplierApp::where([
             'supplier_id' => $request->input('supplier_id'),
             'app_id' => $app->id,
