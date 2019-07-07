@@ -29,7 +29,7 @@ class ShoppingTableMigration extends Migration
             $table->timestamp('date_end')->nullable();
             $table->string('start_hours')->nullable();
             $table->string('end_hours')->nullable();
-            $table->bigInteger('price_fee')->default(0);
+            $table->bigInteger('price_income')->default(0);
             $table->bigInteger('percent_fee')->default(0);
             $table->bigInteger('count')->default(1);
             $table->bigInteger('price_all')->default(0);

@@ -158,7 +158,7 @@ class ZarinpallController extends ApiController
                         'date_end' => $value->date_end,
                         'start_hours' => $value->start_hours,
                         'end_hours' => $value->end_hours,
-                        'price_fee' => $value->price_fee,
+                        'price_income' => $value->price_income,
                         'percent_fee' => $value->percent_fee,
                         'count' => $value->count,
                         'price_all' => $value->price_all,
