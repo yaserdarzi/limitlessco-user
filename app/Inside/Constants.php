@@ -68,6 +68,7 @@ class Constants
     const AGENCY_AGENCY_CATEGORY_DB = 'agency_agency_category';
     const AGENCY_AGENCY_DB = 'agency_agency';
     const AGENCY_AGENCY_REQUEST_DB = 'agency_agency_request';
+    const COMMISSION_DB = 'commission';
 
     //Supplier Price Default
     const SUPPLIER_PRICE_DEFAULT = 3000;
