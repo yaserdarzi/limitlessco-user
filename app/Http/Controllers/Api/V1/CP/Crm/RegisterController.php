@@ -148,6 +148,7 @@ class RegisterController extends ApiController
             'agency_id' => $agency->id,
             'app_id' => 2,
         ]);
+        \Artisan::call("check:commission");
         return $this->respond(["username" => $user->username, "password" => $this->help->normalizePhoneNumber($request->input('password'))]);
     }
 
