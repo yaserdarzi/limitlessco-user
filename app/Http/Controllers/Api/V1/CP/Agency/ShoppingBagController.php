@@ -288,6 +288,7 @@ class ShoppingBagController extends ApiController
         $incomeAgency = 0;
         $incomeYou = 0;
         $addPrice = 0;
+        $price_income = 0;
         $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id');
         foreach ($roomEpisode as $key => $value) {
             $shopping_id_commission = $request->input('app_title') . "-" . $value->hotel_id . "-" . $value->room_id;
@@ -302,6 +303,7 @@ class ShoppingBagController extends ApiController
             if ($commission->is_price_power_up) {
                 $price = $value->price_power_up;
                 $priceAll = $priceAll + $value->price_power_up;
+                $price_income = $price_income + $value->price_power_up;
                 if ($value->type_percent == Constants::TYPE_PRICE) {
                     $percentAll = $percentAll + $value->percent;
                     $percent = $value->percent;
@@ -314,6 +316,7 @@ class ShoppingBagController extends ApiController
             } else {
                 $price = $value->price;
                 $priceAll = $priceAll + $value->price;
+                $price_income = $price_income + $value->price_power_up;
                 if ($value->type_percent == Constants::TYPE_PRICE) {
                     $percentAll = $percentAll + $value->percent;
                     $percent = $value->percent;
@@ -327,6 +330,7 @@ class ShoppingBagController extends ApiController
             if ($request->input('is_capacity') == "true") {
                 $addPrice += $value->add_price;
                 $priceAll += $addPrice;
+                $price_income += $addPrice;
                 $price += $addPrice;
             }
             $supplierSales = SupplierSales::
@@ -384,6 +388,7 @@ class ShoppingBagController extends ApiController
                 'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id')
             ])->update([
                 'count' => $shopping->count + $request->input('count'),
+                'price_income' => $price_income * ($shopping->count + $request->input('count')),
                 'price_all' => $priceAll * ($shopping->count + $request->input('count')),
                 'percent_all' => $percentAll * ($shopping->count + $request->input('count')),
                 'income' => $income * ($shopping->count + $request->input('count')),
@@ -399,6 +404,7 @@ class ShoppingBagController extends ApiController
                 'date' => $startDay->format('Y-m-d'),
                 'date_end' => $endDay->format('Y-m-d'),
                 'count' => $request->input('count'),
+                'price_income' => $price_income * $request->input('count'),
                 'price_all' => $priceAll * $request->input('count'),
                 'percent_all' => $percentAll * $request->input('count'),
                 'income' => intval($income * $request->input('count')),
@@ -461,16 +467,42 @@ class ShoppingBagController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، سانس مورد نظر خالی نمی باشد.'
             );
+        $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id');
+        $shopping_id_commission = $request->input('app_title') . "-" . $productEpisode->product_id;
+        $commission = Commission::where(['customer_id' => $customer_id, 'shopping_id' => $shopping_id_commission])->first();
+        if (!$commission)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، درصد کمیسیون شما مشخص نشده است لطفا با پیشتیبانی تماس حاصل فرمایید.'
+            );
+        $productEpisode->commission = $commission;
         $percentAll = 0;
         $income = 0;
         $incomeAgency = 0;
         $incomeYou = 0;
-        $agency = Agency::where('id', $request->input('agency_id'))->first();
-        $priceAll = intval(
-            intval($productEpisode->price_adult * $count) +
-            intval($productEpisode->price_child * $count_child) +
-            intval($productEpisode->price_baby * $count_baby)
-        );
+        if ($commission->is_price_power_up) {
+            $priceAll = intval(
+                intval($productEpisode->price_adult_power_up * $count) +
+                intval($productEpisode->price_child_power_up * $count_child) +
+                intval($productEpisode->price_baby_power_up * $count_baby)
+            );
+            $price_income = intval(
+                intval($productEpisode->price_adult_power_up * $count) +
+                intval($productEpisode->price_child_power_up * $count_child) +
+                intval($productEpisode->price_baby_power_up * $count_baby)
+            );
+        } else {
+            $priceAll = intval(
+                intval($productEpisode->price_adult * $count) +
+                intval($productEpisode->price_child * $count_child) +
+                intval($productEpisode->price_baby * $count_baby)
+            );
+            $price_income = intval(
+                intval($productEpisode->price_adult_power_up * $count) +
+                intval($productEpisode->price_child_power_up * $count_child) +
+                intval($productEpisode->price_baby_power_up * $count_baby)
+            );
+        }
         if ($productEpisode->type_percent == Constants::TYPE_PRICE) {
             $percentAll = $productEpisode->percent;
         } elseif ($productEpisode->type_percent == Constants::TYPE_PERCENT) {
@@ -488,27 +520,14 @@ class ShoppingBagController extends ApiController
         if ($supplierSales)
             if ($supplierSales->type_price == Constants::TYPE_PERCENT) {
                 if ($supplierSales->percent != 0)
-                    $income = intval(($supplierSales->percent / 100) * $priceAll);
+                    $income = intval(($supplierSales->percent / 100) * $productEpisode->price_adult_power_up);
             } elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
                 $income = $supplierSales->price;
-        if (in_array(Constants::AGENCY_INTRODUCTION_SUPPLIER, $agency->introduction)) {
-            $supplierAgency = SupplierAgency::where([
-                'status' => Constants::STATUS_ACTIVE,
-                'supplier_id' => $productEpisode->supplier_id
-            ])->first();
-            if ($supplierAgency)
-                if ($supplierAgency->type_price == Constants::TYPE_PERCENT) {
-                    if ($supplierAgency->percent != 0)
-                        $incomeAgency += intval(($supplierAgency->percent / 100) * $priceAll);
-                } elseif ($supplierAgency->type_price == Constants::TYPE_PRICE)
-                    $incomeAgency = $supplierAgency->price;
-        } elseif (in_array(Constants::AGENCY_INTRODUCTION_SALES, $agency->introduction)) {
-            if ($agency->type == Constants::TYPE_PERCENT) {
-                if ($agency->percent != 0)
-                    $incomeAgency = intval(($agency->percent / 100) * $priceAll);
-            } elseif ($supplierSales->type == Constants::TYPE_PRICE)
-                $incomeAgency = $agency->price;
-        }
+        if ($commission->type == Constants::TYPE_PERCENT) {
+            if ($commission->percent < 100)
+                $incomeAgency += intval(($commission->percent / 100) * $priceAll);
+        } elseif ($commission->type == Constants::TYPE_PRICE)
+            $incomeAgency = $incomeAgency + $commission->price;
         $agencyUser = AgencyUser::where([
             'user_id' => $request->input('user_id'),
             'agency_id' => $request->input('agency_id')
@@ -522,7 +541,6 @@ class ShoppingBagController extends ApiController
                     $incomeYou = $incomeAgency;
             elseif ($agencyUser->type == Constants::TYPE_PRICE)
                 $incomeYou = $incomeYou + $agencyUser->price;
-
         $product = DB::connection(Constants::CONNECTION_ENTERTAINMENT)
             ->table(Constants::APP_ENTERTAINMENT_DB_PRODUCT_DB)
             ->where('id', $productEpisode->product_id)
@@ -535,6 +553,7 @@ class ShoppingBagController extends ApiController
                 'customer_id' => Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id') . "-" . $request->input('user_id')
             ])->update([
                 'count' => $shopping->count + ($count + $count_child),
+                'price_income' => $price_income + $shopping->price_income,
                 'price_all' => $priceAll + $shopping->price_all,
                 'percent_all' => $percentAll + $shopping->percent_all,
                 'income' => $income + $shopping->income,
@@ -552,6 +571,7 @@ class ShoppingBagController extends ApiController
                 'start_hours' => $productEpisode->start_hours,
                 'end_hours' => $productEpisode->end_hours,
                 'count' => ($count + $count_child),
+                'price_income' => $price_income,
                 'price_all' => $priceAll,
                 'percent_all' => $percentAll,
                 'income' => intval($income),
