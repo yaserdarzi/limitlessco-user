@@ -108,7 +108,7 @@ class AppController extends ApiController
         if (!$app)
             throw new ApiException(
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
-                'کاربر گرامی شما دسترسی به این قسمت را ندارید.111111111111'
+                'کاربر گرامی شما دسترسی به این قسمت را ندارید.'
             );
         $supplierApp = SupplierApp::where([
             'supplier_id' => $request->input('supplier_id'),
@@ -117,7 +117,7 @@ class AppController extends ApiController
         if (!sizeof($supplierApp))
             throw new ApiException(
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
-                'کاربر گرامی شما دسترسی به این قسمت را ندارید.'
+                '1111111111111کاربر گرامی شما دسترسی به این قسمت را ندارید.'
             );
         return $this->respond(["app_id" => $app->id]);
     }
