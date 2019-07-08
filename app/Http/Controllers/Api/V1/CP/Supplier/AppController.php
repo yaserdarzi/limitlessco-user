@@ -108,7 +108,7 @@ class AppController extends ApiController
         if (!$app)
             throw new ApiException(
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
-                'کاربر گرامی شما دسترسی به این قسمت را ندارید.'
+                'کاربر گرامی شما دسترسی به این قسمت را ندارید.111111111111'
             );
         $supplierApp = SupplierApp::where([
             'supplier_id' => $request->input('supplier_id'),
