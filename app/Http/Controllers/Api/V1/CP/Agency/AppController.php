@@ -107,7 +107,6 @@ class AppController extends ApiController
         $app = App::whereIn(
             'id', $request->input('apps_id')
         )->where('app', $request->header('appName'))->first();
-        var_dump($app);
         if (!$app)
             throw new ApiException(
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
