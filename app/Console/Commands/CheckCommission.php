@@ -3,9 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Agency;
+use App\AgencyApp;
 use App\Commission;
 use App\Inside\Constants;
-use App\Supplier;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
@@ -44,6 +44,22 @@ class CheckCommission extends Command
     {
         $agency = Agency::all();
         foreach ($agency as $agencyVal) {
+            ////////////////////Hotel App////////////////////
+            if (!AgencyApp::where(['agency_id' => $agencyVal->id, 'app_id' => 2])->exists()) {
+                AgencyApp::create([
+                    'agency_id' => $agencyVal->id,
+                    'app_id' => 2,
+                ]);
+                echo "$agencyVal->id =>>>>>>>>>>>>>>>>>> 2 \n";
+            }
+            ////////////////////Entertainment App////////////////////
+            if (!AgencyApp::where(['agency_id' => $agencyVal->id, 'app_id' => 1])->exists()) {
+                AgencyApp::create([
+                    'agency_id' => $agencyVal->id,
+                    'app_id' => 1,
+                ]);
+                echo "$agencyVal->id =>>>>>>>>>>>>>>>>>> 1 \n";
+            }
             $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $agencyVal->id;
             ////////////////////ROOM////////////////////
             $room = DB::connection(Constants::CONNECTION_HOTEL)
