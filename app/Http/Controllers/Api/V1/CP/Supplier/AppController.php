@@ -117,7 +117,7 @@ class AppController extends ApiController
         if (!sizeof($supplierApp))
             throw new ApiException(
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
-                '1111111111111کاربر گرامی شما دسترسی به این قسمت را ندارید.'
+                'کاربر گرامی شما دسترسی به این قسمت را ندارید.'
             );
         return $this->respond(["app_id" => $app->id]);
     }
