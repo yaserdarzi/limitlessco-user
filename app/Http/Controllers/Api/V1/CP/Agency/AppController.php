@@ -110,7 +110,7 @@ class AppController extends ApiController
         if (!$app)
             throw new ApiException(
                 ApiException::EXCEPTION_UNAUTHORIZED_401,
-                $request->header('appName') . $request->input('apps_id') . 'کاربر گرامی شما دسترسی به این قسمت را ندارید.eeeee'
+                'کاربر گرامی شما دسترسی به این قسمت را ندارید.'
             );
         $agencyApp = AgencyApp::where([
             'agency_id' => $request->input('agency_id'),
