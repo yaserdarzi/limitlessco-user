@@ -10,6 +10,7 @@ use App\Api;
 use App\ApiApp;
 use App\ApiUser;
 use App\ApiWallet;
+use App\Commission;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
@@ -18,6 +19,7 @@ use App\User;
 use App\Wallet;
 use Hashids\Hashids;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RegisterController extends ApiController
 {
@@ -144,10 +146,55 @@ class RegisterController extends ApiController
             'agency_id' => $agency->id,
             'price' => 0
         ]);
-        AgencyApp::create([
-            'agency_id' => $agency->id,
-            'app_id' => 2,
-        ]);
+        ////////////////////Hotel App////////////////////
+        if (!AgencyApp::where(['agency_id' => $agency->id, 'app_id' => 2])->exists()) {
+            AgencyApp::create([
+                'agency_id' => $agency->id,
+                'app_id' => 2,
+            ]);
+        }
+        ////////////////////Entertainment App////////////////////
+        if (!AgencyApp::where(['agency_id' => $agency->id, 'app_id' => 1])->exists()) {
+            AgencyApp::create([
+                'agency_id' => $agency->id,
+                'app_id' => 1,
+            ]);
+        }
+        $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $agency->id;
+        ////////////////////ROOM////////////////////
+        $room = DB::connection(Constants::CONNECTION_HOTEL)
+            ->table(Constants::APP_HOTEL_DB_ROOM_DB)
+            ->select(
+                Constants::APP_HOTEL_DB_ROOM_DB . '.id as room_id',
+                '*'
+            )
+            ->get();
+        foreach ($room as $roomVal) {
+            $shopping_id = Constants::APP_NAME_HOTEL . "-" . $roomVal->hotel_id . "-" . $roomVal->room_id;
+            if (!Commission::where(['customer_id' => $customer_id, 'shopping_id' => $shopping_id])->exists()) {
+                Commission::create([
+                    'customer_id' => $customer_id,
+                    'shopping_id' => $shopping_id,
+                    'type' => $agency->type,
+                    'percent' => Constants::AGENCY_PERCENT_DEFAULT,
+                ]);
+            }
+        }
+        ////////////PRODUCT////////////////////
+        $product = DB::connection(Constants::CONNECTION_ENTERTAINMENT)
+            ->table(Constants::APP_ENTERTAINMENT_DB_PRODUCT_DB)
+            ->get();
+        foreach ($product as $productVal) {
+            $shopping_id = Constants::APP_NAME_ENTERTAINMENT . "-" . $productVal->id;
+            if (!Commission::where(['customer_id' => $customer_id, 'shopping_id' => $shopping_id])->exists()) {
+                Commission::create([
+                    'customer_id' => $customer_id,
+                    'shopping_id' => $shopping_id,
+                    'type' => $agency->type,
+                    'percent' => Constants::AGENCY_PERCENT_DEFAULT,
+                ]);
+            }
+        }
         return $this->respond(["username" => $user->username, "password" => $this->help->normalizePhoneNumber($request->input('password'))]);
     }
 
