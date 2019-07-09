@@ -81,26 +81,33 @@ class AgencyUserController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد کردن نام و نام خانوادگی اجباری می باشد.'
             );
-        if (!$request->input('phone'))
-            throw new ApiException(
-                ApiException::EXCEPTION_NOT_FOUND_404,
-                'کاربر گرامی ، وارد کردن شماره همراه اجباری می باشد.'
-            );
+        if (!$request->input('username'))
+        throw new ApiException(
+            ApiException::EXCEPTION_NOT_FOUND_404,
+            'کاربر گرامی ، وارد کردن نام کاربری آژانس اجباری می باشد.'
+        );
         if (!$request->input('price'))
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد کردن مبلغ کمیسیون اجباری می باشد.'
             );
-        $phone = $this->help->phoneChecker($request->input('phone'), 'IR');
-        $user = User::where(['phone' => $phone])->first();
+        if (!$request->input('password'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن کلمه عبور اجباری می باشد.'
+            );
+        $username = strtolower(str_replace(' ', '', $request->input('username')));
+        $user = User::where(['username' => $username ])->first();
         if (!$user) {
             $hashIds = new Hashids(config("config.hashIds"));
-            $refLink = $hashIds->encode($phone, intval(microtime(true)));
+            $refLink = $hashIds->encode($username, intval(microtime(true)));
             $user = User::create([
-                'phone' => $phone,
+                'phone' => '',
                 'email' => '',
                 'password' => '',
                 'gmail' => '',
+                'username' => $username,
+                'password_username' => $request->input('password'),
                 'name' => $request->input('name'),
                 'image' => '',
                 'gender' => '',
