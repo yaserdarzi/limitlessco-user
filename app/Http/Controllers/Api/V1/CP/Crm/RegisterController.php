@@ -20,6 +20,8 @@ use App\Wallet;
 use Hashids\Hashids;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class RegisterController extends ApiController
 {
@@ -194,6 +196,23 @@ class RegisterController extends ApiController
                     'percent' => Constants::AGENCY_PERCENT_DEFAULT,
                 ]);
             }
+        }
+        if ($phone != '') {
+            $connection = new AMQPStreamConnection(config("rabbitmq.server"), config("rabbitmq.port"), config("rabbitmq.user"), config("rabbitmq.password"), '/');
+            $channel = $connection->channel();
+            $channel->queue_declare(Constants::QUEUE_SMS_REGISTER_AGENCY, false, false, false, false);
+            $msg = new AMQPMessage(json_encode([
+                'phone' => $phone,
+                'agency_name' => $agency->name,
+                'user_name' => $user->name,
+                'username' => strtolower(str_replace(' ', '', $request->input('username'))),
+                'password' => $this->help->normalizePhoneNumber($request->input('password'))
+            ]),
+                array('delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT)
+            );
+            $channel->basic_publish($msg, '', Constants::QUEUE_SMS_REGISTER_AGENCY);
+            $channel->close();
+            $connection->close();
         }
         return $this->respond(["name" => $user->name, "username" => $user->username, "password" => $this->help->normalizePhoneNumber($request->input('password'))]);
     }

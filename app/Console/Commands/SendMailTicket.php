@@ -90,7 +90,5 @@ class SendMailTicket extends Command
         $channel->wait();
         $channel->close();
         $connection->close();
-
-
     }
 }
