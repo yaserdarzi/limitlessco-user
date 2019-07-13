@@ -195,7 +195,7 @@ class RegisterController extends ApiController
                 ]);
             }
         }
-        return $this->respond(["username" => $user->username, "password" => $this->help->normalizePhoneNumber($request->input('password'))]);
+        return $this->respond(["name" => $user->name,"username" => $user->username, "password" => $this->help->normalizePhoneNumber($request->input('password'))]);
     }
 
     /**
