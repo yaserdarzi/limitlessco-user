@@ -267,6 +267,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
         //Agency
         Route::get('agency', 'AgencyController@index');
         Route::post('agency/send/sms', 'AgencyController@sendSms');
+        Route::get('agency/login', 'AgencyController@login');
 
         //Checkout Supplier Income
         Route::post('checkout', 'CheckoutController@store');
