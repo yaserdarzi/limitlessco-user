@@ -168,5 +168,6 @@ class Constants
     const MAIL_USER = 'sales@';
     const MAIL_PASSWORD = 'yaserdarzi';
     const QUEUE_MAIL_TICKET = 'mail_ticket';
+    const QUEUE_SMS_REGISTER_AGENCY= 'sms_register_agency';
 
 }

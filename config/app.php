@@ -178,6 +178,7 @@ return [
         //Customize
         Rasulian\ZarinPal\ZarinPalServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
+        Kavenegar\Laravel\ServiceProvider::class,
 
     ],
 
@@ -232,6 +233,7 @@ return [
 
         //Customize
         'Image' => Intervention\Image\Facades\Image::class,
+        'Kavenegar' => Kavenegar\Laravel\Facade::class,
 
     ],
 

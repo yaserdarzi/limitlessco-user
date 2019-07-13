@@ -27,6 +27,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('checkExpire:shoppingBag')->everyMinute();
         $schedule->command('send:mailTicket')->everyMinute();
         $schedule->command('checkIncome:supplier')->daily();
+        $schedule->command('send:sms:register:agency')->everyMinute();
     }
 
     /**
