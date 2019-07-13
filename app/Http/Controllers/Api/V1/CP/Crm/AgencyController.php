@@ -31,10 +31,10 @@ class AgencyController extends ApiController
             ->join(Constants::USERS_DB, Constants::AGENCY_USERS_DB . '.user_id', '=', Constants::USERS_DB . '.id');
         if ($request->input('search')) {
             $agency = $agency->orWhere([
-                [Constants::AGENCY_DB . '.name', 'like', '%' . $request->input("search") . '%']
+                [Constants::USERS_DB . '.name', 'like', '%' . $request->input("search") . '%']
             ]);
             $agency = $agency->orWhere([
-                [Constants::USERS_DB . '.name', 'like', '%' . $request->input("search") . '%']
+                [Constants::AGENCY_DB . '.name', 'like', '%' . $request->input("search") . '%']
             ]);
             $agency = $agency->orWhere([
                 [Constants::USERS_DB . '.phone', 'like', '%' . $request->input("search") . '%']
