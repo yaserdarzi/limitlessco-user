@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\CP\Crm;
 use App\Agency;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
+use App\UsersLoginLog;
 use Illuminate\Http\Request;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -144,4 +145,27 @@ class AgencyController extends ApiController
         }
         return $this->respond(["status" => "success"]);
     }
+
+    public function login(Request $request)
+    {
+        $login = UsersLoginLog::where('type', 'like', "%agency-%")
+            ->orderByDesc('created_at')->take(10)
+            ->get()->map(function ($value) {
+                $value->agency = Agency::select(
+                    Constants::AGENCY_DB . '.id',
+                    Constants::AGENCY_DB . '.name as agency_name',
+                    Constants::USERS_DB . '.name as user_name',
+                    Constants::USERS_DB . '.phone',
+                    Constants::USERS_DB . '.username',
+                    Constants::USERS_DB . '.password_username'
+                )->join(Constants::AGENCY_USERS_DB, Constants::AGENCY_DB . '.id', '=', Constants::AGENCY_USERS_DB . '.agency_id')
+                    ->join(Constants::USERS_DB, Constants::AGENCY_USERS_DB . '.user_id', '=', Constants::USERS_DB . '.id')
+                    ->where(Constants::AGENCY_DB . '.id', explode('-', $value->type)[1])
+                    ->first();
+                return $value;
+            });
+        return $this->respond($login);
+    }
+
+
 }
