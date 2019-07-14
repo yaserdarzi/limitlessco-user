@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\CP\Crm;
 
 use App\Agency;
+use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
 use App\UsersLoginLog;
@@ -127,23 +128,26 @@ class AgencyController extends ApiController
             ->join(Constants::USERS_DB, Constants::AGENCY_USERS_DB . '.user_id', '=', Constants::USERS_DB . '.id')
             ->where(Constants::AGENCY_DB . '.id', $request->input('agency_id'))
             ->first();
-        if ($agency) {
-            $connection = new AMQPStreamConnection(config("rabbitmq.server"), config("rabbitmq.port"), config("rabbitmq.user"), config("rabbitmq.password"), '/');
-            $channel = $connection->channel();
-            $channel->queue_declare(Constants::QUEUE_SMS_REGISTER_AGENCY, false, false, false, false);
-            $msg = new AMQPMessage(json_encode([
-                'phone' => $agency->phone,
-                'agency_name' => $agency->agency_name,
-                'user_name' => $agency->user_name,
-                'username' => $agency->username,
-                'password' => $agency->password_username
-            ]),
-                array('delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT)
+        if (!$agency)
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'plz check your agency_id'
             );
-            $channel->basic_publish($msg, '', Constants::QUEUE_SMS_REGISTER_AGENCY);
-            $channel->close();
-            $connection->close();
-        }
+        $connection = new AMQPStreamConnection(config("rabbitmq.server"), config("rabbitmq.port"), config("rabbitmq.user"), config("rabbitmq.password"), '/');
+        $channel = $connection->channel();
+        $channel->queue_declare(Constants::QUEUE_SMS_REGISTER_AGENCY, false, false, false, false);
+        $msg = new AMQPMessage(json_encode([
+            'phone' => $agency->phone,
+            'agency_name' => $agency->agency_name,
+            'user_name' => $agency->user_name,
+            'username' => $agency->username,
+            'password' => $agency->password_username
+        ]),
+            array('delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT)
+        );
+        $channel->basic_publish($msg, '', Constants::QUEUE_SMS_REGISTER_AGENCY);
+        $channel->close();
+        $connection->close();
         return $this->respond(["status" => "success"]);
     }
 
