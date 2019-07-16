@@ -92,11 +92,15 @@ class CheckCommission extends Command
             foreach ($product as $productVal) {
                 $shopping_id = Constants::APP_NAME_ENTERTAINMENT . "-" . $productVal->id;
                 if (!Commission::where(['customer_id' => $customer_id, 'shopping_id' => $shopping_id])->exists()) {
+                    if ($productVal->id == 1)
+                        $percent = Constants::AGENCY_PERCENT_DEFAULT;
+                    else
+                        $percent = 30;
                     Commission::create([
                         'customer_id' => $customer_id,
                         'shopping_id' => $shopping_id,
                         'type' => $agencyVal->type,
-                        'percent' => Constants::AGENCY_PERCENT_DEFAULT,
+                        'percent' => $percent,
                         'price' => $agencyVal->price,
                         'award' => $agencyVal->award,
                         'income' => $agencyVal->income,
