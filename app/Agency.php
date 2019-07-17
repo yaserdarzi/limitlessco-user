@@ -15,7 +15,7 @@ class Agency extends Model
     ];
     protected $table = Constants::AGENCY_DB;
     protected $fillable = [
-        'name', 'image', 'tell', 'state', 'type', 'percent', 'price',
+        'name', 'image', 'tell', 'city', 'type', 'percent', 'price',
         'award', 'income', 'status', 'introduction', 'info'
     ];
 }
