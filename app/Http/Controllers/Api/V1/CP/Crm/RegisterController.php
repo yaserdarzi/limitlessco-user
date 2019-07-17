@@ -131,7 +131,8 @@ class RegisterController extends ApiController
         $agency = Agency::create([
             'name' => $request->input('name_agency'),
             'image' => '',
-            'tell' => '',
+            'tell' => $request->input('tell'),
+            'state' => $request->input('state'),
             'type' => 'percent',
             'percent' => Constants::AGENCY_PERCENT_DEFAULT,
             'status' => Constants::STATUS_ACTIVE,

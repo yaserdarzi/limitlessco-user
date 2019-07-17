@@ -19,6 +19,7 @@ class AgencyTableMigration extends Migration
             $table->string('name');
             $table->string('image');
             $table->string('tell')->nullable();
+            $table->string('state')->nullable();
             $table->string('status')->default(Constants::STATUS_PENDING);
             $table->json('introduction')->nullable();
             $table->json('info')->nullable();
