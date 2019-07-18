@@ -25,7 +25,7 @@ class AgencyController extends ApiController
             Constants::AGENCY_DB . '.id',
             Constants::AGENCY_DB . '.name as agency_name',
             Constants::AGENCY_DB . '.tell',
-            Constants::AGENCY_DB . '.city tell',
+            Constants::AGENCY_DB . '.city',
             Constants::USERS_DB . '.name as user_name',
             Constants::USERS_DB . '.phone',
             Constants::USERS_DB . '.username',
