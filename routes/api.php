@@ -272,6 +272,8 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
         //Checkout Supplier Income
         Route::post('checkout', 'CheckoutController@store');
 
+        //Agency
+        Route::get('supplier', 'SupplierController@index');
 
 //        });
 
