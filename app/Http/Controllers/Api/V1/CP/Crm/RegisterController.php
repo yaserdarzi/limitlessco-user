@@ -175,11 +175,15 @@ class RegisterController extends ApiController
         foreach ($room as $roomVal) {
             $shopping_id = Constants::APP_NAME_HOTEL . "-" . $roomVal->hotel_id . "-" . $roomVal->room_id;
             if (!Commission::where(['customer_id' => $customer_id, 'shopping_id' => $shopping_id])->exists()) {
+                if (in_array($roomVal->id, [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]))
+                    $percent = 43;
+                else
+                    $percent = Constants::AGENCY_PERCENT_DEFAULT;
                 Commission::create([
                     'customer_id' => $customer_id,
                     'shopping_id' => $shopping_id,
                     'type' => $agency->type,
-                    'percent' => Constants::AGENCY_PERCENT_DEFAULT,
+                    'percent' => $percent,
                 ]);
             }
         }
