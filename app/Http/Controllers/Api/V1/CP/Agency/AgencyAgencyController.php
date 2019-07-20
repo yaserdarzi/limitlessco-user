@@ -183,42 +183,17 @@ class AgencyAgencyController extends ApiController
         }
         $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $agency_id;
         ////////////////////ROOM////////////////////
-        $room = DB::connection(Constants::CONNECTION_HOTEL)
-            ->table(Constants::APP_HOTEL_DB_ROOM_DB)
-            ->select(
-                Constants::APP_HOTEL_DB_ROOM_DB . '.id as room_id',
-                '*'
-            )
-            ->get();
-        foreach ($room as $roomVal) {
-            $shopping_id = Constants::APP_NAME_HOTEL . "-" . $roomVal->hotel_id . "-" . $roomVal->room_id;
-            if (!Commission::where(['customer_id' => $customer_id, 'shopping_id' => $shopping_id])->exists()) {
+        $Commissions = Commission::where("customer_id", Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id'))->get();
+        foreach ($Commissions as $value) {
+            if (!Commission::where(['customer_id' => $customer_id, 'shopping_id' => $value->shopping_id])->exists()) {
                 Commission::create([
                     'customer_id' => $customer_id,
-                    'shopping_id' => $shopping_id,
+                    'shopping_id' => $value->shopping_id,
                     'type' => $agencyAgencyCategory->type_price,
                     'price' => $agencyAgencyCategory->price,
                     'percent' => $agencyAgencyCategory->percent,
                 ]);
             }
-
-        }
-        ////////////PRODUCT////////////////////
-        $product = DB::connection(Constants::CONNECTION_ENTERTAINMENT)
-            ->table(Constants::APP_ENTERTAINMENT_DB_PRODUCT_DB)
-            ->get();
-        foreach ($product as $productVal) {
-            $shopping_id = Constants::APP_NAME_ENTERTAINMENT . "-" . $productVal->id;
-            if (!Commission::where(['customer_id' => $customer_id, 'shopping_id' => $shopping_id])->exists()) {
-                Commission::create([
-                    'customer_id' => $customer_id,
-                    'shopping_id' => $shopping_id,
-                    'type' => $agencyAgencyCategory->type_price,
-                    'price' => $agencyAgencyCategory->price,
-                    'percent' => $agencyAgencyCategory->percent,
-                ]);
-            }
-
         }
         AgencyAgency::create([
             'agency_parent_id' => $request->input('agency_id'),
