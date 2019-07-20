@@ -333,19 +333,16 @@ class ShoppingBagController extends ApiController
                 $price_income += $addPrice;
                 $price += $addPrice;
             }
-            $supplierSales = SupplierSales::
-            join(Constants::SALES_DB, Constants::SALES_DB . '.id', '=', Constants::SUPPLIER_SALES_DB . '.sales_id')
-                ->where([
-                    'status' => Constants::STATUS_ACTIVE,
-                    'type' => Constants::SALES_TYPE_AGENCY,
-                    'supplier_id' => $value->supplier_id
-                ])->first();
-            if ($supplierSales)
-                if ($supplierSales->type_price == Constants::TYPE_PERCENT) {
-                    if ($supplierSales->percent != 0)
-                        $income += intval(($supplierSales->percent / 100) * $value->price_power_up);
-                } elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
-                    $income = $income + $supplierSales->price;
+            $commissionSupplier = Commission::where([
+                'customer_id' => Constants::SALES_TYPE_SUPPLIER . '-' . $value->supplier_id,
+                'shopping_id' => $shopping_id_commission,
+            ])->first();
+            if ($commissionSupplier)
+                if ($commissionSupplier->type == Constants::TYPE_PERCENT) {
+                    if ($commissionSupplier->percent != 0)
+                        $income += intval(($commissionSupplier->percent / 100) * $value->price_power_up);
+                } elseif ($commissionSupplier->type == Constants::TYPE_PRICE)
+                    $income = $income + $commissionSupplier->price;
             if ($commission->type == Constants::TYPE_PERCENT) {
                 if ($commission->percent < 100)
                     $incomeAgency += intval(($commission->percent / 100) * $price);
@@ -510,19 +507,16 @@ class ShoppingBagController extends ApiController
                 $percentAll = intval(($productEpisode->percent / 100) * $priceAll);
             }
         }
-        $supplierSales = SupplierSales::
-        join(Constants::SALES_DB, Constants::SALES_DB . '.id', '=', Constants::SUPPLIER_SALES_DB . '.sales_id')
-            ->where([
-                'status' => Constants::STATUS_ACTIVE,
-                'type' => Constants::SALES_TYPE_AGENCY,
-                'supplier_id' => $productEpisode->supplier_id
-            ])->first();
-        if ($supplierSales)
-            if ($supplierSales->type_price == Constants::TYPE_PERCENT) {
-                if ($supplierSales->percent != 0)
-                    $income = intval(($supplierSales->percent / 100) * $productEpisode->price_adult_power_up);
-            } elseif ($supplierSales->type_price == Constants::TYPE_PRICE)
-                $income = $supplierSales->price;
+        $commissionSupplier = Commission::where([
+            'customer_id' => Constants::SALES_TYPE_SUPPLIER . '-' . $productEpisode->supplier_id,
+            'shopping_id' => $shopping_id_commission,
+        ])->first();
+        if ($commissionSupplier)
+            if ($commissionSupplier->type == Constants::TYPE_PERCENT) {
+                if ($commissionSupplier->percent != 0)
+                    $income += intval(($commissionSupplier->percent / 100) * $price_income);
+            } elseif ($commissionSupplier->type == Constants::TYPE_PRICE)
+                $income = $income + $commissionSupplier->price;
         if ($commission->type == Constants::TYPE_PERCENT) {
             if ($commission->percent < 100)
                 $incomeAgency += intval(($commission->percent / 100) * $priceAll);
