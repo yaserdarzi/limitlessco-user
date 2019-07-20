@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\CP\Api;
 
 use App\Api;
 use App\App;
+use App\Commission;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\ApiApp;
@@ -132,9 +133,22 @@ class AppController extends ApiController
         where('capacity_percent', '!=', 0)
             ->where(['status' => Constants::STATUS_ACTIVE, 'sales_id' => $sales->id])
             ->pluck('supplier_id');
-        return $this->respond($supplierSales);
+        $commissions = $this->getCommissions($request);
+        return $this->respond($supplierSales, ["commissions" => $commissions,]);
     }
 
     ///////////////////private function///////////////////////
 
+
+    private function getCommissions(Request $request)
+    {
+        $customer_id = Constants::SALES_TYPE_API . "-" . $request->input('api_id');
+        $shopping_id = $request->header('appName') . '-';
+        $commissions = Commission::
+        where([
+            'customer_id' => $customer_id,
+            ['shopping_id', 'like', "%{$shopping_id}%"],
+        ])->get();
+        return $commissions;
+    }
 }
