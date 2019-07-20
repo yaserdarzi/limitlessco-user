@@ -9,21 +9,21 @@ use App\Inside\Constants;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
-class CheckCommission extends Command
+class CheckCommissionAgency extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'check:commission';
+    protected $signature = 'check:commission:agency {type} {id} ';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'fix commission';
+    protected $description = 'fix commission type(agency,supplier) typeID';
 
     /**
      * Create a new command instance.
@@ -42,6 +42,16 @@ class CheckCommission extends Command
      */
     public function handle()
     {
+//        switch ($this->argument('type')) {
+//            case Constants::SALES_TYPE_AGENCY:
+//                $this->agency(Constants::SALES_TYPE_AGENCY . '-' . $this->argument('id'));
+//                break;
+//            case Constants::SALES_TYPE_SUPPLIER:
+//                $this->supplier(Constants::SALES_TYPE_SUPPLIER . '-' . $this->argument('id'));
+//                break;
+//        }
+
+
 //        $agency = Agency::all();
 //        foreach ($agency as $agencyVal) {
 //            ////////////////////Hotel App////////////////////
@@ -114,5 +124,15 @@ class CheckCommission extends Command
 //
 //            }
 //        }
+    }
+
+    private function supplier($customer_id)
+    {
+        dd($customer_id);
+    }
+
+    private function agency($customer_id)
+    {
+        dd($customer_id);
     }
 }

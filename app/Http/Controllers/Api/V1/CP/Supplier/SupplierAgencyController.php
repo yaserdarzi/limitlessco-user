@@ -6,6 +6,7 @@ use App\Agency;
 use App\AgencyApp;
 use App\AgencyUser;
 use App\AgencyWallet;
+use App\Commission;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
@@ -18,6 +19,7 @@ use App\Wallet;
 use Hashids\Hashids;
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use Illuminate\Support\Facades\DB;
 
 class SupplierAgencyController extends ApiController
 {
@@ -159,7 +161,7 @@ class SupplierAgencyController extends ApiController
                 'tell' => '',
                 'type' => 'percent',
                 'status' => Constants::STATUS_ACTIVE,
-                'introduction' => [Constants::AGENCY_INTRODUCTION_SUPPLIER]
+                'introduction' => [Constants::AGENCY_INTRODUCTION_SUPPLIER, Constants::AGENCY_INTRODUCTION_SALES]
             ]);
             AgencyUser::create([
                 'user_id' => $user->id,
@@ -179,6 +181,51 @@ class SupplierAgencyController extends ApiController
                 ]);
             }
             $agency_id = $agency->id;
+        }
+        $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $agency_id;
+        ////////////////////room////////////////////
+        $hotelId = DB::connection(Constants::CONNECTION_HOTEL)
+            ->table(Constants::APP_HOTEL_DB_HOTEL_SUPPLIER_DB)
+            ->where("supplier_id", $request->input('supplier_id'))
+            ->pluck('hotel_id');
+        if (sizeof($hotelId)) {
+            $room = DB::connection(Constants::CONNECTION_HOTEL)
+                ->table(Constants::APP_HOTEL_DB_ROOM_DB)
+                ->whereIn("id", $hotelId)->get();
+            foreach ($room as $roomVal) {
+                $shopping_id = Constants::APP_NAME_HOTEL . "-" . $roomVal->hotel_id . "-" . $roomVal->id;
+                if (!Commission::where(['customer_id' => $customer_id, 'shopping_id' => $shopping_id])->exists()) {
+                    Commission::create([
+                        'customer_id' => $customer_id,
+                        'shopping_id' => $shopping_id,
+                        'type' => $supplierAgencyCategory->type_price,
+                        'price' => $supplierAgencyCategory->price,
+                        'percent' => $supplierAgencyCategory->percent,
+                    ]);
+                }
+            }
+        }
+        ////////////////////Entertainment////////////////////
+        $productId = DB::connection(Constants::CONNECTION_ENTERTAINMENT)
+            ->table(Constants::APP_ENTERTAINMENT_DB_PRODUCT_SUPPLIER_DB)
+            ->where("supplier_id", $request->input('supplier_id'))
+            ->pluck('product_id');
+        if (sizeof($productId)) {
+            $product = DB::connection(Constants::CONNECTION_ENTERTAINMENT)
+                ->table(Constants::APP_ENTERTAINMENT_DB_PRODUCT_DB)
+                ->whereIn("id", $productId)->get();
+            foreach ($product as $productVal) {
+                $shopping_id = Constants::APP_NAME_ENTERTAINMENT . "-" . $productVal->id;
+                if (!Commission::where(['customer_id' => $customer_id, 'shopping_id' => $shopping_id])->exists()) {
+                    Commission::create([
+                        'customer_id' => $customer_id,
+                        'shopping_id' => $shopping_id,
+                        'type' => $supplierAgencyCategory->type_price,
+                        'price' => $supplierAgencyCategory->price,
+                        'percent' => $supplierAgencyCategory->percent,
+                    ]);
+                }
+            }
         }
         SupplierAgency::create([
             'supplier_id' => $request->input('supplier_id'),
