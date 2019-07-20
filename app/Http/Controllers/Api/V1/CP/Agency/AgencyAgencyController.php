@@ -182,7 +182,7 @@ class AgencyAgencyController extends ApiController
             $agency_id = $agency->id;
         }
         $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $agency_id;
-        ////////////////////ROOM////////////////////
+        ////////////////////Commission////////////////////
         $Commissions = Commission::where("customer_id", Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id'))->get();
         foreach ($Commissions as $value) {
             if (!Commission::where(['customer_id' => $customer_id, 'shopping_id' => $value->shopping_id])->exists()) {

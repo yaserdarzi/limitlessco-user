@@ -25,6 +25,7 @@ class Constants
 
     //Database Hotel
     const APP_HOTEL_DB_HOTEL_DB = 'hotel';
+    const APP_HOTEL_DB_HOTEL_SUPPLIER_DB = 'hotel_supplier';
     const APP_HOTEL_DB_ROOM_DB = 'room';
     const APP_HOTEL_DB_ROOM_EPISODE_DB = 'room_episode';
 
