@@ -160,7 +160,7 @@ class AgencyAgencyController extends ApiController
                 'tell' => '',
                 'type' => 'percent',
                 'status' => Constants::STATUS_ACTIVE,
-                'introduction' => [Constants::AGENCY_INTRODUCTION_AGENCY]
+                'introduction' => [Constants::AGENCY_INTRODUCTION_AGENCY, Constants::AGENCY_INTRODUCTION_SALES]
             ]);
             AgencyUser::create([
                 'user_id' => $user->id,
