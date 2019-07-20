@@ -180,10 +180,9 @@ class PaymentController extends ApiController
         $incomeApi = 0;
         $addPrice = 0;
         $price_income = 0;
-        $customer_id = Constants::SALES_TYPE_API . "-" . $request->input('api_id');
         foreach ($roomEpisode as $key => $value) {
             $shopping_id_commission = Constants::APP_NAME_HOTEL . "-" . $value->hotel_id . "-" . $value->room_id;
-            $commission = Commission::where(['customer_id' => $customer_id, 'shopping_id' => $shopping_id_commission])->first();
+            $commission = Commission::where(['customer_id' => Constants::SALES_TYPE_API . "-" . $request->input('api_id'), 'shopping_id' => $shopping_id_commission])->first();
             if (!$commission)
                 throw new ApiException(
                     ApiException::EXCEPTION_NOT_FOUND_404,
@@ -248,7 +247,7 @@ class PaymentController extends ApiController
             ->table(Constants::APP_HOTEL_DB_HOTEL_DB)
             ->where('id', $room->hotel_id)
             ->first();
-        $shopping_id = $request->input('app_title') . "-" . $request->input('room_id');
+        $shopping_id = Constants::SALES_TYPE_API . "-" . $request->input('room_id');
         $title_more = $room->title;
         if ($request->input('is_capacity') == "true") {
             $shopping_id = $shopping_id . '-' . $request->input('is_capacity');
