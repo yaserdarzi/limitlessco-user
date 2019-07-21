@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Api\V1\CP\Agency;
 
 use App\AgencyAgency;
 use App\AgencyAgencyCategory;
+use App\Commission;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\ApiController;
 use App\Inside\Constants;
 use App\Inside\Helpers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use Illuminate\Support\Facades\DB;
 
 class AgencyAgencyCategoryController extends ApiController
 {
@@ -208,4 +210,42 @@ class AgencyAgencyCategoryController extends ApiController
 
     ///////////////////public function///////////////////////
 
+    public function getCommission(Request $request)
+    {
+        $commission = Commission::where('customer_id', Constants::SALES_TYPE_AGENCY . '-' . $request->input('agency_id'))
+            ->get()->map(function ($value) {
+                switch (explode('-', $value->shopping_id)[0]) {
+                    case Constants::APP_NAME_HOTEL:
+                        $hotel = DB::connection(Constants::CONNECTION_HOTEL)
+                            ->table(Constants::APP_HOTEL_DB_HOTEL_DB)
+                            ->where('id', explode('-', $value->shopping_id)[1])
+                            ->first();
+                        $room = DB::connection(Constants::CONNECTION_HOTEL)
+                            ->table(Constants::APP_HOTEL_DB_ROOM_DB)
+                            ->where('id', explode('-', $value->shopping_id)[2])
+                            ->first();
+                        if ($hotel->logo) {
+                            $value->image_thumb = env('CDN_HOTEL_URL') . '/files/hotel/thumb/' . $hotel->logo;
+                            $value->image = env('CDN_HOTEL_URL') . '/files/hotel/' . $hotel->logo;
+                        }
+                        $value->title = $hotel->name . " " . $room->title;
+                        $value->desc = $hotel->about;
+                        break;
+                    case Constants::APP_NAME_ENTERTAINMENT:
+                        $product = DB::connection(Constants::CONNECTION_ENTERTAINMENT)
+                            ->table(Constants::APP_ENTERTAINMENT_DB_PRODUCT_DB)
+                            ->where('id', explode('-', $value->shopping_id)[1])
+                            ->first();
+                        if ($product->image) {
+                            $value->image_thumb = env('CDN_ENTERTAINMENT_URL') . '/files/product/thumb/' . $product->image;
+                            $value->image = env('CDN_ENTERTAINMENT_URL') . '/files/product/' . $product->image;
+                        }
+                        $value->title = $product->title;
+                        $value->desc = $product->small_desc;
+                        break;
+                }
+                return $value;
+            });
+        return $this->respond($commission);
+    }
 }
