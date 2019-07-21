@@ -325,8 +325,8 @@ class AgencyAgencyCategoryController extends ApiController
                 }
                 $value->commission = 0;
                 $commission = AgencyAgencyCategoryCommission::where([
-                    'agency_agency_category_id', $agency_agency_category_id,
-                    'shopping_id', $value->shopping_id,
+                    'agency_agency_category_id' => $agency_agency_category_id,
+                    'shopping_id' => $value->shopping_id
                 ])->first();
                 if ($commission)
                     $value->commission = $commission->percent;
