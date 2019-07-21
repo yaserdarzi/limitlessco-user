@@ -75,44 +75,42 @@ class AgencyAgencyCategoryController extends ApiController
                 'کاربر گرامی ، وارد  کمیسیون اجباری می باشد.'
             );
 //        dd(json_decode($request->input('commission')));
-        foreach (json_decode($request->input('commission')) as $item)
-            foreach ((array)$item as $key => $value) {
-                $commission = Commission::where([
-                    'shopping_id' => $key,
-                    'customer_id' => Constants::SALES_TYPE_AGENCY . '-' . $request->input('agency_id')
-                ])->first();
-                if ($commission)
-                    if ($commission->percent < $value)
-                        throw new ApiException(
-                            ApiException::EXCEPTION_NOT_FOUND_404,
-                            'کاربر گرامی ، درصد کمیسیون بیشتر از حد مجاز است .'
-                        );
-            }
+        foreach ($request->input('commission') as $key => $value) {
+            $commission = Commission::where([
+                'shopping_id' => $key,
+                'customer_id' => Constants::SALES_TYPE_AGENCY . '-' . $request->input('agency_id')
+            ])->first();
+            if ($commission)
+                if ($commission->percent < $value)
+                    throw new ApiException(
+                        ApiException::EXCEPTION_NOT_FOUND_404,
+                        'کاربر گرامی ، درصد کمیسیون بیشتر از حد مجاز است .'
+                    );
+        }
         $agencyAgencyCategory = AgencyAgencyCategory::create([
             'agency_id' => $request->input('agency_id'),
             'title' => $request->input('title'),
             'type_price' => Constants::TYPE_PERCENT,
             'percent' => 0
         ]);
-        foreach (json_decode($request->input('commission')) as $item)
-            foreach ((array)$item as $key => $value) {
-                $commission = Commission::where([
+        foreach ($request->input('commission') as $key => $value) {
+            $commission = Commission::where([
+                'shopping_id' => $key,
+                'customer_id' => Constants::SALES_TYPE_AGENCY . '-' . $request->input('agency_id')
+            ])->first();
+            if ($commission->percent < $value)
+                throw new ApiException(
+                    ApiException::EXCEPTION_NOT_FOUND_404,
+                    'کاربر گرامی ، درصد کمیسیون بیشتر از حد مجاز است .'
+                );
+            if ($value != 0)
+                AgencyAgencyCategoryCommission::create([
+                    'agency_agency_category_id' => $agencyAgencyCategory->id,
                     'shopping_id' => $key,
-                    'customer_id' => Constants::SALES_TYPE_AGENCY . '-' . $request->input('agency_id')
-                ])->first();
-                if ($commission->percent < $value)
-                    throw new ApiException(
-                        ApiException::EXCEPTION_NOT_FOUND_404,
-                        'کاربر گرامی ، درصد کمیسیون بیشتر از حد مجاز است .'
-                    );
-                if ($value != 0)
-                    AgencyAgencyCategoryCommission::create([
-                        'agency_agency_category_id' => $agencyAgencyCategory->id,
-                        'shopping_id' => $key,
-                        'type' => Constants::TYPE_PERCENT,
-                        'percent' => $value,
-                    ]);
-            }
+                    'type' => Constants::TYPE_PERCENT,
+                    'percent' => $value,
+                ]);
+        }
         return $this->respond(["status" => "success"]);
     }
 
