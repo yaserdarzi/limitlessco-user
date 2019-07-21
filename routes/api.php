@@ -177,6 +177,7 @@ Route::namespace('Api\V1\CP')->prefix('/v1/cp/')->group(function () {
 
             //Agency Agency Category
             Route::get('agency/category/commission', 'AgencyAgencyCategoryController@getCommission');
+            Route::get('agency/category/commission/{agency_agency_category_id}', 'AgencyAgencyCategoryController@getCommissionAgencyCategory');
             Route::post('agency/category/update/{agency_agency_category_id}', 'AgencyAgencyCategoryController@update');
             Route::resource('agency/category', 'AgencyAgencyCategoryController');
 
