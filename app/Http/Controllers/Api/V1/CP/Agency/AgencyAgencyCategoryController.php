@@ -69,7 +69,7 @@ class AgencyAgencyCategoryController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد کردن عنوان اجباری می باشد.'
             );
-        if (!sizeof($request->input('commission')))
+        if (!sizeof(json_decode($request->input('commission'))))
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد  کمیسیون اجباری می باشد.'
@@ -87,6 +87,7 @@ class AgencyAgencyCategoryController extends ApiController
                         'کاربر گرامی ، درصد کمیسیون بیشتر از حد مجاز است .'
                     );
         }
+        dd(1);
         $agencyAgencyCategory = AgencyAgencyCategory::create([
             'agency_id' => $request->input('agency_id'),
             'title' => $request->input('title'),
