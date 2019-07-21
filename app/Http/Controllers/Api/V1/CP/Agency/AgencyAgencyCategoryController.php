@@ -213,7 +213,7 @@ class AgencyAgencyCategoryController extends ApiController
     public function getCommission(Request $request)
     {
         $commission = Commission::where('customer_id', Constants::SALES_TYPE_AGENCY . '-' . $request->input('agency_id'))
-            ->get()->map(function ($value) {
+            ->orderBy('shopping_id')->get()->map(function ($value) {
                 switch (explode('-', $value->shopping_id)[0]) {
                     case Constants::APP_NAME_HOTEL:
                         $hotel = DB::connection(Constants::CONNECTION_HOTEL)
