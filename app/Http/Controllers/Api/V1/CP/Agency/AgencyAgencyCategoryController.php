@@ -238,7 +238,7 @@ class AgencyAgencyCategoryController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 "کاربر گرامی امکان حذف برای گروهی که آژانس دارد امکان پذیر نمی باشد."
             );
-        if (!AgencyAgencyCategory::where(['id' => $id])->exists())
+        if (!AgencyAgencyCategory::where(['id' => $id, 'agency_id' => $request->input('agency_id')])->exists())
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 "کاربر گرامی شما دسترسی لازم برای حذف را ندارید."
