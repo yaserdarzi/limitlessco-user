@@ -202,13 +202,15 @@ class AgencyAgencyCategoryController extends ApiController
                         'کاربر گرامی ، درصد کمیسیون بیشتر از حد مجاز است .'
                     );
                 if ($value != 0)
-                    if (AgencyAgencyCategoryCommission::where(['agency_agency_category_id' => $id])->exists())
-                        AgencyAgencyCategoryCommission::where(['agency_agency_category_id' => $id])
-                            ->update([
-                                'shopping_id' => $key,
-                                'type' => Constants::TYPE_PERCENT,
-                                'percent' => $value,
-                            ]);
+                    if (AgencyAgencyCategoryCommission::where(['agency_agency_category_id' => $id, 'shopping_id' => $key])->exists())
+                        AgencyAgencyCategoryCommission::where([
+                            'agency_agency_category_id' => $id,
+                            'shopping_id' => $key
+                        ])->update([
+                            'shopping_id' => $key,
+                            'type' => Constants::TYPE_PERCENT,
+                            'percent' => $value,
+                        ]);
                     else
                         AgencyAgencyCategoryCommission::create([
                             'agency_agency_category_id' => $id,
