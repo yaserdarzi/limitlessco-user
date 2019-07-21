@@ -73,6 +73,7 @@ class AgencyAgencyCategoryController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد  کمیسیون اجباری می باشد.'
             );
+        dd(json_decode($request->input('commission')));
         switch ($request->input('type_percent')) {
             case Constants::TYPE_PRICE:
                 $typePercent = Constants::TYPE_PRICE;
