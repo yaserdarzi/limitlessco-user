@@ -352,7 +352,7 @@ class AgencyAgencyController extends ApiController
         AgencyAgency::where([
             'id' => $id,
             'agency_parent_id' => $request->input('agency_id')
-        ])->update(['status' => Constants::STATUS_DEACTIVATE]);
+        ])->delete();
         return $this->respond(["status" => "success"]);
     }
     ///////////////////public function///////////////////////
