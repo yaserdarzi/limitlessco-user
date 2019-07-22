@@ -67,6 +67,7 @@ class Constants
     const API_WALLET_INVOICE_DB = 'api_wallet_invoice';
     const SERVICE_DB = 'service';
     const AGENCY_AGENCY_CATEGORY_DB = 'agency_agency_category';
+    const AGENCY_AGENCY_CATEGORY_COMMISSION_DB = 'agency_agency_category_commission';
     const AGENCY_AGENCY_DB = 'agency_agency';
     const AGENCY_AGENCY_REQUEST_DB = 'agency_agency_request';
     const COMMISSION_DB = 'commission';
@@ -169,6 +170,6 @@ class Constants
     const MAIL_USER = 'sales@';
     const MAIL_PASSWORD = 'yaserdarzi';
     const QUEUE_MAIL_TICKET = 'mail_ticket';
-    const QUEUE_SMS_REGISTER_AGENCY= 'sms_register_agency';
+    const QUEUE_SMS_REGISTER_AGENCY = 'sms_register_agency';
 
 }
