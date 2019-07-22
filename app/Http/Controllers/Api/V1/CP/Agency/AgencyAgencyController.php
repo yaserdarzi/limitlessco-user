@@ -230,7 +230,7 @@ class AgencyAgencyController extends ApiController
             $channel->close();
             $connection->close();
         }
-        $userAgency = User::where('user_id', $request->input('user_id'))->first();
+        $userAgency = User::where('id', $request->input('user_id'))->first();
         return $this->respond(["name_user_agency" => $userAgency->name, "name" => $user->name, "username" => $user->username, "password" => $this->help->normalizePhoneNumber($request->input('password'))]);
     }
 
