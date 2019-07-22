@@ -230,7 +230,7 @@ class AgencyAgencyController extends ApiController
             $channel->close();
             $connection->close();
         }
-        return $this->respond(["status" => "success"]);
+        return $this->respond(["name" => $user->name, "username" => $user->username, "password" => $this->help->normalizePhoneNumber($request->input('password'))]);
     }
 
     /**
