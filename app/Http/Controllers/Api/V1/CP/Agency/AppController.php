@@ -204,7 +204,7 @@ class AppController extends ApiController
             ->whereIn('agency_id', $agencyId)
             ->where(['status' => Constants::STATUS_ACTIVE])
             ->pluck('supplier_id');
-        $supplierAgency = array_unique(array_merge($supplierSalesID->toArray(), $supplierAgencyID->toArray()));
+        $supplierAgency = array_unique(array_merge($supplierSalesID, $supplierAgencyID->toArray()));
         return $supplierAgency;
     }
 }

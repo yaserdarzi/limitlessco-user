@@ -20,6 +20,8 @@ use Hashids\Hashids;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use Illuminate\Support\Facades\DB;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class AgencyAgencyController extends ApiController
 {
@@ -211,6 +213,23 @@ class AgencyAgencyController extends ApiController
             'price' => $agencyAgencyCategory->price,
             'percent' => $agencyAgencyCategory->percent,
         ]);
+        if ($phone != '') {
+            $connection = new AMQPStreamConnection(config("rabbitmq.server"), config("rabbitmq.port"), config("rabbitmq.user"), config("rabbitmq.password"), '/');
+            $channel = $connection->channel();
+            $channel->queue_declare(Constants::QUEUE_SMS_REGISTER_AGENCY, false, false, false, false);
+            $msg = new AMQPMessage(json_encode([
+                'phone' => $phone,
+                'agency_name' => $agency->name,
+                'user_name' => $user->name,
+                'username' => strtolower(str_replace(' ', '', $request->input('username'))),
+                'password' => $this->help->normalizePhoneNumber($request->input('password'))
+            ]),
+                array('delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT)
+            );
+            $channel->basic_publish($msg, '', Constants::QUEUE_SMS_REGISTER_AGENCY);
+            $channel->close();
+            $connection->close();
+        }
         return $this->respond(["status" => "success"]);
     }
 
