@@ -37,7 +37,11 @@ class AgencyAgencyCategoryController extends ApiController
                 'کاربر گرامی شما دسترسی به این قسمت ندارید.'
             );
         $agencyAgencyCategory = AgencyAgencyCategory::
-        where(['agency_id' => $request->input('agency_id')])->get();
+        where(['agency_id' => $request->input('agency_id')])
+            ->get()->map(function ($value) {
+                $value->count_agency = AgencyAgency::where('agency_agency_category_id', $value->id)->count();
+                return $value;
+            });
         return $this->respond($agencyAgencyCategory);
     }
 
