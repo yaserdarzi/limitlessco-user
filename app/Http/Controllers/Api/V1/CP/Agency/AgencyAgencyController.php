@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\CP\Agency;
 use App\Agency;
 use App\AgencyAgency;
 use App\AgencyAgencyCategory;
+use App\AgencyAgencyCategoryCommission;
 use App\AgencyApp;
 use App\AgencyUser;
 use App\AgencyWallet;
@@ -89,6 +90,41 @@ class AgencyAgencyController extends ApiController
      */
     public function store(Request $request)
     {
+        if (!$request->input('name_agency'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن نام آژانس اجباری می باشد.'
+            );
+        if (!$request->input('name'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن نام و نام خانوادگی اجباری می باشد.'
+            );
+        if (!$request->input('username'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن نام کاربری اجباری می باشد.'
+            );
+        if (!$request->input('password'))
+            throw new ApiException(
+                ApiException::EXCEPTION_NOT_FOUND_404,
+                'کاربر گرامی ، وارد کردن کلمه عبور اجباری می باشد.'
+            );
+        if ($request->input('username'))
+            if (User::where(['username' => strtolower(str_replace(' ', '', $request->input('username')))])->exists())
+                throw new ApiException(
+                    ApiException::EXCEPTION_NOT_FOUND_404,
+                    'کاربر گرامی ، نام کاربری تکراری می باشد.'
+                );
+        $phone = null;
+        if ($request->input('phone')) {
+            $phone = $this->help->phoneChecker($request->input('phone'));
+            if (User::where(['phone' => $phone])->exists())
+                throw new ApiException(
+                    ApiException::EXCEPTION_NOT_FOUND_404,
+                    'کاربر گرامی ، تلفن همراه تکراری می باشد.'
+                );
+        }
         if ($request->input('role') != Constants::ROLE_ADMIN)
             throw new ApiException(
                 ApiException::EXCEPTION_NOT_FOUND_404,
@@ -104,102 +140,73 @@ class AgencyAgencyController extends ApiController
                 ApiException::EXCEPTION_NOT_FOUND_404,
                 'کاربر گرامی ، وارد کردن گروه آژانس اجباری می باشد.'
             );
-        if (!$request->input('phone'))
-            throw new ApiException(
-                ApiException::EXCEPTION_NOT_FOUND_404,
-                'کاربر گرامی ، وارد کردن شماره همراه مدیر آژانس اجباری می باشد.'
-            );
-        if (!$request->input('capacity_percent'))
-            throw new ApiException(
-                ApiException::EXCEPTION_NOT_FOUND_404,
-                'کاربر گرامی ، وارد کردن ظرفیت اجباری می باشد.'
-            );
-        $phone = $this->help->phoneChecker($request->input('phone'), '');
-        $agency = Agency::join(Constants::AGENCY_USERS_DB, Constants::AGENCY_USERS_DB . '.agency_id', '=', Constants::AGENCY_DB . '.id')
-            ->join(Constants::USERS_DB, Constants::AGENCY_USERS_DB . '.user_id', '=', Constants::USERS_DB . '.id')
-            ->where('phone', $phone)
-            ->first();
-        if ($agency) {
-            if (AgencyAgency::where(['agency_parent_id' => $request->input('agency_id'), 'agency_id' => $agency->agency_id])->exists())
-                throw new ApiException(
-                    ApiException::EXCEPTION_NOT_FOUND_404,
-                    'کاربر گرامی ، آژانس مورد نظر قبلا در سیستم شما ثبت شده است.'
-                );
-            $agencyUpdate = Agency::find($agency->agency_id);
-            $agencyUpdate->introduction = array_merge($agencyUpdate->introduction, [Constants::AGENCY_INTRODUCTION_AGENCY]);
-            $agencyUpdate->save();
-            $agency_id = $agency->agency_id;
-        } else {
-            $user = User::where(['phone' => $phone])->first();
-            if (!$user) {
-                $hashIds = new Hashids(config("config.hashIds"));
-                $refLink = $hashIds->encode($phone, intval(microtime(true)));
-                $user = User::create([
-                    'phone' => $phone,
-                    'email' => '',
-                    'password' => '',
-                    'gmail' => '',
-                    'name' => '',
-                    'image' => '',
-                    'gender' => '',
-                    "ref_link" => $refLink,
-                    'info' => '',
-                    'remember_token' => '',
-                ]);
-                Wallet::create([
-                    'user_id' => $user->id,
-                    'price' => 0,
-                ]);
-            }
-            $app = AgencyApp::where([
-                'agency_id' => $request->input('agency_id'),
-            ])->get();
-            $agency = Agency::create([
-                'name' => '',
-                'image' => '',
-                'tell' => '',
-                'type' => 'percent',
-                'status' => Constants::STATUS_ACTIVE,
-                'introduction' => [Constants::AGENCY_INTRODUCTION_AGENCY, Constants::AGENCY_INTRODUCTION_SALES]
-            ]);
-            AgencyUser::create([
-                'user_id' => $user->id,
+        $hashIds = new Hashids(config("config.hashIds"));
+        $refLink = $hashIds->encode($phone, intval(microtime(true)));
+        $user = User::create([
+            'phone' => $phone,
+            'name' => $request->input('name'),
+            'username' => strtolower(str_replace(' ', '', $request->input('username'))),
+            'password_username' => $this->help->normalizePhoneNumber($request->input('password')),
+            "ref_link" => $refLink,
+        ]);
+        Wallet::create([
+            'user_id' => $user->id,
+            'price' => 0,
+        ]);
+        //agency
+        $agency = Agency::create([
+            'name' => $request->input('name_agency'),
+            'image' => '',
+            'tell' => $request->input('tell'),
+            'city' => $request->input('city'),
+            'type' => 'percent',
+            'percent' => Constants::AGENCY_PERCENT_DEFAULT,
+            'status' => Constants::STATUS_ACTIVE,
+            'introduction' => [Constants::AGENCY_INTRODUCTION_AGENCY, Constants::AGENCY_INTRODUCTION_SALES]
+        ]);
+        AgencyUser::create([
+            'user_id' => $user->id,
+            'agency_id' => $agency->id,
+            'type' => 'percent',
+            'percent' => 100,
+            'role' => Constants::ROLE_ADMIN
+        ]);
+        AgencyWallet::create([
+            'agency_id' => $agency->id,
+            'price' => 0
+        ]);
+        $app = AgencyApp::where([
+            'agency_id' => $request->input('agency_id'),
+        ])->get();
+        foreach ($app as $value) {
+            AgencyApp::create([
                 'agency_id' => $agency->id,
-                'type' => 'percent',
-                'percent' => 100,
-                'role' => Constants::ROLE_ADMIN
+                'app_id' => $value->app_id,
             ]);
-            AgencyWallet::create([
-                'agency_id' => $agency->id,
-                'price' => 0
-            ]);
-            foreach ($app as $value) {
-                AgencyApp::create([
-                    'agency_id' => $agency->id,
-                    'app_id' => $value->app_id,
-                ]);
-            }
-            $agency_id = $agency->id;
         }
-        $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $agency_id;
+        $customer_id = Constants::SALES_TYPE_AGENCY . "-" . $agency->id;
         ////////////////////Commission////////////////////
-        $Commissions = Commission::where("customer_id", Constants::SALES_TYPE_AGENCY . "-" . $request->input('agency_id'))->get();
-        foreach ($Commissions as $value) {
+        $commissions = AgencyAgencyCategoryCommission::where("agency_agency_category_id", $request->input('agency_agency_category_id'))->get();
+        foreach ($commissions as $value) {
             if (!Commission::where(['customer_id' => $customer_id, 'shopping_id' => $value->shopping_id])->exists()) {
                 Commission::create([
                     'customer_id' => $customer_id,
                     'shopping_id' => $value->shopping_id,
-                    'type' => $agencyAgencyCategory->type_price,
-                    'price' => $agencyAgencyCategory->price,
-                    'percent' => $agencyAgencyCategory->percent,
+                    'type' => $value->type,
+                    'percent' => $value->percent,
+                    'price' => $value->price,
+                    'award' => $value->award,
+                    'income' => $value->income,
+                    'is_price_power_up' => $value->is_price_power_up,
+                    'info' => $value->info
                 ]);
             }
         }
         AgencyAgency::create([
             'agency_parent_id' => $request->input('agency_id'),
             'agency_agency_category_id' => $request->input('agency_agency_category_id'),
-            'agency_id' => $agency_id,
-            'capacity_percent' => $request->input('capacity_percent'),
+            'agency_id' => $agency->id,
+            'capacity_percent' => 0,
             'type_price' => $agencyAgencyCategory->type_price,
             'price' => $agencyAgencyCategory->price,
             'percent' => $agencyAgencyCategory->percent,
