@@ -230,7 +230,8 @@ class AgencyAgencyController extends ApiController
             $channel->close();
             $connection->close();
         }
-        return $this->respond(["status" => "success"]);
+        $userAgency = User::where('id', $request->input('user_id'))->first();
+        return $this->respond(["name_user_agency" => $userAgency->name, "name" => $user->name, "username" => $user->username, "password" => $this->help->normalizePhoneNumber($request->input('password'))]);
     }
 
     /**
@@ -352,7 +353,7 @@ class AgencyAgencyController extends ApiController
         AgencyAgency::where([
             'id' => $id,
             'agency_parent_id' => $request->input('agency_id')
-        ])->update(['status' => Constants::STATUS_DEACTIVATE]);
+        ])->delete();
         return $this->respond(["status" => "success"]);
     }
     ///////////////////public function///////////////////////
