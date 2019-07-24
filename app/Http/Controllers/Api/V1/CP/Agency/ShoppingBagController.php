@@ -456,7 +456,7 @@ class ShoppingBagController extends ApiController
         );
         if ($commission->type == Constants::TYPE_PERCENT) {
             if ($commission->percent < 100)
-                $incomeAgency += intval(($commission->percent / 100) * $priceAll);
+                $incomeAgency += intval(($commission->percent / 100) * $price_income);
         } elseif ($commission->type == Constants::TYPE_PRICE)
             $incomeAgency = $incomeAgency + $commission->price;
         $agencyUser = AgencyUser::where([
