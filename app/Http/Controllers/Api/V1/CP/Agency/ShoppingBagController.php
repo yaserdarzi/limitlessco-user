@@ -299,50 +299,15 @@ class ShoppingBagController extends ApiController
                     'کاربر گرامی ، درصد کمیسیون شما مشخص نشده است لطفا با پیشتیبانی تماس حاصل فرمایید.'
                 );
             $value->commission = $commission;
-            $percent = 0;
-            if ($commission->is_price_power_up) {
-                $price = $value->price_power_up;
-                $priceAll = $priceAll + $value->price_power_up;
-                $price_income = $price_income + $value->price_power_up;
-                if ($value->type_percent == Constants::TYPE_PRICE) {
-                    $percentAll = $percentAll + $value->percent;
-                    $percent = $value->percent;
-                } elseif ($value->type_percent == Constants::TYPE_PERCENT) {
-                    if ($value->percent != 0) {
-                        $percentAll += ($value->percent / 100) * $value->price_power_up;
-                        $percent = ($value->percent / 100) * $value->price_power_up;
-                    }
-                }
-            } else {
-                $price = $value->price;
-                $priceAll = $priceAll + $value->price;
-                $price_income = $price_income + $value->price_power_up;
-                if ($value->type_percent == Constants::TYPE_PRICE) {
-                    $percentAll = $percentAll + $value->percent;
-                    $percent = $value->percent;
-                } elseif ($value->type_percent == Constants::TYPE_PERCENT) {
-                    if ($value->percent != 0) {
-                        $percentAll += ($value->percent / 100) * $value->price;
-                        $percent = ($value->percent / 100) * $value->price;
-                    }
-                }
-            }
+            $priceAll += $value->price_power_up;
+            $price_income += $value->price_power_up;
+            $price = $value->price_power_up;
             if ($request->input('is_capacity') == "true") {
                 $addPrice += $value->add_price;
                 $priceAll += $addPrice;
                 $price_income += $addPrice;
                 $price += $addPrice;
             }
-            $commissionSupplier = Commission::where([
-                'customer_id' => Constants::SALES_TYPE_SUPPLIER . '-' . $value->supplier_id,
-                'shopping_id' => $shopping_id_commission,
-            ])->first();
-            if ($commissionSupplier)
-                if ($commissionSupplier->type == Constants::TYPE_PERCENT) {
-                    if ($commissionSupplier->percent != 0)
-                        $income += intval(($commissionSupplier->percent / 100) * $value->price_power_up);
-                } elseif ($commissionSupplier->type == Constants::TYPE_PRICE)
-                    $income = $income + $commissionSupplier->price;
             if ($commission->type == Constants::TYPE_PERCENT) {
                 if ($commission->percent < 100)
                     $incomeAgency += intval(($commission->percent / 100) * $price);
@@ -361,6 +326,8 @@ class ShoppingBagController extends ApiController
                         $incomeYou = $incomeAgency;
                 elseif ($agencyUser->type == Constants::TYPE_PRICE)
                     $incomeYou = $incomeYou + $agencyUser->price;
+            $priceAll += $incomeAgency;
+            $income += $priceAll - $price_income;
         }
         $room = DB::connection(Constants::CONNECTION_HOTEL)
             ->table(Constants::APP_HOTEL_DB_ROOM_DB)
@@ -477,46 +444,16 @@ class ShoppingBagController extends ApiController
         $income = 0;
         $incomeAgency = 0;
         $incomeYou = 0;
-        if ($commission->is_price_power_up) {
-            $priceAll = intval(
-                intval($productEpisode->price_adult_power_up * $count) +
-                intval($productEpisode->price_child_power_up * $count_child) +
-                intval($productEpisode->price_baby_power_up * $count_baby)
-            );
-            $price_income = intval(
-                intval($productEpisode->price_adult_power_up * $count) +
-                intval($productEpisode->price_child_power_up * $count_child) +
-                intval($productEpisode->price_baby_power_up * $count_baby)
-            );
-        } else {
-            $priceAll = intval(
-                intval($productEpisode->price_adult * $count) +
-                intval($productEpisode->price_child * $count_child) +
-                intval($productEpisode->price_baby * $count_baby)
-            );
-            $price_income = intval(
-                intval($productEpisode->price_adult_power_up * $count) +
-                intval($productEpisode->price_child_power_up * $count_child) +
-                intval($productEpisode->price_baby_power_up * $count_baby)
-            );
-        }
-        if ($productEpisode->type_percent == Constants::TYPE_PRICE) {
-            $percentAll = $productEpisode->percent;
-        } elseif ($productEpisode->type_percent == Constants::TYPE_PERCENT) {
-            if ($productEpisode->percent != 0) {
-                $percentAll = intval(($productEpisode->percent / 100) * $priceAll);
-            }
-        }
-        $commissionSupplier = Commission::where([
-            'customer_id' => Constants::SALES_TYPE_SUPPLIER . '-' . $productEpisode->supplier_id,
-            'shopping_id' => $shopping_id_commission,
-        ])->first();
-        if ($commissionSupplier)
-            if ($commissionSupplier->type == Constants::TYPE_PERCENT) {
-                if ($commissionSupplier->percent != 0)
-                    $income += intval(($commissionSupplier->percent / 100) * $price_income);
-            } elseif ($commissionSupplier->type == Constants::TYPE_PRICE)
-                $income = $income + $commissionSupplier->price;
+        $priceAll = intval(
+            intval($productEpisode->price_adult_power_up * $count) +
+            intval($productEpisode->price_child_power_up * $count_child) +
+            intval($productEpisode->price_baby_power_up * $count_baby)
+        );
+        $price_income = intval(
+            intval($productEpisode->price_adult_power_up * $count) +
+            intval($productEpisode->price_child_power_up * $count_child) +
+            intval($productEpisode->price_baby_power_up * $count_baby)
+        );
         if ($commission->type == Constants::TYPE_PERCENT) {
             if ($commission->percent < 100)
                 $incomeAgency += intval(($commission->percent / 100) * $priceAll);
@@ -535,6 +472,8 @@ class ShoppingBagController extends ApiController
                     $incomeYou = $incomeAgency;
             elseif ($agencyUser->type == Constants::TYPE_PRICE)
                 $incomeYou = $incomeYou + $agencyUser->price;
+        $priceAll += $incomeAgency;
+        $income += $priceAll - $price_income;
         $product = DB::connection(Constants::CONNECTION_ENTERTAINMENT)
             ->table(Constants::APP_ENTERTAINMENT_DB_PRODUCT_DB)
             ->where('id', $productEpisode->product_id)
