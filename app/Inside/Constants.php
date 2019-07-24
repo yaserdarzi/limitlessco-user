@@ -143,6 +143,7 @@ class Constants
     const INVOICE_MARKET_INCOME_SUPPLIER = 'income_supplier';
     //Invoice Type
     const INVOICE_TYPE_SHOPPING = 'shopping';
+    const INVOICE_TYPE_SHOPPING_CASH_BACK= 'shopping_cash_back';
     const INVOICE_TYPE_WITHDRAW = 'withdraw';
     const INVOICE_TYPE_WALLET = 'wallet';
     const INVOICE_TYPE_INCOME_SUPPLIER = 'income_supplier';
@@ -161,6 +162,7 @@ class Constants
     const INVOICE_INVOICE_STATUS_SHOPPING = 'خرید';
     const INVOICE_INVOICE_STATUS_WALLET = 'کیف پول';
     const INVOICE_INVOICE_STATUS_INCREMENT = 'افزایش';
+    const INVOICE_INVOICE_STATUS_CASH_BACK= 'امتیاز نقدی';
     const INVOICE_INVOICE_STATUS_DECREMENT = 'کاهش';
     const INVOICE_INVOICE_STATUS_WITHDRAW = 'تصویه حساب';
     const INVOICE_INVOICE_STATUS_INCOME_SUPPLIER = 'در آمد عرضه کننده';
