@@ -83,6 +83,7 @@ class TicketController extends ApiController
                 'کاربر گرامی شما دسترسی به این قسمت ندارید.'
             );
         $shopping->date_persian = CalendarUtils::strftime('Y-m-d', strtotime($shopping->date));
+        $shopping->date_end_persian = CalendarUtils::strftime('Y-m-d', strtotime($shopping->date_end));
         $shopping->created_at_persian = CalendarUtils::strftime('Y-m-d', strtotime($shopping->created_at));
         return $this->respond($shopping);
     }
